@@ -3,7 +3,7 @@ module.exports = {
         browser: true,
         es2021: true,
     },
-    ignorePatterns: ['node_module', 'dist', '.eslintrc.js', 'webpack.config.js', 'webpack.dev.config.js', 'webpack.prod.config.js'],
+    ignorePatterns: ['node_module', 'dist', '.eslintrc.js', 'webpack.config.js', 'webpack.dev.config.js', 'webpack.prod.config.js', 'jest.config.js'],
     extends: [
         'airbnb-base',
         'plugin:@typescript-eslint/recommended',

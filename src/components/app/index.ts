@@ -1,11 +1,13 @@
 import img from '../../assets/images/html.png';
 
 export default class App {
-    constructor(root) {
+    private root: HTMLElement;
+
+    constructor(root: HTMLElement) {
         this.root = root;
     }
 
-    start() {
+    public start(): void {
         this.root.innerHTML = `<img src="${img}" alt="html" />`;
     }
 }

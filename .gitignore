@@ -1,2 +1,46 @@
-node_modules
-dist
+# Игнорирование временных файлов и каталогов
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+*.log.*
+*.tmp
+*.temp
+
+# Игнорирование файлов зависимостей
+package-lock.json
+yarn.lock
+
+# Игнорирование файлов сборки и пакетов
+/dist/
+/build/
+*.bundle.js
+*.bundle.js.map
+
+# Игнорирование файлов конфигурации
+.env
+
+# Игнорирование файлов среды разработки
+/.vscode/
+/.idea/
+
+# Игнорирование файлов локальной конфигурации
+/.env.local
+
+# Игнорирование файлов редакторов
+*.sublime-project
+*.komodoproject
+.project
+.tmproj
+*.esproj
+*.nbproject
+*.xcodeproj/
+*.xcworkspace/
+
+# Игнорирование файлов данных и бинарных файлов
+*.csv
+
+# Игнорирование файлов логов и отчетов об ошибках
+*.log
+*.log.*

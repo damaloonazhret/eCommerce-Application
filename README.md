@@ -24,39 +24,39 @@ The application runs on the CommerceTools platform. This platform provides tools
 
 ## The following technologies are used in the project:
 
-- HTML: used to create the structure of the page.
-- CSS/SASS: used for styling elements and creating user interface.
-- JavaScript: used to add interactivity and handle events on the page.
-- TypeScript: A language that compiles to JavaScript that helps provide typing and more reliable programming.
-- SPA (Single-Page Application): web applications or websites that consist of a single HTML page.
+-   HTML: used to create the structure of the page.
+-   CSS/SASS: used for styling elements and creating user interface.
+-   JavaScript: used to add interactivity and handle events on the page.
+-   TypeScript: A language that compiles to JavaScript that helps provide typing and more reliable programming.
+-   SPA (Single-Page Application): web applications or websites that consist of a single HTML page.
 
 ## Development tools:
 
-- Webpack: A build tool for developing web applications.
-- ESLint: A static code analysis tool used to find errors in code.
-- Prettier: automatic code formatting tool.
-- Husky: tool for creating git hooks
-- Jest: JavaScript testing toolkit.
+-   Webpack: A build tool for developing web applications.
+-   ESLint: A static code analysis tool used to find errors in code.
+-   Prettier: automatic code formatting tool.
+-   Husky: tool for creating git hooks
+-   Jest: JavaScript testing toolkit.
 
 ## Design
 
-- Figma: cross-platform design tool with built-in sharing and collaboration features.
+-   Figma: cross-platform design tool with built-in sharing and collaboration features.
 
 ## Project management
 
-- Jira: project management, issue tracking and software development management tool.
-- Discord: a platform for communication between developers.
+-   Jira: project management, issue tracking and software development management tool.
+-   Discord: a platform for communication between developers.
 
 ## Scripts
 
-running ESLint (file: package.json)
-"eslint": "eslint ./src",
+running ESLint (file: package.json)  
+"eslint": "eslint ./src"
 
-running Prettier (file: package.json)
-"prettier": "prettier ./src --write",
+running Prettier (file: package.json)  
+"prettier": "prettier ./src --write"
 
-running Jest tests (file: package.json)
-"test": "jest .src/",
+running Jest tests (file: package.json)  
+"test": "jest .src/"
 
 ## Instructions for running the project locally
 

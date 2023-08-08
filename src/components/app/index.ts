@@ -1,4 +1,7 @@
-import img from '../../assets/images/html.png';
+import Router from '../router/router';
+import routes from '../router/routes';
+import Header from '../view/header';
+import Main from '../view/main';
 
 export default class App {
     private root: HTMLElement;
@@ -8,6 +11,12 @@ export default class App {
     }
 
     public start(): void {
-        this.root.innerHTML = `<img src="${img}" alt="html" />`;
+        const header = new Header();
+        const main = new Main();
+        const router = new Router(main);
+        router.setRoutes(routes);
+
+        this.root.append(header.getLayout());
+        this.root.append(main.getLayout());
     }
 }

@@ -1,0 +1,25 @@
+.registration {
+    form {
+        display: grid;
+        gap: 1vw;
+    }
+
+    &__input-city {
+        position: relative;
+        &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 2vw;
+            height: 2vw;
+            background-color: black;
+        }
+    }
+    &__button {
+        background-color: #00bb00;
+        transition: 0.4s ease-in-out;
+        &:hover {
+            background-color: #00ff00;
+        }
+    }
+}

@@ -1,4 +1,5 @@
 import './registration.scss';
+import { registrationInput } from '../login/view';
 
 export default class Registration {
     private registration!: HTMLElement;
@@ -10,7 +11,7 @@ export default class Registration {
     private init(): void {
         this.registration = document.createElement('section');
         this.registration.classList.add('registration');
-        this.registration.textContent = 'Registration Page';
+        this.registration.appendChild(registrationInput);
     }
 
     public getLayout(): HTMLElement {

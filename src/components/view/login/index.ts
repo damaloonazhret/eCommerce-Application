@@ -1,4 +1,5 @@
 import './login.scss';
+import { loginForm } from './view';
 
 export default class Login {
     private login!: HTMLElement;
@@ -10,7 +11,7 @@ export default class Login {
     private init(): void {
         this.login = document.createElement('section');
         this.login.classList.add('login');
-        this.login.textContent = 'Login Page';
+        this.login.appendChild(loginForm);
     }
 
     public getLayout(): HTMLElement {

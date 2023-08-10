@@ -1,0 +1,58 @@
+.login {
+    form {
+        display: grid;
+        grid-template-rows: repeat(3, 3vw);
+        width: 20vw;
+        justify-items: center;
+        gap: 2vw;
+        * {
+            width: 100%;
+        }
+    }
+
+    &__email {
+        &.error {
+            border: 0.2vw solid red;
+            position: relative;
+            &::before {
+                content: 'Email must contains...';
+                position: absolute;
+                display: block;
+                width: 10vw;
+                height: 2vw;
+                color: white;
+                left: 0;
+                top: 0;
+                background-color: red;
+            }
+        }
+    }
+
+    &__password {
+        &.error {
+            border: 0.2vw solid red;
+            position: relative;
+            &::before {
+                content: 'Password must contains';
+                position: absolute;
+                display: block;
+                width: 10vw;
+                height: 2vw;
+                color: white;
+                left: 0;
+                top: 0;
+                background-color: red;
+            }
+        }
+    }
+
+    &__button {
+        margin: 0;
+        padding: 0;
+        background-color: #00bb00;
+        transition: 0.4s ease-in-out;
+        &:hover {
+            background-color: #00ff00;
+        }
+    }
+}

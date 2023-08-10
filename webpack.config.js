@@ -26,6 +26,7 @@ const baseConfig = {
   },
   resolve: {
     extensions: ['.js', '.ts'],
+    alias: {'node-fetch' : 'isomorphic-fetch'},
   },
   output: {
     filename: 'index.[contenthash].js',

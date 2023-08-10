@@ -1,17 +1,17 @@
-import Routes from '../../types/interfaces';
+import { Route } from '../../types/interfaces';
 import Main from '../view/main';
 
 export default class Router {
     private main!: Main;
 
-    private routes!: Routes[];
+    private routes!: Route[];
 
     constructor(main: Main) {
         this.main = main;
         this.bindListeners();
     }
 
-    public setRoutes(newRoutes: Routes[]): void {
+    public setRoutes(newRoutes: Route[]): void {
         this.routes = newRoutes;
     }
 

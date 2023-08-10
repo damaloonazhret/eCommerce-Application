@@ -1,4 +1,4 @@
-import Route from '../../types/interfaces';
+import { Route } from '../../types/interfaces';
 import Login from '../view/login';
 import Registration from '../view/registration';
 import Shop from '../view/shop';

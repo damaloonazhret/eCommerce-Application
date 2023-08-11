@@ -13,6 +13,11 @@ describe('Checking form login', () => {
             expected: 'Correct data',
         },
         {
+            email: '1@m ail.ru',
+            password: 'Aqswdefr1!',
+            expected: 'Incorrect data',
+        },
+        {
             email: 'test@email.ru ',
             password: 'Aqswdefr1!',
             expected: 'Incorrect data',

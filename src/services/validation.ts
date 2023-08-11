@@ -1,7 +1,6 @@
 export function checkDataLoginForm(emailUser: string, passwordUser: string): string {
     // check email, <input> type='text'
     const hasUpperCaseEmail = /[A-Z]/.test(emailUser);
-    const hasSpacesEmail = /^\s|\s$/.test(emailUser);
     const hasSymbolDogEmail = /@/.test(emailUser);
     const hasDomenEmail = /\.[a-z]{2,4}/.test(emailUser);
 
@@ -10,7 +9,7 @@ export function checkDataLoginForm(emailUser: string, passwordUser: string): str
         return 'Incorrect data';
     }
 
-    if (hasSpacesEmail) {
+    if (emailUser.includes(' ')) {
         console.log('err-login: has space in email');
         return 'Incorrect data';
     }

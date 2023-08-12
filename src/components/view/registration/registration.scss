@@ -2,22 +2,29 @@
     form {
         display: grid;
         gap: 1vw;
+        width: 50vw;
+
+        div {
+            display: grid;
+            grid-template-rows: repeat(2, auto);
+            span {
+                display: none;
+            }
+
+            &.error span {
+                color: #ff0000;
+                display: block;
+            }
+        }
     }
 
     &__input-city {
-        position: relative;
-        &::after {
-            content: '';
-            display: block;
-            position: absolute;
-            width: 2vw;
-            height: 2vw;
-            background-color: black;
-        }
     }
+
     &__button {
         background-color: #00bb00;
         transition: 0.4s ease-in-out;
+
         &:hover {
             background-color: #00ff00;
         }

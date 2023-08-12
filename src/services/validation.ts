@@ -1,27 +1,39 @@
-export function checkDataLoginForm(emailUser: string, passwordUser: string): string {
+interface ObjValidationLogin {
+    email: boolean;
+    password: boolean;
+}
+
+interface ObjValidationRegistration {
+    email: boolean;
+    password: boolean;
+    nameUser: boolean;
+    lastNameUser: boolean;
+    dateBirth: boolean;
+    addressStreet: boolean;
+    addressCity: boolean;
+    addressPostalCode: boolean;
+    addressCountry: boolean;
+}
+
+export function checkDataLoginForm(emailUser: string, passwordUser: string): object {
     // check email, <input> type='text'
-    const hasUpperCaseEmail = /[A-Z]/.test(emailUser);
     const hasSymbolDogEmail = /@/.test(emailUser);
     const hasDomenEmail = /\.[a-z]{2,4}/.test(emailUser);
-
-    if (hasUpperCaseEmail) {
-        console.log('err-login: has uppercase in email');
-        return 'Incorrect data';
-    }
+    const objValidationLogin: ObjValidationLogin = {
+        email: true,
+        password: true,
+    };
 
     if (emailUser.includes(' ')) {
-        console.log('err-login: has space in email');
-        return 'Incorrect data';
+        objValidationLogin.email = false;
     }
 
     if (!hasSymbolDogEmail) {
-        console.log('err-login: no symbol @ in email');
-        return 'Incorrect data';
+        objValidationLogin.email = false;
     }
 
     if (!hasDomenEmail) {
-        console.log('err-login: no domen in email');
-        return 'Incorrect data';
+        objValidationLogin.email = false;
     }
 
     // check password, <input> type='password'
@@ -33,36 +45,30 @@ export function checkDataLoginForm(emailUser: string, passwordUser: string): str
     const hasSpacesPassword = /^\s|\s$/.test(passwordUser);
 
     if (passwordUser.length < minLengthPassword) {
-        console.log('err-login: wrong length password');
-        return 'Incorrect data';
+        objValidationLogin.password = false;
     }
 
     if (!hasUpperCasePassword) {
-        console.log('err-login: no uppercase symbol in password');
-        return 'Incorrect data';
+        objValidationLogin.password = false;
     }
 
     if (!hasLowerCasePassword) {
-        console.log('err-login: no lowercase symbol in password');
-        return 'Incorrect data';
+        objValidationLogin.password = false;
     }
 
     if (!hasNumberPassword) {
-        console.log('err-login: no number in password');
-        return 'Incorrect data';
+        objValidationLogin.password = false;
     }
 
     if (!hasSpecialSymbolPassword) {
-        console.log('err-login: no special symbol in password');
-        return 'Incorrect data';
+        objValidationLogin.password = false;
     }
 
     if (hasSpacesPassword) {
-        console.log('err-login: has space in password');
-        return 'Incorrect data';
+        objValidationLogin.password = false;
     }
 
-    return 'Correct data';
+    return objValidationLogin;
 }
 
 export function checkDataRegistrationForm(
@@ -73,62 +79,87 @@ export function checkDataRegistrationForm(
     dateBirth: string,
     addressStreet: string,
     addressCity: string,
-    adressPostalCode: string,
-    adressCountry: string
-): string {
-    if (checkDataLoginForm(emailUser, passwordUser) === 'Incorrect data') {
-        return 'Incorrect data';
-    }
+    addressPostalCode: string,
+    addressCountry: string
+): object {
+    const objValidationRegistration: ObjValidationRegistration = {
+        email: true,
+        password: true,
+        nameUser: true,
+        lastNameUser: true,
+        dateBirth: true,
+        addressStreet: true,
+        addressCity: true,
+        addressPostalCode: true,
+        addressCountry: true,
+    };
 
     // check data registration
     const minQuantitySymbol = 1;
     const hasSpecialSymbolDataName = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?\d]/.test(nameUser);
+    const hasSpecialSymbolDataLastName = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?\d]/.test(lastNameUser);
     const hasSpecialSymbolDataCity = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?\d]/.test(addressCity);
     const dateBirthUser = new Date(dateBirth).getTime();
-    console.log(dateBirthUser);
     const minAgeUser = 10;
     const yearMaxDateAge = Number(new Date().getFullYear()) - minAgeUser;
     const monthMaxDateAge = `0${new Date().getMonth() + 1}`.slice(-2);
     const dayMaxDateAge = `0${new Date().getDate()}`.slice(-2);
     const maxDateAge = new Date(`${yearMaxDateAge}-${monthMaxDateAge}-${dayMaxDateAge}`).getTime();
-    const hasNumberSymbolUppercasePostalCode = /[A-Z\d]/.test(adressPostalCode);
+    const hasNumberSymbolUppercasePostalCode = /[A-Z\d]/.test(addressPostalCode);
 
-    if (nameUser.length < minQuantitySymbol || lastNameUser.length < minQuantitySymbol) {
-        console.log('err-reg: wrong length name or wrong length lastname');
-        return 'Incorrect data';
+    // email, pass. Object comparison
+    if (
+        JSON.stringify(checkDataLoginForm(emailUser, passwordUser)) === JSON.stringify({ email: false, password: true })
+    ) {
+        objValidationRegistration.email = false;
+    } else if (
+        JSON.stringify(checkDataLoginForm(emailUser, passwordUser)) === JSON.stringify({ email: true, password: false })
+    ) {
+        objValidationRegistration.password = false;
+    } else if (
+        JSON.stringify(checkDataLoginForm(emailUser, passwordUser)) ===
+        JSON.stringify({ email: false, password: false })
+    ) {
+        objValidationRegistration.email = false;
+        objValidationRegistration.password = false;
+    }
+
+    // other fields
+    if (nameUser.length < minQuantitySymbol) {
+        objValidationRegistration.nameUser = false;
     }
 
     if (hasSpecialSymbolDataName) {
-        console.log('err-reg: has spec symbol or number in name');
-        return 'Incorrect data';
+        objValidationRegistration.nameUser = false;
     }
 
-    // birth day <input> type='date'
+    if (lastNameUser.length < minQuantitySymbol) {
+        objValidationRegistration.lastNameUser = false;
+    }
+
+    if (hasSpecialSymbolDataLastName) {
+        objValidationRegistration.lastNameUser = false;
+    }
+
     if (dateBirthUser > maxDateAge || !dateBirthUser) {
-        console.log('err-reg: you less then 10 years old');
-        return 'Incorrect data';
+        objValidationRegistration.dateBirth = false;
     }
 
     if (addressStreet.length < minQuantitySymbol) {
-        console.log('err-reg: wrong adress street');
-        return 'Incorrect data';
+        objValidationRegistration.addressStreet = false;
     }
 
     if (addressCity.length < minQuantitySymbol || hasSpecialSymbolDataCity) {
-        console.log('err-reg: wrong adress city');
-        return 'Incorrect data';
+        objValidationRegistration.addressCity = false;
     }
 
-    if (!hasNumberSymbolUppercasePostalCode) {
-        console.log('err-reg: wrong postal code');
-        return 'Incorrect data';
+    if (!hasNumberSymbolUppercasePostalCode || addressPostalCode.length !== 6) {
+        objValidationRegistration.addressPostalCode = false;
     }
 
-    // country <select>
-    if (adressCountry.length === 0) {
-        console.log('err-reg: no select country');
-        return 'Incorrect data';
+    if (addressCountry.length === 0) {
+        objValidationRegistration.addressCountry = false;
     }
 
-    return 'Correct data';
+    return objValidationRegistration;
 }

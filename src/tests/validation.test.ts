@@ -72,7 +72,6 @@ describe('Checking form registration', () => {
             addressStreet: 'Brooklyn',
             addressCity: 'New York',
             addressPostalCode: '123A15',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: true,
                 password: true,
@@ -82,7 +81,6 @@ describe('Checking form registration', () => {
                 addressStreet: true,
                 addressCity: true,
                 addressPostalCode: true,
-                addressCountry: true,
             }),
         },
         {
@@ -94,7 +92,6 @@ describe('Checking form registration', () => {
             addressStreet: 'Brooklyn',
             addressCity: 'New York',
             addressPostalCode: '123A15',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: false,
                 password: true,
@@ -104,7 +101,6 @@ describe('Checking form registration', () => {
                 addressStreet: true,
                 addressCity: true,
                 addressPostalCode: true,
-                addressCountry: true,
             }),
         },
         {
@@ -116,7 +112,6 @@ describe('Checking form registration', () => {
             addressStreet: 'Brooklyn',
             addressCity: 'New York',
             addressPostalCode: '123A15',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: false,
                 password: false,
@@ -126,7 +121,6 @@ describe('Checking form registration', () => {
                 addressStreet: true,
                 addressCity: true,
                 addressPostalCode: true,
-                addressCountry: true,
             }),
         },
         {
@@ -138,7 +132,6 @@ describe('Checking form registration', () => {
             addressStreet: 'Brooklyn',
             addressCity: 'New York',
             addressPostalCode: '123A15',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: true,
                 password: true,
@@ -148,7 +141,6 @@ describe('Checking form registration', () => {
                 addressStreet: true,
                 addressCity: true,
                 addressPostalCode: true,
-                addressCountry: true,
             }),
         },
         {
@@ -160,7 +152,6 @@ describe('Checking form registration', () => {
             addressStreet: 'Brooklyn',
             addressCity: 'New York',
             addressPostalCode: '123A15',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: true,
                 password: true,
@@ -170,7 +161,6 @@ describe('Checking form registration', () => {
                 addressStreet: true,
                 addressCity: true,
                 addressPostalCode: true,
-                addressCountry: true,
             }),
         },
         {
@@ -182,7 +172,6 @@ describe('Checking form registration', () => {
             addressStreet: 'Brooklyn',
             addressCity: 'New York',
             addressPostalCode: '123A15',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: true,
                 password: true,
@@ -192,7 +181,6 @@ describe('Checking form registration', () => {
                 addressStreet: true,
                 addressCity: true,
                 addressPostalCode: true,
-                addressCountry: true,
             }),
         },
         {
@@ -204,7 +192,6 @@ describe('Checking form registration', () => {
             addressStreet: '',
             addressCity: 'New York',
             addressPostalCode: '123A15',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: true,
                 password: true,
@@ -214,7 +201,6 @@ describe('Checking form registration', () => {
                 addressStreet: false,
                 addressCity: true,
                 addressPostalCode: true,
-                addressCountry: true,
             }),
         },
         {
@@ -226,7 +212,6 @@ describe('Checking form registration', () => {
             addressStreet: 'Brooklyn',
             addressCity: '',
             addressPostalCode: '123A15',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: true,
                 password: true,
@@ -236,7 +221,6 @@ describe('Checking form registration', () => {
                 addressStreet: true,
                 addressCity: false,
                 addressPostalCode: true,
-                addressCountry: true,
             }),
         },
         {
@@ -248,7 +232,6 @@ describe('Checking form registration', () => {
             addressStreet: 'Brooklyn',
             addressCity: 'New York',
             addressPostalCode: '123A156548',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: true,
                 password: true,
@@ -258,7 +241,6 @@ describe('Checking form registration', () => {
                 addressStreet: true,
                 addressCity: true,
                 addressPostalCode: false,
-                addressCountry: true,
             }),
         },
         {
@@ -270,7 +252,6 @@ describe('Checking form registration', () => {
             addressStreet: 'Brooklyn',
             addressCity: 'New York',
             addressPostalCode: '',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: true,
                 password: true,
@@ -280,7 +261,6 @@ describe('Checking form registration', () => {
                 addressStreet: true,
                 addressCity: true,
                 addressPostalCode: false,
-                addressCountry: true,
             }),
         },
         {
@@ -292,7 +272,6 @@ describe('Checking form registration', () => {
             addressStreet: 'Brooklyn',
             addressCity: 'New York',
             addressPostalCode: '123A15',
-            addressCountry: '',
             expected: JSON.stringify({
                 email: true,
                 password: true,
@@ -302,7 +281,6 @@ describe('Checking form registration', () => {
                 addressStreet: true,
                 addressCity: true,
                 addressPostalCode: true,
-                addressCountry: false,
             }),
         },
         {
@@ -314,7 +292,6 @@ describe('Checking form registration', () => {
             addressStreet: '',
             addressCity: 'New York',
             addressPostalCode: '123A1',
-            addressCountry: 'USA',
             expected: JSON.stringify({
                 email: false,
                 password: false,
@@ -324,7 +301,6 @@ describe('Checking form registration', () => {
                 addressStreet: false,
                 addressCity: true,
                 addressPostalCode: false,
-                addressCountry: true,
             }),
         },
     ];
@@ -338,8 +314,7 @@ describe('Checking form registration', () => {
                 test.dateBirth,
                 test.addressStreet,
                 test.addressCity,
-                test.addressPostalCode,
-                test.addressCountry
+                test.addressPostalCode
             );
             expect(JSON.stringify(res)).toBe(test.expected);
         });

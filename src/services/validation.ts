@@ -12,7 +12,6 @@ interface ObjValidationRegistration {
     addressStreet: boolean;
     addressCity: boolean;
     addressPostalCode: boolean;
-    addressCountry: boolean;
 }
 
 export function checkDataLoginForm(emailUser: string, passwordUser: string): object {
@@ -79,8 +78,7 @@ export function checkDataRegistrationForm(
     dateBirth: string,
     addressStreet: string,
     addressCity: string,
-    addressPostalCode: string,
-    addressCountry: string
+    addressPostalCode: string
 ): object {
     const objValidationRegistration: ObjValidationRegistration = {
         email: true,
@@ -91,7 +89,6 @@ export function checkDataRegistrationForm(
         addressStreet: true,
         addressCity: true,
         addressPostalCode: true,
-        addressCountry: true,
     };
 
     // check data registration
@@ -155,10 +152,6 @@ export function checkDataRegistrationForm(
 
     if (!hasNumberSymbolUppercasePostalCode || addressPostalCode.length !== 6) {
         objValidationRegistration.addressPostalCode = false;
-    }
-
-    if (addressCountry.length === 0) {
-        objValidationRegistration.addressCountry = false;
     }
 
     return objValidationRegistration;

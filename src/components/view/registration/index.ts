@@ -129,7 +129,6 @@ export default class Registration {
             const streetInput = this.streetInputReg.getInputContainer().querySelector('input');
             const cityInput = this.cityInputReg.getInputContainer().querySelector('input');
             const postalCodeInput = this.postalCodeInputReg.getInputContainer().querySelector('input');
-            const countryInput = this.countryInputReg.getInputContainer().querySelector('input');
             let email;
             let password;
             let firstName;
@@ -138,7 +137,6 @@ export default class Registration {
             let street;
             let city;
             let postalCode;
-            let country;
             if (passwordInput) {
                 const emailValue = emailInput?.value || '';
                 const passwordValue = passwordInput?.value || '';
@@ -148,7 +146,6 @@ export default class Registration {
                 const streetValue = streetInput?.value || '';
                 const cityValue = cityInput?.value || '';
                 const postalValue = postalCodeInput?.value || '';
-                const countryValue = countryInput?.value || '';
                 const response = checkDataRegistrationForm(
                     emailValue,
                     passwordValue,
@@ -157,8 +154,7 @@ export default class Registration {
                     dobValue,
                     streetValue,
                     cityValue,
-                    postalValue,
-                    countryValue
+                    postalValue
                 ) as ObjValidationRegistration;
                 const btn = document.getElementById('registration__button');
                 const allValuesTrue = Object.values(response).every((value) => value === true);
@@ -170,7 +166,6 @@ export default class Registration {
                 street = response.addressStreet;
                 city = response.addressCity;
                 postalCode = response.addressPostalCode;
-                country = response.addressCountry;
 
                 if (emailValue !== '') FormValidator.handleValidation(this.emailInputReg.getInputContainer(), email);
                 if (passwordValue !== '')
@@ -184,8 +179,6 @@ export default class Registration {
                 if (cityValue !== '') FormValidator.handleValidation(this.cityInputReg.getInputContainer(), city);
                 if (postalValue !== '')
                     FormValidator.handleValidation(this.postalCodeInputReg.getInputContainer(), postalCode);
-                if (countryValue !== '')
-                    FormValidator.handleValidation(this.countryInputReg.getInputContainer(), country);
                 if (allValuesTrue) {
                     btn?.removeAttribute('disabled');
                 }

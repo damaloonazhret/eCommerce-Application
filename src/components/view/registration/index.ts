@@ -96,7 +96,7 @@ export default class Registration {
             'Postal code: Must follow the format for the country (e.g., 12345 or A1B 2C3 for the U.S. and Canada, respectively.)'
         );
         this.countryInputReg = new InputGenerator(
-            'text',
+            'select',
             'Country',
             'registration__input-country',
             'country',
@@ -117,67 +117,81 @@ export default class Registration {
         this.registrationInput.appendChild(
             this.buttonGeneratorReg.getButton('registration__button', 'REGISTRATION', (e) => {
                 e.preventDefault();
-                const emailInput = this.emailInputReg.getInputContainer().querySelector('input');
-                const passwordInput = this.passwordInputReg.getInputContainer().querySelector('input');
-                const firstNameInput = this.firstNameInputReg.getInputContainer().querySelector('input');
-                const lastNameInput = this.lastNameInputReg.getInputContainer().querySelector('input');
-                const dobInput = this.dobInputReg.getInputContainer().querySelector('input');
-                const streetInput = this.streetInputReg.getInputContainer().querySelector('input');
-                const cityInput = this.cityInputReg.getInputContainer().querySelector('input');
-                const postalCodeInput = this.postalCodeInputReg.getInputContainer().querySelector('input');
-                const countryInput = this.countryInputReg.getInputContainer().querySelector('input');
-                let email;
-                let password;
-                let firstName;
-                let lastName;
-                let dob;
-                let street;
-                let city;
-                let postalCode;
-                let country;
-                if (passwordInput) {
-                    const emailValue = emailInput?.value || '';
-                    const passwordValue = passwordInput?.value || '';
-                    const firstNameValue = firstNameInput?.value || '';
-                    const lastNameValue = lastNameInput?.value || '';
-                    const dobValue = dobInput?.value || '';
-                    const streetValue = streetInput?.value || '';
-                    const cityValue = cityInput?.value || '';
-                    const postalValue = postalCodeInput?.value || '';
-                    const countryValue = countryInput?.value || '';
-                    const response = checkDataRegistrationForm(
-                        emailValue,
-                        passwordValue,
-                        firstNameValue,
-                        lastNameValue,
-                        dobValue,
-                        streetValue,
-                        cityValue,
-                        postalValue,
-                        countryValue
-                    ) as ObjValidationRegistration;
-                    email = response.email;
-                    password = response.password;
-                    firstName = response.nameUser;
-                    lastName = response.lastNameUser;
-                    dob = response.dateBirth;
-                    street = response.addressStreet;
-                    city = response.addressCity;
-                    postalCode = response.addressPostalCode;
-                    country = response.addressCountry;
-
-                    FormValidator.handleValidation(this.emailInputReg.getInputContainer(), email);
-                    FormValidator.handleValidation(this.passwordInputReg.getInputContainer(), password);
-                    FormValidator.handleValidation(this.firstNameInputReg.getInputContainer(), firstName);
-                    FormValidator.handleValidation(this.lastNameInputReg.getInputContainer(), lastName);
-                    FormValidator.handleValidation(this.dobInputReg.getInputContainer(), dob);
-                    FormValidator.handleValidation(this.streetInputReg.getInputContainer(), street);
-                    FormValidator.handleValidation(this.cityInputReg.getInputContainer(), city);
-                    FormValidator.handleValidation(this.postalCodeInputReg.getInputContainer(), postalCode);
-                    FormValidator.handleValidation(this.countryInputReg.getInputContainer(), country);
-                }
             })
         );
+
+        this.registrationInput.addEventListener('change', () => {
+            const emailInput = this.emailInputReg.getInputContainer().querySelector('input');
+            const passwordInput = this.passwordInputReg.getInputContainer().querySelector('input');
+            const firstNameInput = this.firstNameInputReg.getInputContainer().querySelector('input');
+            const lastNameInput = this.lastNameInputReg.getInputContainer().querySelector('input');
+            const dobInput = this.dobInputReg.getInputContainer().querySelector('input');
+            const streetInput = this.streetInputReg.getInputContainer().querySelector('input');
+            const cityInput = this.cityInputReg.getInputContainer().querySelector('input');
+            const postalCodeInput = this.postalCodeInputReg.getInputContainer().querySelector('input');
+            const countryInput = this.countryInputReg.getInputContainer().querySelector('input');
+            let email;
+            let password;
+            let firstName;
+            let lastName;
+            let dob;
+            let street;
+            let city;
+            let postalCode;
+            let country;
+            if (passwordInput) {
+                const emailValue = emailInput?.value || '';
+                const passwordValue = passwordInput?.value || '';
+                const firstNameValue = firstNameInput?.value || '';
+                const lastNameValue = lastNameInput?.value || '';
+                const dobValue = dobInput?.value || '';
+                const streetValue = streetInput?.value || '';
+                const cityValue = cityInput?.value || '';
+                const postalValue = postalCodeInput?.value || '';
+                const countryValue = countryInput?.value || '';
+                const response = checkDataRegistrationForm(
+                    emailValue,
+                    passwordValue,
+                    firstNameValue,
+                    lastNameValue,
+                    dobValue,
+                    streetValue,
+                    cityValue,
+                    postalValue,
+                    countryValue
+                ) as ObjValidationRegistration;
+                const btn = document.getElementById('registration__button');
+                const allValuesTrue = Object.values(response).every((value) => value === true);
+                email = response.email;
+                password = response.password;
+                firstName = response.nameUser;
+                lastName = response.lastNameUser;
+                dob = response.dateBirth;
+                street = response.addressStreet;
+                city = response.addressCity;
+                postalCode = response.addressPostalCode;
+                country = response.addressCountry;
+
+                if (emailValue !== '') FormValidator.handleValidation(this.emailInputReg.getInputContainer(), email);
+                if (passwordValue !== '')
+                    FormValidator.handleValidation(this.passwordInputReg.getInputContainer(), password);
+                if (firstNameValue !== '')
+                    FormValidator.handleValidation(this.firstNameInputReg.getInputContainer(), firstName);
+                if (lastNameValue !== '')
+                    FormValidator.handleValidation(this.lastNameInputReg.getInputContainer(), lastName);
+                if (dobValue !== '') FormValidator.handleValidation(this.dobInputReg.getInputContainer(), dob);
+                if (streetValue !== '') FormValidator.handleValidation(this.streetInputReg.getInputContainer(), street);
+                if (cityValue !== '') FormValidator.handleValidation(this.cityInputReg.getInputContainer(), city);
+                if (postalValue !== '')
+                    FormValidator.handleValidation(this.postalCodeInputReg.getInputContainer(), postalCode);
+                if (countryValue !== '')
+                    FormValidator.handleValidation(this.countryInputReg.getInputContainer(), country);
+                if (allValuesTrue) {
+                    btn?.removeAttribute('disabled');
+                }
+            }
+        });
+
         this.init();
     }
 

@@ -44,24 +44,34 @@ export default class Login {
         this.loginForm.appendChild(
             buttonGenerator.getButton('login__button', 'LOGIN', (e) => {
                 e.preventDefault();
-
-                const emailInput = this.loginInput.getInputContainer().querySelector('input');
-                const passwordInput = this.passwordInput.getInputContainer().querySelector('input');
-                let email = false;
-                let password = false;
-
-                if (passwordInput) {
-                    const emailValue = emailInput?.value || '';
-                    const passwordValue = passwordInput?.value || '';
-                    const response = checkDataLoginForm(emailValue, passwordValue) as ObjValidationLogin;
-                    email = response.email;
-                    password = response.password;
-
-                    FormValidator.handleValidation(this.loginInput.getInputContainer(), email);
-                    FormValidator.handleValidation(this.passwordInput.getInputContainer(), password);
-                }
             })
         );
+        this.loginForm.addEventListener('change', (e: Event) => {
+            e.preventDefault();
+            const emailInput = this.loginInput.getInputContainer().querySelector('input');
+            const passwordInput = this.passwordInput.getInputContainer().querySelector('input');
+            let email = false;
+            let password = false;
+
+            if (passwordInput) {
+                const emailValue = emailInput?.value || '';
+                const passwordValue = passwordInput?.value || '';
+                const response = checkDataLoginForm(emailValue, passwordValue) as ObjValidationLogin;
+                const allValuesTrue = Object.values(response).every((value) => value === true);
+                const btn = document.getElementById('login__button');
+
+                email = response.email;
+                password = response.password;
+
+                if (emailValue !== '') FormValidator.handleValidation(this.loginInput.getInputContainer(), email);
+                if (passwordValue !== '')
+                    FormValidator.handleValidation(this.passwordInput.getInputContainer(), password);
+
+                if (allValuesTrue) {
+                    btn?.removeAttribute('disabled');
+                }
+            }
+        });
         this.init();
     }
 

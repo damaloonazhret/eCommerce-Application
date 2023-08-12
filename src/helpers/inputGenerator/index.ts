@@ -1,11 +1,17 @@
 export default class InputGenerator {
     private readonly inputContainer: HTMLDivElement;
 
-    private readonly input: HTMLInputElement;
+    private readonly input: HTMLInputElement | HTMLSelectElement;
 
     constructor(type: string, placeholder: string, className: string, id: string, errorMessage: string) {
         this.inputContainer = this.createInputContainer(className);
-        this.input = this.createInput(type, placeholder, id);
+
+        if (type === 'select') {
+            this.input = this.createSelect(id);
+        } else {
+            this.input = this.createInput(type, placeholder, id);
+        }
+
         this.inputContainer.appendChild(this.input);
 
         const errorMessageSpan = document.createElement('span');
@@ -28,6 +34,25 @@ export default class InputGenerator {
         return input;
     }
 
+    private createSelect(id: string): HTMLSelectElement {
+        const select = document.createElement('select');
+        select.id = id;
+
+        const optionUS = document.createElement('option');
+        optionUS.value = 'US';
+        optionUS.textContent = 'United States';
+        select.appendChild(optionUS);
+
+        const optionCA = document.createElement('option');
+        optionCA.value = 'CA';
+        optionCA.textContent = 'Canada';
+        select.appendChild(optionCA);
+
+        select.value = 'US';
+
+        return select;
+    }
+
     public getInputContainer(): HTMLDivElement {
         return this.inputContainer;
     }
@@ -38,6 +63,7 @@ export default class InputGenerator {
         button.textContent = text;
         button.classList.add(`${id}`);
         button.addEventListener('click', clickHandler);
+        button.setAttribute('disabled', '');
         return button;
     }
 }

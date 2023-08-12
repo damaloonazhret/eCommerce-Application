@@ -1,9 +1,9 @@
-interface ObjValidationLogin {
+export interface ObjValidationLogin {
     email: boolean;
     password: boolean;
 }
 
-interface ObjValidationRegistration {
+export interface ObjValidationRegistration {
     email: boolean;
     password: boolean;
     nameUser: boolean;

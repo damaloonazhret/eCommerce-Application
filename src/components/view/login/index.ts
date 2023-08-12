@@ -1,5 +1,7 @@
 import './login.scss';
 import InputGenerator from '../../../helpers/inputGenerator';
+import { checkDataLoginForm, ObjValidationLogin } from '../../../services/validation';
+import FormValidator from '../../../helpers/formValidator';
 
 export default class Login {
     private login!: HTMLElement;
@@ -18,8 +20,6 @@ export default class Login {
             'email',
             "Email: local part and the domain name separated by '@', without leading or trailing spaces."
         );
-
-        this.loginInput.getInputContainer().classList.add('error');
 
         this.passwordInput = new InputGenerator(
             'password',
@@ -40,8 +40,28 @@ export default class Login {
             'login-btn',
             'must contains ...'
         );
-        this.loginForm.appendChild(buttonGenerator.getButton('login__button', 'LOGIN', () => {}));
 
+        this.loginForm.appendChild(
+            buttonGenerator.getButton('login__button', 'LOGIN', (e) => {
+                e.preventDefault();
+
+                const emailInput = this.loginInput.getInputContainer().querySelector('input');
+                const passwordInput = this.passwordInput.getInputContainer().querySelector('input');
+                let email = false;
+                let password = false;
+
+                if (passwordInput) {
+                    const emailValue = emailInput?.value || '';
+                    const passwordValue = passwordInput?.value || '';
+                    const response = checkDataLoginForm(emailValue, passwordValue) as ObjValidationLogin;
+                    email = response.email;
+                    password = response.password;
+
+                    FormValidator.handleValidation(this.loginInput.getInputContainer(), email);
+                    FormValidator.handleValidation(this.passwordInput.getInputContainer(), password);
+                }
+            })
+        );
         this.init();
     }
 

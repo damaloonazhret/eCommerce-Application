@@ -1,6 +1,8 @@
 import './registration.scss';
 
 import InputGenerator from '../../../helpers/inputGenerator';
+import { checkDataRegistrationForm, ObjValidationRegistration } from '../../../services/validation';
+import FormValidator from '../../../helpers/formValidator';
 
 export default class Registration {
     private registration!: HTMLElement;
@@ -58,8 +60,6 @@ export default class Registration {
             'First name: Must contain at least one character and no special characters or numbers.'
         );
 
-        this.firstNameInputReg.getInputContainer().classList.add('error');
-
         this.lastNameInputReg = new InputGenerator(
             'text',
             'Last name',
@@ -115,7 +115,68 @@ export default class Registration {
         this.registrationInput.appendChild(this.postalCodeInputReg.getInputContainer());
         this.registrationInput.appendChild(this.countryInputReg.getInputContainer());
         this.registrationInput.appendChild(
-            this.buttonGeneratorReg.getButton('registration__button', 'REGISTRATION', () => {})
+            this.buttonGeneratorReg.getButton('registration__button', 'REGISTRATION', (e) => {
+                e.preventDefault();
+                const emailInput = this.emailInputReg.getInputContainer().querySelector('input');
+                const passwordInput = this.passwordInputReg.getInputContainer().querySelector('input');
+                const firstNameInput = this.firstNameInputReg.getInputContainer().querySelector('input');
+                const lastNameInput = this.lastNameInputReg.getInputContainer().querySelector('input');
+                const dobInput = this.dobInputReg.getInputContainer().querySelector('input');
+                const streetInput = this.streetInputReg.getInputContainer().querySelector('input');
+                const cityInput = this.cityInputReg.getInputContainer().querySelector('input');
+                const postalCodeInput = this.postalCodeInputReg.getInputContainer().querySelector('input');
+                const countryInput = this.countryInputReg.getInputContainer().querySelector('input');
+                let email;
+                let password;
+                let firstName;
+                let lastName;
+                let dob;
+                let street;
+                let city;
+                let postalCode;
+                let country;
+                if (passwordInput) {
+                    const emailValue = emailInput?.value || '';
+                    const passwordValue = passwordInput?.value || '';
+                    const firstNameValue = firstNameInput?.value || '';
+                    const lastNameValue = lastNameInput?.value || '';
+                    const dobValue = dobInput?.value || '';
+                    const streetValue = streetInput?.value || '';
+                    const cityValue = cityInput?.value || '';
+                    const postalValue = postalCodeInput?.value || '';
+                    const countryValue = countryInput?.value || '';
+                    const response = checkDataRegistrationForm(
+                        emailValue,
+                        passwordValue,
+                        firstNameValue,
+                        lastNameValue,
+                        dobValue,
+                        streetValue,
+                        cityValue,
+                        postalValue,
+                        countryValue
+                    ) as ObjValidationRegistration;
+                    email = response.email;
+                    password = response.password;
+                    firstName = response.nameUser;
+                    lastName = response.lastNameUser;
+                    dob = response.dateBirth;
+                    street = response.addressStreet;
+                    city = response.addressCity;
+                    postalCode = response.addressPostalCode;
+                    country = response.addressCountry;
+
+                    FormValidator.handleValidation(this.emailInputReg.getInputContainer(), email);
+                    FormValidator.handleValidation(this.passwordInputReg.getInputContainer(), password);
+                    FormValidator.handleValidation(this.firstNameInputReg.getInputContainer(), firstName);
+                    FormValidator.handleValidation(this.lastNameInputReg.getInputContainer(), lastName);
+                    FormValidator.handleValidation(this.dobInputReg.getInputContainer(), dob);
+                    FormValidator.handleValidation(this.streetInputReg.getInputContainer(), street);
+                    FormValidator.handleValidation(this.cityInputReg.getInputContainer(), city);
+                    FormValidator.handleValidation(this.postalCodeInputReg.getInputContainer(), postalCode);
+                    FormValidator.handleValidation(this.countryInputReg.getInputContainer(), country);
+                }
+            })
         );
         this.init();
     }

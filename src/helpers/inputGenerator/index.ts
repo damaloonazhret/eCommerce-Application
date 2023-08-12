@@ -32,7 +32,7 @@ export default class InputGenerator {
         return this.inputContainer;
     }
 
-    public getButton(id: string, text: string, clickHandler: () => void): HTMLButtonElement {
+    public getButton(id: string, text: string, clickHandler: (e: Event) => void): HTMLButtonElement {
         const button = document.createElement('button');
         button.id = id;
         button.textContent = text;

@@ -167,18 +167,14 @@ export default class Registration {
                 city = response.addressCity;
                 postalCode = response.addressPostalCode;
 
-                if (emailValue !== '') FormValidator.handleValidation(this.emailInputReg.getInputContainer(), email);
-                if (passwordValue !== '')
-                    FormValidator.handleValidation(this.passwordInputReg.getInputContainer(), password);
-                if (firstNameValue !== '')
-                    FormValidator.handleValidation(this.firstNameInputReg.getInputContainer(), firstName);
-                if (lastNameValue !== '')
-                    FormValidator.handleValidation(this.lastNameInputReg.getInputContainer(), lastName);
-                if (dobValue !== '') FormValidator.handleValidation(this.dobInputReg.getInputContainer(), dob);
-                if (streetValue !== '') FormValidator.handleValidation(this.streetInputReg.getInputContainer(), street);
-                if (cityValue !== '') FormValidator.handleValidation(this.cityInputReg.getInputContainer(), city);
-                if (postalValue !== '')
-                    FormValidator.handleValidation(this.postalCodeInputReg.getInputContainer(), postalCode);
+                FormValidator.handleValidation(this.emailInputReg.getInputContainer(), email);
+                FormValidator.handleValidation(this.passwordInputReg.getInputContainer(), password);
+                FormValidator.handleValidation(this.firstNameInputReg.getInputContainer(), firstName);
+                FormValidator.handleValidation(this.lastNameInputReg.getInputContainer(), lastName);
+                FormValidator.handleValidation(this.dobInputReg.getInputContainer(), dob);
+                FormValidator.handleValidation(this.streetInputReg.getInputContainer(), street);
+                FormValidator.handleValidation(this.cityInputReg.getInputContainer(), city);
+                FormValidator.handleValidation(this.postalCodeInputReg.getInputContainer(), postalCode);
                 if (allValuesTrue) {
                     btn?.removeAttribute('disabled');
                 }

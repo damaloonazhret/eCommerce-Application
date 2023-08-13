@@ -46,7 +46,7 @@ export default class Login {
                 e.preventDefault();
             })
         );
-        this.loginForm.addEventListener('change', (e: Event) => {
+        this.loginForm.addEventListener('input', (e: Event) => {
             e.preventDefault();
             const emailInput = this.loginInput.getInputContainer().querySelector('input');
             const passwordInput = this.passwordInput.getInputContainer().querySelector('input');

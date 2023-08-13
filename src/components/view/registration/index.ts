@@ -120,7 +120,7 @@ export default class Registration {
             })
         );
 
-        this.registrationInput.addEventListener('change', () => {
+        this.registrationInput.addEventListener('input', () => {
             const emailInput = this.emailInputReg.getInputContainer().querySelector('input');
             const passwordInput = this.passwordInputReg.getInputContainer().querySelector('input');
             const firstNameInput = this.firstNameInputReg.getInputContainer().querySelector('input');

@@ -14,6 +14,13 @@ export default class InputGenerator {
 
         this.inputContainer.appendChild(this.input);
 
+        if (type === 'password') {
+            const passwordSwitchSpan = document.createElement('button');
+            passwordSwitchSpan.setAttribute('disabled', '');
+            passwordSwitchSpan.classList.add(`${id}-switch`);
+            this.inputContainer.appendChild(passwordSwitchSpan);
+        }
+
         const errorMessageSpan = document.createElement('span');
         errorMessageSpan.textContent = errorMessage;
         errorMessageSpan.classList.add(`${id}-error`);

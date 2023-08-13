@@ -7,6 +7,7 @@
         div {
             display: grid;
             grid-template-rows: repeat(2, auto);
+
             span {
                 display: none;
             }
@@ -18,7 +19,19 @@
         }
     }
 
-    &__input-city {
+    &__input-password {
+        //position: relative;
+        display: grid;
+        grid-template-columns: 94% 6%;
+        .password-reg-switch {
+            width: 3vw;
+            height: 3vw;
+            //position: absolute;
+            //right: 0vw;
+        }
+        .password-reg-error {
+            grid-column: 1 / 3;
+        }
     }
 
     &__button {

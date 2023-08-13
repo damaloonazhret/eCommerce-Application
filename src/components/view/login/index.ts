@@ -63,8 +63,9 @@ export default class Login {
                 email = response.email;
                 password = response.password;
 
-                FormValidator.handleValidation(this.loginInput.getInputContainer(), email);
-                FormValidator.handleValidation(this.passwordInput.getInputContainer(), password);
+                if (emailValue !== '') FormValidator.handleValidation(this.loginInput.getInputContainer(), email);
+                if (passwordValue !== '')
+                    FormValidator.handleValidation(this.passwordInput.getInputContainer(), password);
 
                 if (allValuesTrue) {
                     btn?.removeAttribute('disabled');

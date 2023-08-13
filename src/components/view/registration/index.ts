@@ -114,9 +114,30 @@ export default class Registration {
         this.registrationInput.appendChild(this.cityInputReg.getInputContainer());
         this.registrationInput.appendChild(this.postalCodeInputReg.getInputContainer());
         this.registrationInput.appendChild(this.countryInputReg.getInputContainer());
+        let emailValue: string;
+        let passwordValue: string;
+        let firstNameValue: string;
+        let lastNameValue: string;
+        let dobValue: string;
+        let streetValue: string;
+        let cityValue: string;
+        let postalValue: string;
+        let countryValue: string;
         this.registrationInput.appendChild(
             this.buttonGeneratorReg.getButton('registration__button', 'REGISTRATION', (e) => {
                 e.preventDefault();
+                const obj = {
+                    email: emailValue,
+                    password: passwordValue,
+                    firstName: firstNameValue,
+                    lastName: lastNameValue,
+                    dob: dobValue,
+                    street: streetValue,
+                    city: cityValue,
+                    postal: postalValue,
+                    country: countryValue,
+                };
+                console.log(obj);
             })
         );
 
@@ -129,6 +150,7 @@ export default class Registration {
             const streetInput = this.streetInputReg.getInputContainer().querySelector('input');
             const cityInput = this.cityInputReg.getInputContainer().querySelector('input');
             const postalCodeInput = this.postalCodeInputReg.getInputContainer().querySelector('input');
+            const countryInput = this.countryInputReg.getInputContainer().querySelector('select');
             let email;
             let password;
             let firstName;
@@ -137,15 +159,28 @@ export default class Registration {
             let street;
             let city;
             let postalCode;
+            const passSwitch = document.querySelector('.password-reg-switch');
+            passSwitch?.removeAttribute('disabled');
+            passSwitch?.addEventListener('click', (e: Event) => {
+                e.preventDefault();
+                if (passwordInput) {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                    } else {
+                        passwordInput.type = 'password';
+                    }
+                }
+            });
             if (passwordInput) {
-                const emailValue = emailInput?.value || '';
-                const passwordValue = passwordInput?.value || '';
-                const firstNameValue = firstNameInput?.value || '';
-                const lastNameValue = lastNameInput?.value || '';
-                const dobValue = dobInput?.value || '';
-                const streetValue = streetInput?.value || '';
-                const cityValue = cityInput?.value || '';
-                const postalValue = postalCodeInput?.value || '';
+                emailValue = emailInput?.value || '';
+                passwordValue = passwordInput?.value || '';
+                firstNameValue = firstNameInput?.value || '';
+                lastNameValue = lastNameInput?.value || '';
+                dobValue = dobInput?.value || '';
+                streetValue = streetInput?.value || '';
+                cityValue = cityInput?.value || '';
+                postalValue = postalCodeInput?.value || '';
+                countryValue = countryInput?.value || '';
                 const response = checkDataRegistrationForm(
                     emailValue,
                     passwordValue,
@@ -167,14 +202,18 @@ export default class Registration {
                 city = response.addressCity;
                 postalCode = response.addressPostalCode;
 
-                FormValidator.handleValidation(this.emailInputReg.getInputContainer(), email);
-                FormValidator.handleValidation(this.passwordInputReg.getInputContainer(), password);
-                FormValidator.handleValidation(this.firstNameInputReg.getInputContainer(), firstName);
-                FormValidator.handleValidation(this.lastNameInputReg.getInputContainer(), lastName);
-                FormValidator.handleValidation(this.dobInputReg.getInputContainer(), dob);
-                FormValidator.handleValidation(this.streetInputReg.getInputContainer(), street);
-                FormValidator.handleValidation(this.cityInputReg.getInputContainer(), city);
-                FormValidator.handleValidation(this.postalCodeInputReg.getInputContainer(), postalCode);
+                if (emailValue !== '') FormValidator.handleValidation(this.emailInputReg.getInputContainer(), email);
+                if (passwordValue !== '')
+                    FormValidator.handleValidation(this.passwordInputReg.getInputContainer(), password);
+                if (firstNameValue !== '')
+                    FormValidator.handleValidation(this.firstNameInputReg.getInputContainer(), firstName);
+                if (lastNameValue !== '')
+                    FormValidator.handleValidation(this.lastNameInputReg.getInputContainer(), lastName);
+                if (dobValue !== '') FormValidator.handleValidation(this.dobInputReg.getInputContainer(), dob);
+                if (streetValue !== '') FormValidator.handleValidation(this.streetInputReg.getInputContainer(), street);
+                if (cityValue !== '') FormValidator.handleValidation(this.cityInputReg.getInputContainer(), city);
+                if (postalValue !== '')
+                    FormValidator.handleValidation(this.postalCodeInputReg.getInputContainer(), postalCode);
                 if (allValuesTrue) {
                     btn?.removeAttribute('disabled');
                 }

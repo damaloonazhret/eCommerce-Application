@@ -20,14 +20,11 @@
     }
 
     &__input-password {
-        //position: relative;
         display: grid;
         grid-template-columns: 94% 6%;
         .password-reg-switch {
             width: 3vw;
             height: 3vw;
-            //position: absolute;
-            //right: 0vw;
         }
         .password-reg-error {
             grid-column: 1 / 3;

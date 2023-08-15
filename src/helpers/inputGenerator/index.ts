@@ -3,7 +3,7 @@ export default class InputGenerator {
 
     private readonly input: HTMLInputElement | HTMLSelectElement;
 
-    constructor(type: string, placeholder: string, className: string, id: string, errorMessage: string) {
+    constructor(type: string, placeholder: string, className: string, id: string) {
         this.inputContainer = this.createInputContainer(className);
 
         if (type === 'select') {
@@ -22,7 +22,6 @@ export default class InputGenerator {
         }
 
         const errorMessageSpan = document.createElement('span');
-        errorMessageSpan.textContent = errorMessage;
         errorMessageSpan.classList.add(`${id}-error`);
         this.inputContainer.appendChild(errorMessageSpan);
     }

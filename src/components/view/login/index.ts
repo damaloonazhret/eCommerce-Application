@@ -1,6 +1,6 @@
 import './login.scss';
 import InputGenerator from '../../../helpers/inputGenerator';
-import { checkDataLoginForm, ObjValidationLogin } from '../../../services/validation';
+import { checkDataLoginForm } from '../../../services/validation';
 import FormValidator from '../../../helpers/formValidator';
 
 export default class Login {
@@ -13,59 +13,55 @@ export default class Login {
     private readonly loginForm: HTMLFormElement;
 
     constructor() {
-        this.loginInput = new InputGenerator(
-            'text',
-            'Enter Email',
-            'login__email',
-            'email',
-            "Email: local part and the domain name separated by '@', without leading or trailing spaces."
-        );
+        this.loginInput = new InputGenerator('text', 'Enter Email', 'login__email', 'email');
 
-        this.passwordInput = new InputGenerator(
-            'password',
-            'Enter password',
-            'login__password',
-            'password',
-            'Password: Minimum 8 characters, 1 capital letter (A-Z), 1 small letter (a-z), 1 number (0-9), 1 special character (e.g. !@#$%^&*), no leading or trailing spaces.'
-        );
+        this.passwordInput = new InputGenerator('password', 'Enter password', 'login__password', 'password');
 
         this.loginForm = document.createElement('form');
         this.loginForm.appendChild(this.loginInput.getInputContainer());
         this.loginForm.appendChild(this.passwordInput.getInputContainer());
 
-        const buttonGenerator = new InputGenerator(
-            'button',
-            'Button Text',
-            'login__button',
-            'login-btn',
-            'must contains ...'
-        );
+        const buttonGenerator = new InputGenerator('button', 'Button Text', 'login__button', 'login-btn');
 
-        this.loginForm.appendChild(
-            buttonGenerator.getButton('login__button', 'LOGIN', (e) => {
-                e.preventDefault();
-            })
-        );
+        let emailValue: string;
+        let passwordValue: string;
+
+        const buttonElement = buttonGenerator.getButton('login__button', 'LOGIN', (e) => {
+            e.preventDefault();
+            const obj = {
+                email: emailValue,
+                password: passwordValue,
+            };
+            console.log(obj);
+        });
+
+        if (buttonElement) {
+            this.loginForm.appendChild(buttonElement);
+        }
+
         this.loginForm.addEventListener('input', (e: Event) => {
             e.preventDefault();
             const emailInput = this.loginInput.getInputContainer().querySelector('input');
+            const emailSpanError = this.loginInput.getInputContainer().querySelector('span');
             const passwordInput = this.passwordInput.getInputContainer().querySelector('input');
-            let email = false;
-            let password = false;
+            const passwordSpanError = this.passwordInput.getInputContainer().querySelector('span');
+            let email;
+            let password;
 
             if (passwordInput) {
-                const emailValue = emailInput?.value || '';
-                const passwordValue = passwordInput?.value || '';
-                const response = checkDataLoginForm(emailValue, passwordValue) as ObjValidationLogin;
-                const allValuesTrue = Object.values(response).every((value) => value === true);
+                emailValue = emailInput?.value || '';
+                passwordValue = passwordInput?.value || '';
+                const response = checkDataLoginForm(emailValue, passwordValue);
+                const allValuesTrue = Object.values(response).every((value: Array<string>) => value.length === 0);
                 const btn = document.getElementById('login__button');
 
                 email = response.email;
                 password = response.password;
 
-                if (emailValue !== '') FormValidator.handleValidation(this.loginInput.getInputContainer(), email);
-                if (passwordValue !== '')
-                    FormValidator.handleValidation(this.passwordInput.getInputContainer(), password);
+                if (emailValue !== '' && emailSpanError)
+                    FormValidator.handleValidation(this.loginInput.getInputContainer(), email, emailSpanError);
+                if (passwordValue !== '' && passwordSpanError)
+                    FormValidator.handleValidation(this.passwordInput.getInputContainer(), password, passwordSpanError);
 
                 if (allValuesTrue) {
                     btn?.removeAttribute('disabled');

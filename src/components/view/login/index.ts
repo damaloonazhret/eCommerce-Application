@@ -1,83 +1,108 @@
 import './login.scss';
 import InputGenerator from '../../../helpers/inputGenerator';
-import { checkDataLoginForm } from '../../../services/validation';
-import FormValidator from '../../../helpers/formValidator';
+import { validation } from '../../../services/validation';
 
 export default class Login {
     private login!: HTMLElement;
 
-    private loginInput: InputGenerator;
+    private loginDiv!: HTMLElement;
 
-    private passwordInput: InputGenerator;
+    private loginInput!: HTMLInputElement;
 
-    private readonly loginForm: HTMLFormElement;
+    private passwordDiv!: HTMLElement;
+
+    private passwordInput!: HTMLInputElement;
+
+    private loginForm!: HTMLFormElement;
+
+    private submitButton!: HTMLButtonElement;
+
+    private passwordSwitch!: HTMLButtonElement;
 
     constructor() {
-        this.loginInput = new InputGenerator('text', 'Enter Email', 'login__email', 'email');
-
-        this.passwordInput = new InputGenerator('password', 'Enter password', 'login__password', 'password');
-
-        this.loginForm = document.createElement('form');
-        this.loginForm.appendChild(this.loginInput.getInputContainer());
-        this.loginForm.appendChild(this.passwordInput.getInputContainer());
-
-        const buttonGenerator = new InputGenerator('button', 'Button Text', 'login__button', 'login-btn');
-
-        let emailValue: string;
-        let passwordValue: string;
-
-        const buttonElement = buttonGenerator.getButton('login__button', 'LOGIN', (e) => {
-            e.preventDefault();
-            const obj = {
-                email: emailValue,
-                password: passwordValue,
-            };
-            console.log(obj);
-        });
-
-        if (buttonElement) {
-            this.loginForm.appendChild(buttonElement);
-        }
-
-        this.loginForm.addEventListener('input', (e: Event) => {
-            e.preventDefault();
-            const emailInput = this.loginInput.getInputContainer().querySelector('input');
-            const emailSpanError = this.loginInput.getInputContainer().querySelector('span');
-            const passwordInput = this.passwordInput.getInputContainer().querySelector('input');
-            const passwordSpanError = this.passwordInput.getInputContainer().querySelector('span');
-            let email;
-            let password;
-
-            if (passwordInput) {
-                emailValue = emailInput?.value || '';
-                passwordValue = passwordInput?.value || '';
-                const response = checkDataLoginForm(emailValue, passwordValue);
-                const allValuesTrue = Object.values(response).every((value: Array<string>) => value.length === 0);
-                const btn = document.getElementById('login__button');
-
-                email = response.email;
-                password = response.password;
-
-                if (emailValue !== '' && emailSpanError)
-                    FormValidator.handleValidation(this.loginInput.getInputContainer(), email, emailSpanError);
-                if (passwordValue !== '' && passwordSpanError)
-                    FormValidator.handleValidation(this.passwordInput.getInputContainer(), password, passwordSpanError);
-
-                if (allValuesTrue) {
-                    btn?.removeAttribute('disabled');
-                }
-            }
-        });
         this.init();
     }
 
     private init(): void {
         this.login = document.createElement('section');
         this.login.classList.add('login');
-        this.login.appendChild(this.loginForm);
+
+        this.loginForm = document.createElement('form');
+
+        this.loginDiv = new InputGenerator('text', 'Enter Email', 'login__email', 'email').getInputContainer();
+        this.loginInput = this.loginDiv.querySelector('input') as HTMLInputElement;
+
+        this.passwordDiv = new InputGenerator(
+            'password',
+            'Enter password',
+            'login__password',
+            'password'
+        ).getInputContainer();
+        this.passwordInput = this.passwordDiv.querySelector('input') as HTMLInputElement;
+
+        this.submitButton = new InputGenerator('button', 'Button Text', 'login__button', 'login-btn').getButton(
+            'login__button',
+            'LOGIN',
+            (e) => this.submit(e)
+        );
+
+        this.loginForm.append(this.loginDiv);
+        this.loginForm.append(this.passwordDiv);
+        this.loginForm.append(this.submitButton);
+
+        this.login.append(this.loginForm);
+
+        this.loginForm.addEventListener('input', (e) =>
+            validation(e.target as HTMLInputElement, this.showError.bind(this))
+        );
+
+        this.passwordSwitch = this.passwordDiv.querySelector('.password-switch') as HTMLButtonElement;
+        this.passwordSwitch.addEventListener('click', (e) => this.togglePasswordVisibility(e));
     }
 
     public getLayout(): HTMLElement {
         return this.login;
+    }
+
+    private submit(e: Event): void {
+        e.preventDefault();
+
+        const inputs = Array.from(this.loginForm.querySelectorAll('input'));
+        for (let i = 0; i < inputs.length; i += 1) {
+            const errors = validation(inputs[i], this.showError.bind(this));
+            if (errors.length > 0) {
+                console.log('not valid');
+                return;
+            }
+        }
+
+        console.log('valid', { email: this.loginInput.value, password: this.passwordInput.value });
+    }
+
+    private showError(input: HTMLInputElement, messages: Array<string>): void {
+        console.log(input, messages);
+        if (messages.length < 0) return;
+
+        const inputParent = input.parentElement as HTMLElement;
+        const errorUl = inputParent.querySelector('.error') as HTMLElement;
+        errorUl.innerHTML = '';
+
+        messages.forEach((message) => {
+            const li = document.createElement('li');
+            li.textContent = message;
+            errorUl.append(li);
+        });
+    }
+
+    private togglePasswordVisibility(e: Event): void {
+        e.preventDefault();
+
+        if (this.passwordInput.type === 'password') {
+            this.passwordInput.type = 'text';
+            this.passwordSwitch.textContent = 'H';
+        } else {
+            this.passwordInput.type = 'password';
+            this.passwordSwitch.textContent = 'S';
+        }
     }
 }

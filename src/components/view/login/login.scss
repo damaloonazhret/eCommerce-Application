@@ -11,11 +11,7 @@
         }
 
         div {
-            span {
-                display: none;
-            }
-
-            &.error span {
+            ul {
                 color: #ff0000;
                 display: block;
             }

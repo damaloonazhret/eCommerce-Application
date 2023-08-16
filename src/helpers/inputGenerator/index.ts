@@ -16,13 +16,14 @@ export default class InputGenerator {
 
         if (type === 'password') {
             const passwordSwitchSpan = document.createElement('button');
-            passwordSwitchSpan.setAttribute('disabled', '');
+            // passwordSwitchSpan.setAttribute('disabled', '');
             passwordSwitchSpan.classList.add(`${id}-switch`);
+            passwordSwitchSpan.textContent = 'S';
             this.inputContainer.appendChild(passwordSwitchSpan);
         }
 
-        const errorMessageSpan = document.createElement('span');
-        errorMessageSpan.classList.add(`${id}-error`);
+        const errorMessageSpan = document.createElement('ul');
+        errorMessageSpan.classList.add(`error`);
         this.inputContainer.appendChild(errorMessageSpan);
     }
 
@@ -69,7 +70,7 @@ export default class InputGenerator {
         button.textContent = text;
         button.classList.add(`${id}`);
         button.addEventListener('click', clickHandler);
-        button.setAttribute('disabled', '');
+        // button.setAttribute('disabled', '');
         return button;
     }
 }

@@ -110,10 +110,10 @@ export default class Login {
 
         if (this.passwordInput.type === 'password') {
             this.passwordInput.type = 'text';
-            this.passwordSwitch.textContent = 'H';
+            this.passwordSwitch.classList.add('hide');
         } else {
             this.passwordInput.type = 'password';
-            this.passwordSwitch.textContent = 'S';
+            this.passwordSwitch.classList.remove('hide');
         }
     }
 }

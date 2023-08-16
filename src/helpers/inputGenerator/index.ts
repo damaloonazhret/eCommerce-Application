@@ -18,7 +18,6 @@ export default class InputGenerator {
             const passwordSwitchSpan = document.createElement('button');
             // passwordSwitchSpan.setAttribute('disabled', '');
             passwordSwitchSpan.classList.add(`${id}-switch`);
-            passwordSwitchSpan.textContent = 'S';
             this.inputContainer.appendChild(passwordSwitchSpan);
         }
 

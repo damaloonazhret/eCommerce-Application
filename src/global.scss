@@ -38,8 +38,8 @@ ul {
 }
 
 img {
-    max-width: 100%;
     display: block;
+    max-width: 100%;
 }
 
 input,
@@ -51,4 +51,10 @@ select {
 
 a {
     text-decoration: none;
+}
+
+body {
+    display: grid;
+    height: 100vh;
+    grid-template-rows: auto 1fr;
 }

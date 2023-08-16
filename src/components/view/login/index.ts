@@ -1,6 +1,6 @@
 import './login.scss';
 import InputGenerator from '../../../helpers/inputGenerator';
-import { validation } from '../../../services/validation';
+import validation from '../../../services/validation';
 
 export default class Login {
     private login!: HTMLElement;
@@ -66,21 +66,25 @@ export default class Login {
 
     private submit(e: Event): void {
         e.preventDefault();
+        let valid = true;
 
         const inputs = Array.from(this.loginForm.querySelectorAll('input'));
         for (let i = 0; i < inputs.length; i += 1) {
             const errors = validation(inputs[i], this.showError.bind(this));
             if (errors.length > 0) {
-                console.log('not valid');
-                return;
+                valid = false;
             }
+        }
+
+        if (!valid) {
+            console.log('not valid', { email: this.loginInput.value, password: this.passwordInput.value });
+            return;
         }
 
         console.log('valid', { email: this.loginInput.value, password: this.passwordInput.value });
     }
 
     private showError(input: HTMLInputElement, messages: Array<string>): void {
-        console.log(input, messages);
         if (messages.length < 0) return;
 
         const inputParent = input.parentElement as HTMLElement;

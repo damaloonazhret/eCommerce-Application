@@ -1,221 +1,3 @@
-export interface ObjValidationLogin {
-    email: Array<string>;
-    password: Array<string>;
-}
-
-export interface ObjValidationRegistration {
-    email: Array<string>;
-    password: Array<string>;
-    nameUser: Array<string>;
-    lastNameUser: Array<string>;
-    dateBirth: Array<string>;
-    addressStreet: Array<string>;
-    addressCity: Array<string>;
-    addressPostalCode: Array<string>;
-}
-
-export function checkDataLoginForm(emailUser: string, passwordUser: string): ObjValidationLogin {
-    // check email, <input> type='text'
-    const hasSpecialSymboEmail = /[~!#$%^&*()_+\-=[\]{};:"\\|,'<>/?]/.test(emailUser);
-    const hasSymbolDogEmail = /@/.test(emailUser);
-    const hasDomenEmail = /\.[a-z]{2,4}/.test(emailUser);
-    const objValidationLogin: ObjValidationLogin = {
-        email: [],
-        password: [],
-    };
-
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < emailUser.length; i += 1) {
-        const letterEmail = emailUser.charAt(i);
-        const hasCirilic = /[а-яА-ЯёЁ]/;
-        if (hasCirilic.test(letterEmail)) {
-            objValidationLogin.email.push('Email must not contain сyrillic characters.');
-            i += emailUser.length;
-        }
-    }
-
-    if (hasSpecialSymboEmail) {
-        objValidationLogin.email.push('Email must not contain special characters(e.g., !#$%^&*).');
-    }
-
-    if (emailUser.includes(' ')) {
-        objValidationLogin.email.push('Email must not contain a space.');
-    }
-
-    if (!hasSymbolDogEmail) {
-        objValidationLogin.email.push('Email address must contain an @ symbol separating local part and domain name.');
-    }
-
-    if (!hasDomenEmail) {
-        objValidationLogin.email.push('Email address must contain a domain name (e.g., example.com).');
-    }
-
-    if (emailUser[0] === '@') {
-        objValidationLogin.email.push('Email address must be properly formatted (e.g., user@example.com).');
-    }
-
-    if (emailUser.length < 1) {
-        objValidationLogin.email.splice(0, objValidationLogin.email.length);
-        objValidationLogin.email.push('Enter your email address (e.g., user@example.com).');
-    }
-
-    // check password, <input> type='password'
-    const minLengthPassword = 8;
-    const hasUpperCasePassword = /[A-Z]/.test(passwordUser);
-    const hasLowerCasePassword = /[a-z]/.test(passwordUser);
-    const hasNumberPassword = /\d/.test(passwordUser);
-    const hasSpecialSymbolPassword = /[~!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(passwordUser);
-
-    for (let i = 0; i < passwordUser.length; i += 1) {
-        const letterPassword = passwordUser.charAt(i);
-        const hasCirilic = /[а-яА-ЯёЁ]/;
-        if (hasCirilic.test(letterPassword)) {
-            objValidationLogin.password.push('Password must not contain сyrillic characters.');
-            i += passwordUser.length;
-        }
-    }
-
-    if (passwordUser.length < minLengthPassword) {
-        objValidationLogin.password.push('Password must be at least 8 characters long.');
-    }
-
-    if (!hasUpperCasePassword) {
-        objValidationLogin.password.push('Password must contain at least one uppercase letter (A-Z).');
-    }
-
-    if (!hasLowerCasePassword) {
-        objValidationLogin.password.push('Password must contain at least one lowercase letter (a-z).');
-    }
-
-    if (!hasNumberPassword) {
-        objValidationLogin.password.push('Password must contain at least one digit (0-9).');
-    }
-
-    if (!hasSpecialSymbolPassword) {
-        objValidationLogin.password.push('Password must contain at least one special character (e.g., !@#$%^&*).');
-    }
-
-    if (passwordUser.includes(' ')) {
-        objValidationLogin.password.push('Password must not contain a space.');
-    }
-
-    if (passwordUser.length < 1) {
-        objValidationLogin.password.splice(0, objValidationLogin.password.length);
-        objValidationLogin.password.push(
-            'Enter password (minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter, and 1 number).'
-        );
-    }
-
-    return objValidationLogin;
-}
-
-export function checkDataRegistrationForm(
-    emailUser: string,
-    passwordUser: string,
-    nameUser: string,
-    lastNameUser: string,
-    dateBirth: string,
-    addressStreet: string,
-    addressCity: string,
-    addressPostalCode: string
-): object {
-    const objValidationRegistration: ObjValidationRegistration = {
-        email: [],
-        password: [],
-        nameUser: [],
-        lastNameUser: [],
-        dateBirth: [],
-        addressStreet: [],
-        addressCity: [],
-        addressPostalCode: [],
-    };
-
-    // check data registration
-    const minQuantitySymbol = 1;
-    const hasSpecialSymbolDataName = /[~!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?\d]/.test(nameUser);
-    const hasSpecialSymbolDataLastName = /[~!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?\d]/.test(lastNameUser);
-    const hasSpecialSymbolDataCity = /[~!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?\d]/.test(addressCity);
-    const dateBirthUser = new Date(dateBirth).getTime();
-    const minAgeUser = 13;
-    const yearMaxDateAge = Number(new Date().getFullYear()) - minAgeUser;
-    const monthMaxDateAge = `0${new Date().getMonth() + 1}`.slice(-2);
-    const dayMaxDateAge = `0${new Date().getDate()}`.slice(-2);
-    const maxDateAge = new Date(`${yearMaxDateAge}-${monthMaxDateAge}-${dayMaxDateAge}`).getTime();
-    const hasNumberSymbolUppercasePostalCode = /[A-Z\d]/.test(addressPostalCode);
-    const hasSymbolLowercasePostalCode = /[a-z]/.test(addressPostalCode);
-    const hasSpecialSymbolPostalCode = /[~!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(addressPostalCode);
-
-    const dataValidationLoginPassword = checkDataLoginForm(emailUser, passwordUser);
-    objValidationRegistration.email = dataValidationLoginPassword.email;
-    objValidationRegistration.password = dataValidationLoginPassword.password;
-
-    // other fields
-    if (nameUser.length < minQuantitySymbol) {
-        objValidationRegistration.nameUser.push('First name must contain at least one character.');
-    }
-
-    if (hasSpecialSymbolDataName) {
-        objValidationRegistration.nameUser.push('First name must contain no special characters or numbers.');
-    }
-
-    if (lastNameUser.length < minQuantitySymbol) {
-        objValidationRegistration.lastNameUser.push('Last name must contain at least one character.');
-    }
-
-    if (hasSpecialSymbolDataLastName) {
-        objValidationRegistration.lastNameUser.push('Last name must contain no special characters or numbers.');
-    }
-
-    if (dateBirth.length < 1) {
-        objValidationRegistration.dateBirth.push('Enter date of birth');
-    }
-
-    if (dateBirthUser > maxDateAge || !dateBirthUser) {
-        objValidationRegistration.dateBirth.push('Registration is possible for persons over 13 years of age.');
-    }
-
-    if (addressStreet.length < minQuantitySymbol) {
-        objValidationRegistration.addressStreet.push('Street must contain at least one character.');
-    }
-
-    if (addressCity.length < minQuantitySymbol) {
-        objValidationRegistration.addressCity.push('City must contain at least one character.');
-    }
-
-    if (hasSpecialSymbolDataCity) {
-        objValidationRegistration.addressCity.push('City must contain no special characters or numbers.');
-    }
-
-    if (hasSpecialSymbolPostalCode) {
-        objValidationRegistration.addressPostalCode.push('Postal code must contain no special characters.');
-    }
-
-    if (!hasNumberSymbolUppercasePostalCode) {
-        objValidationRegistration.addressPostalCode.push(
-            'Postal code must follow the format for the country (e.g., 12345 or A1B 2C3).'
-        );
-    }
-
-    if (hasSymbolLowercasePostalCode) {
-        objValidationRegistration.addressPostalCode.push('Postal code can contain numbers or capital letters.');
-    }
-
-    if (addressPostalCode.length < 5) {
-        objValidationRegistration.addressPostalCode.push(
-            'Postal code must contain at least 5 characters (e.g., 12345 or A1B 2C3).'
-        );
-    }
-
-    if (addressPostalCode.length < 1) {
-        objValidationRegistration.addressPostalCode.splice(0, objValidationRegistration.addressPostalCode.length);
-        objValidationRegistration.addressPostalCode.push(
-            'Postal code must contain at least 5 characters (e.g., 12345 or A1B 2C3).'
-        );
-    }
-
-    return objValidationRegistration;
-}
-
 const isEmpty = (value: string): boolean => value === '';
 const hasAtSymbol = (value: string): boolean => /@/.test(value);
 const isAllowedEmailCharacters = (value: string): boolean => /^[a-zA-Z0-9.@]+$/.test(value);
@@ -225,9 +7,21 @@ const hasUppercaseCharacters = (value: string): boolean => /[A-Z]/.test(value);
 const hasDigit = (value: string): boolean => /\d/.test(value);
 const hasLength = (value: string, length: number): boolean => value.length >= length;
 const hasNoWhitespace = (value: string): boolean => !/^\s|\s$/.test(value);
-const hasSpecialCharacter = (value: string): boolean => /[!@#$%^&*]/.test(value);
+const hasSpecialCharacter = (value: string): boolean => /[!@#$%^&*"'`~]/.test(value);
 const isEmailFormatted = (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 const hasDomainName = (value: string): boolean => /\.[A-Za-z]{2,}$/.test(value);
+const isNameValid = (value: string): boolean => /^[a-zA-Z]+$/.test(value);
+const isPostalCodeValid = (value: string): boolean => /^[a-zA-Z0-9\s]+$/.test(value);
+
+const isAgeValid = (birthDate: string, requiredAge: number, maxAge: number): boolean => {
+    const today = new Date();
+    const parsedBirthDate = new Date(birthDate);
+
+    const timeDiff = today.getTime() - parsedBirthDate.getTime();
+    const ageInYears = timeDiff / (1000 * 60 * 60 * 24 * 365.25);
+
+    return ageInYears >= requiredAge && ageInYears <= maxAge;
+};
 
 const checkEmail = (email: string): string[] => {
     const errors = [];
@@ -298,6 +92,103 @@ const checkPassword = (password: string): string[] => {
     return errors;
 };
 
+const checkName = (name: string): string[] => {
+    const errors = [];
+
+    const minLength = 1;
+
+    if (isEmpty(name)) {
+        errors.push('Name cannot be blank.');
+    }
+
+    if (!hasLength(name, minLength)) {
+        errors.push(`Name must be at least ${minLength} characters.`);
+    }
+
+    if (!hasNoWhitespace(name)) {
+        errors.push('Name cannot contain whitespace.');
+    }
+
+    if (!isNameValid(name)) {
+        errors.push('Name must contain only Latin characters.');
+    }
+
+    return errors;
+};
+
+const checkAge = (birthDate: string): string[] => {
+    const errors = [];
+    const minAge = 13;
+    const maxAge = 100;
+
+    if (isEmpty(birthDate)) {
+        errors.push('Date of birth cannot be blank.');
+    }
+
+    if (!isAgeValid(birthDate, minAge, maxAge)) {
+        errors.push(`Age must be between ${minAge} and ${maxAge}.`);
+    }
+
+    return errors;
+};
+
+const checkStreet = (street: string): string[] => {
+    const errors = [];
+    const minLength = 1;
+
+    if (isEmpty(street)) {
+        errors.push('Street cannot be blank.');
+    }
+
+    if (!hasLength(street, minLength)) {
+        errors.push(`Street must contain at least ${minLength} character.`);
+    }
+
+    return errors;
+};
+
+const checkCity = (street: string): string[] => {
+    const errors = [];
+    const minLength = 1;
+
+    if (isEmpty(street)) {
+        errors.push('Street cannot be blank.');
+    }
+
+    if (!hasLength(street, minLength)) {
+        errors.push(`Street must contain at least ${minLength} character.`);
+    }
+
+    if (hasSpecialCharacter(street)) {
+        errors.push('Street cannot contain special characters.');
+    }
+
+    return errors;
+};
+
+const checkPostalCode = (postalCode: string): string[] => {
+    const errors = [];
+    const minLength = 5;
+
+    if (isEmpty(postalCode)) {
+        errors.push('Postal code cannot be blank.');
+    }
+
+    if (hasSpecialCharacter(postalCode)) {
+        errors.push('Postal code cannot contain special characters.');
+    }
+
+    if (!hasLength(postalCode, minLength)) {
+        errors.push(`Postal code must contain at least ${minLength} character.`);
+    }
+
+    if (!isPostalCodeValid(postalCode)) {
+        errors.push('Postal code is not properly formatted.');
+    }
+
+    return errors;
+};
+
 const validation = (
     input: HTMLInputElement,
     errorHandler: (input: HTMLInputElement, messages: string[]) => void
@@ -309,9 +200,25 @@ const validation = (
         case 'password':
             errorHandler(input, checkPassword(input.value));
             return checkPassword(input.value);
+        case 'first-name':
+        case 'last-name':
+            errorHandler(input, checkName(input.value));
+            return checkName(input.value);
+        case 'dob':
+            errorHandler(input, checkAge(input.value));
+            return checkAge(input.value);
+        case 'street':
+            errorHandler(input, checkStreet(input.value));
+            return checkStreet(input.value);
+        case 'city':
+            errorHandler(input, checkCity(input.value));
+            return checkCity(input.value);
+        case 'postal':
+            errorHandler(input, checkPostalCode(input.value));
+            return checkPostalCode(input.value);
         default:
             return [];
     }
 };
 
-export { validation };
+export default validation;

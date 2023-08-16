@@ -38,6 +38,14 @@
                 border-color: #1d34e4;
                 outline: none;
             }
+
+            &.valid {
+                border-color: #2db660;
+            }
+
+            &.not-valid {
+                border-color: #c62222;
+            }
         }
     }
 

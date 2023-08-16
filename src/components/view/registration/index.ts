@@ -191,11 +191,19 @@ export default class Registration {
     }
 
     private showError(input: HTMLInputElement, messages: Array<string>): void {
-        if (messages.length < 0) return;
-
         const inputParent = input.parentElement as HTMLElement;
         const errorUl = inputParent.querySelector('.error') as HTMLElement;
+
         errorUl.innerHTML = '';
+
+        if (messages.length === 0) {
+            input.classList.remove('not-valid');
+            input.classList.add('valid');
+            return;
+        }
+
+        input.classList.remove('valid');
+        input.classList.add('not-valid');
 
         messages.forEach((message) => {
             const li = document.createElement('li');

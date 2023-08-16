@@ -28,6 +28,7 @@ const checkEmail = (email: string): string[] => {
 
     if (isEmpty(email)) {
         errors.push('Email cannot be blank.');
+        return errors;
     }
 
     if (!isEmailFormatted(email)) {
@@ -59,6 +60,7 @@ const checkPassword = (password: string): string[] => {
 
     if (isEmpty(password)) {
         errors.push('Password cannot be blank.');
+        return errors;
     }
 
     if (!hasLength(password, minLength)) {
@@ -99,6 +101,7 @@ const checkName = (name: string): string[] => {
 
     if (isEmpty(name)) {
         errors.push('Name cannot be blank.');
+        return errors;
     }
 
     if (!hasLength(name, minLength)) {
@@ -123,6 +126,7 @@ const checkAge = (birthDate: string): string[] => {
 
     if (isEmpty(birthDate)) {
         errors.push('Date of birth cannot be blank.');
+        return errors;
     }
 
     if (!isAgeValid(birthDate, minAge, maxAge)) {
@@ -138,6 +142,7 @@ const checkStreet = (street: string): string[] => {
 
     if (isEmpty(street)) {
         errors.push('Street cannot be blank.');
+        return errors;
     }
 
     if (!hasLength(street, minLength)) {
@@ -153,6 +158,7 @@ const checkCity = (street: string): string[] => {
 
     if (isEmpty(street)) {
         errors.push('Street cannot be blank.');
+        return errors;
     }
 
     if (!hasLength(street, minLength)) {
@@ -172,6 +178,7 @@ const checkPostalCode = (postalCode: string): string[] => {
 
     if (isEmpty(postalCode)) {
         errors.push('Postal code cannot be blank.');
+        return errors;
     }
 
     if (hasSpecialCharacter(postalCode)) {

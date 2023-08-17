@@ -1,6 +1,7 @@
 import './login.scss';
 import InputGenerator from '../../../helpers/inputGenerator';
 import validation from '../../../services/validation';
+import Controller from '../../controller';
 
 export default class Login {
     private login!: HTMLElement;
@@ -19,7 +20,10 @@ export default class Login {
 
     private passwordSwitch!: HTMLButtonElement;
 
-    constructor() {
+    private controller: Controller;
+
+    constructor(controller: Controller) {
+        this.controller = controller;
         this.init();
     }
 
@@ -64,7 +68,7 @@ export default class Login {
         return this.login;
     }
 
-    private submit(e: Event): void {
+    private async submit(e: Event): Promise<void> {
         e.preventDefault();
         let valid = true;
 
@@ -82,6 +86,11 @@ export default class Login {
         }
 
         console.log('valid', { email: this.loginInput.value, password: this.passwordInput.value });
+        const result = await this.controller.signIn(this.loginInput.value, this.passwordInput.value);
+        console.log(result);
+        if (result) {
+            window.location.href = '/';
+        }
     }
 
     private showError(input: HTMLInputElement, messages: Array<string>): void {

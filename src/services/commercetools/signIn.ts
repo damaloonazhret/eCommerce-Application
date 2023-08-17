@@ -13,6 +13,10 @@ async function signIn(email: string, password: string): Promise<AccessTokenRespo
 
     const result = (await response.json()) as AccessTokenResponse;
 
+    if (!response.ok) {
+        return result;
+    }
+
     const scopeParts = result.scope.split(' ');
     const customerIdPart = scopeParts.find((part) => part.startsWith('customer_id:')) || '';
 

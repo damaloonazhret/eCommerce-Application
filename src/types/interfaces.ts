@@ -24,6 +24,7 @@ export interface AccessTokenResponse {
     refresh_token: string;
     anonymous_id?: string;
     customer_id?: string;
+    message?: string;
 }
 
 export interface Customer {

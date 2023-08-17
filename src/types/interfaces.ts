@@ -1,10 +1,13 @@
+import About from '../components/view/about';
+import Contact from '../components/view/contact';
+import Error404 from '../components/view/error404';
 import Login from '../components/view/login';
 import Registration from '../components/view/registration';
 import Shop from '../components/view/shop';
 
 export interface Route {
     path: string;
-    View: typeof Shop | typeof Login | typeof Registration;
+    View: typeof Shop | typeof Login | typeof Registration | typeof Error404 | typeof About | typeof Contact;
 }
 
 export interface RequestOptions {

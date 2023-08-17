@@ -1,4 +1,5 @@
 import { Route } from '../../types/interfaces';
+import Error404 from '../view/error404';
 import Main from '../view/main';
 
 export default class Router {
@@ -55,7 +56,7 @@ export default class Router {
 
         if (!match) {
             match = {
-                route: this.routes[0],
+                route: { path: '/404', View: Error404 },
                 result: [window.location.pathname],
             };
         }

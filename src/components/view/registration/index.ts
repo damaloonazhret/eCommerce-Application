@@ -3,6 +3,7 @@ import './registration.scss';
 import InputGenerator from '../../../helpers/inputGenerator';
 import validation from '../../../services/validation';
 import Controller from '../../controller';
+import { UserRegistrationData } from '../../../types/interfaces';
 
 export default class Registration {
     private controller: Controller;
@@ -165,49 +166,32 @@ export default class Registration {
             }
         }
 
-        if (!valid) {
-            console.log('not valid', {
-                email: this.emailInput.value,
-                password: this.passwordInput.value,
-                firstName: this.firstNameInput.value,
-                lastName: this.lastNameInput.value,
-                dateOfBirth: this.dobInput.value,
-                addresses: {
-                    streetName: this.streetInput.value,
-                    city: this.cityInput.value,
-                    postalCode: this.postalCodeInput.value,
-                    country: this.countryInput.value,
-                },
-            });
-            return;
-        }
-
-        console.log('valid', {
+        const userData: UserRegistrationData = {
             email: this.emailInput.value,
             password: this.passwordInput.value,
             firstName: this.firstNameInput.value,
             lastName: this.lastNameInput.value,
             dateOfBirth: this.dobInput.value,
-            addresses: {
-                streetName: this.streetInput.value,
-                city: this.cityInput.value,
-                postalCode: this.postalCodeInput.value,
-                country: this.countryInput.value,
-            },
-        });
+            addresses: [
+                {
+                    streetName: this.streetInput.value,
+                    postalCode: this.postalCodeInput.value,
+                    city: this.cityInput.value,
+                    country: this.countryInput.value,
+                },
+            ],
+        };
 
-        const result = await this.controller.signUp(
-            this.emailInput.value,
-            this.firstNameInput.value,
-            this.lastNameInput.value,
-            this.passwordInput.value,
-            this.dobInput.value,
-            this.countryInput.value,
-            this.cityInput.value,
-            this.streetInput.value,
-            this.postalCodeInput.value
-        );
+        if (!valid) {
+            console.log('not valid', userData);
+            return;
+        }
 
+        console.log('valid', userData);
+
+        const result = await this.controller.signUp(userData);
+
+        console.log(result);
         if (result) {
             this.navigateTo('/');
         }

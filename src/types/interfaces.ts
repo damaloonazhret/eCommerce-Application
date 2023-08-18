@@ -46,3 +46,22 @@ export interface Customer {
         ];
     };
 }
+
+export interface UserLoginData {
+    email: string;
+    password: string;
+}
+
+export interface UserRegistrationData extends UserLoginData {
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    addresses: [
+        {
+            streetName: string;
+            postalCode: string;
+            city: string;
+            country: string;
+        },
+    ];
+}

@@ -1,14 +1,14 @@
-import { AccessTokenResponse } from '../../types/interfaces';
+import { AccessTokenResponse, UserLoginData } from '../../types/interfaces';
 import { CTP_AUTH_URL, CTP_CLIENT_ID, CTP_CLIENT_SECRET, CTP_PROJECT_KEY, CTP_SCOPES } from './credential';
 
-async function signIn(email: string, password: string): Promise<AccessTokenResponse> {
+async function signIn(userData: UserLoginData): Promise<AccessTokenResponse> {
     const response = await fetch(`${CTP_AUTH_URL}/oauth/${CTP_PROJECT_KEY}/customers/token`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             Authorization: `Basic ${btoa(`${CTP_CLIENT_ID}:${CTP_CLIENT_SECRET}`)}`,
         },
-        body: `grant_type=password&username=${email}&password=${password}&scope=${CTP_SCOPES}`,
+        body: `grant_type=password&username=${userData.email}&password=${userData.password}&scope=${CTP_SCOPES}`,
     });
 
     const result = (await response.json()) as AccessTokenResponse;

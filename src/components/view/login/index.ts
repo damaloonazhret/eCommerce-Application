@@ -2,6 +2,7 @@ import './login.scss';
 import InputGenerator from '../../../helpers/inputGenerator';
 import validation from '../../../services/validation';
 import Controller from '../../controller';
+import { UserLoginData } from '../../../types/interfaces';
 
 export default class Login {
     private login!: HTMLElement;
@@ -83,13 +84,20 @@ export default class Login {
             }
         }
 
+        const userData: UserLoginData = {
+            email: this.loginInput.value,
+            password: this.passwordInput.value,
+        };
+
         if (!valid) {
-            console.log('not valid', { email: this.loginInput.value, password: this.passwordInput.value });
+            console.log('not valid', userData);
             return;
         }
 
-        console.log('valid', { email: this.loginInput.value, password: this.passwordInput.value });
-        const result = await this.controller.signIn(this.loginInput.value, this.passwordInput.value);
+        console.log('valid', userData);
+
+        const result = await this.controller.signIn(userData);
+
         console.log(result);
         if (result) {
             this.navigateTo('/');

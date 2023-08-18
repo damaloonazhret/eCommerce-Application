@@ -2,8 +2,11 @@ import './registration.scss';
 
 import InputGenerator from '../../../helpers/inputGenerator';
 import validation from '../../../services/validation';
+import Controller from '../../controller';
 
 export default class Registration {
+    private controller: Controller;
+
     private registration!: HTMLElement;
 
     private registrationForm!: HTMLFormElement;
@@ -48,7 +51,8 @@ export default class Registration {
 
     private passwordSwitch!: HTMLButtonElement;
 
-    constructor() {
+    constructor(controller: Controller) {
+        this.controller = controller;
         this.init();
     }
 
@@ -146,7 +150,7 @@ export default class Registration {
         return this.registration;
     }
 
-    private submit(e: Event): void {
+    private async submit(e: Event): Promise<void> {
         e.preventDefault();
         let valid = true;
 
@@ -188,6 +192,22 @@ export default class Registration {
                 country: this.countryInput.value,
             },
         });
+
+        const result = await this.controller.signUp(
+            this.emailInput.value,
+            this.firstNameInput.value,
+            this.lastNameInput.value,
+            this.passwordInput.value,
+            this.dobInput.value,
+            this.countryInput.value,
+            this.cityInput.value,
+            this.streetInput.value,
+            this.postalCodeInput.value
+        );
+
+        if (result) {
+            window.location.href = '/';
+        }
     }
 
     private showError(input: HTMLInputElement, messages: Array<string>): void {

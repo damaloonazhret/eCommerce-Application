@@ -1,7 +1,7 @@
-import { Customer, UserRegistrationData } from '../../types/interfaces';
+import { AccessTokenResponse, Customer, UserRegistrationData } from '../../types/interfaces';
 import { CTP_API_URL, CTP_PROJECT_KEY } from './credential';
 
-async function signUp(token: string, userData: UserRegistrationData): Promise<Customer> {
+async function signUp(token: string, userData: UserRegistrationData): Promise<AccessTokenResponse | Customer> {
     const response = await fetch(`${CTP_API_URL}/${CTP_PROJECT_KEY}/me/signup`, {
         method: 'POST',
         headers: {
@@ -12,12 +12,11 @@ async function signUp(token: string, userData: UserRegistrationData): Promise<Cu
     });
 
     if (!response.ok) {
-        throw Error(`HTTP error! Status: ${response.status}`);
+        const result = (await response.json()) as AccessTokenResponse;
+        return result;
     }
 
-    const result = (await response.json()) as Customer;
-
-    return result;
+    return (await response.json()) as Customer;
 }
 
 export default signUp;

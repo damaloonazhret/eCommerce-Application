@@ -191,9 +191,12 @@ export default class Registration {
 
         const result = await this.controller.signUp(userData);
 
-        console.log(result);
-        if (result) {
+        if (result.success) {
+            console.log('registration success');
             this.navigateTo('/');
+        } else {
+            // TODO: show error on page
+            console.log(result.message);
         }
     }
 

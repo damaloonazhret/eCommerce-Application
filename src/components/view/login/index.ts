@@ -98,9 +98,13 @@ export default class Login {
 
         const result = await this.controller.signIn(userData);
 
-        console.log(result);
-        if (result) {
+        if (result.success) {
+            // TODO: A success message is displayed to the user upon successful account creation
+            console.log('login success');
             this.navigateTo('/');
+        } else {
+            // TODO: show error on page
+            console.log(result.message);
         }
     }
 

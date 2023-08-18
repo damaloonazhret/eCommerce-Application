@@ -1,4 +1,4 @@
-import { Customer, UserLoginData, UserRegistrationData } from '../../types/interfaces';
+import { LoginResult, RegistrationResult, UserLoginData, UserRegistrationData } from '../../types/interfaces';
 import Model from '../model';
 
 export default class Controller {
@@ -8,11 +8,11 @@ export default class Controller {
         this.model = model;
     }
 
-    public async signIn(userData: UserLoginData): Promise<boolean> {
+    public async signIn(userData: UserLoginData): Promise<LoginResult> {
         return this.model.signIn(userData);
     }
 
-    public async signUp(userData: UserRegistrationData): Promise<Customer | boolean> {
+    public async signUp(userData: UserRegistrationData): Promise<RegistrationResult> {
         return this.model.signUp(userData);
     }
 }

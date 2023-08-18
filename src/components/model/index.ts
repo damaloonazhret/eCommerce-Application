@@ -1,29 +1,38 @@
 import getToken from '../../services/commercetools/getToken';
 import signIn from '../../services/commercetools/signIn';
 import signUp from '../../services/commercetools/signUp';
-import { Customer, UserRegistrationData, UserLoginData } from '../../types/interfaces';
+import {
+    Customer,
+    UserRegistrationData,
+    UserLoginData,
+    LoginResult,
+    RegistrationResult,
+    AccessTokenResponse,
+} from '../../types/interfaces';
 
 export default class Model {
-    public async signIn(UserData: UserLoginData): Promise<boolean> {
-        const result = await signIn(UserData);
-        if (result.access_token) {
-            console.log(result);
-            return true;
-        }
+    public async signIn(UserData: UserLoginData): Promise<LoginResult> {
+        const response = await signIn(UserData);
 
-        console.log(result.message);
-        return false;
+        return this.returnFormError(response);
     }
 
-    public async signUp(userData: UserRegistrationData): Promise<Customer | boolean> {
+    public async signUp(userData: UserRegistrationData): Promise<RegistrationResult> {
         const token = getToken();
-        const result = await signUp((await token).access_token, userData);
-        if (result) {
-            console.log(result);
+        const response = await signUp((await token).access_token, userData);
+
+        return this.returnFormError(response);
+    }
+
+    private returnFormError(response: AccessTokenResponse | Customer): LoginResult | RegistrationResult {
+        const result = { success: false, message: '' };
+
+        if (response.statusCode === 400) {
+            result.message = response.message as string;
             return result;
         }
 
-        console.log(result);
-        return false;
+        result.success = true;
+        return result;
     }
 }

@@ -17,6 +17,7 @@ export interface RequestOptions {
 }
 
 export interface AccessTokenResponse {
+    statusCode?: number;
     access_token: string;
     expires_in: number;
     token_type: string;
@@ -28,6 +29,7 @@ export interface AccessTokenResponse {
 }
 
 export interface Customer {
+    statusCode?: number;
     customer: {
         id: string;
         email: string;
@@ -45,6 +47,7 @@ export interface Customer {
             },
         ];
     };
+    message?: string;
 }
 
 export interface UserLoginData {
@@ -65,3 +68,10 @@ export interface UserRegistrationData extends UserLoginData {
         },
     ];
 }
+
+export interface LoginResult {
+    success: boolean;
+    message: string;
+}
+
+export type RegistrationResult = LoginResult;

@@ -1,23 +1,28 @@
-export default class FormValidator {
-    public static handleValidation(inputContainer: HTMLElement, isValid: string[], span: HTMLSpanElement): void {
-        const newSpan = document.createElement('span');
+export default class ValidationUtils {
+    public static togglePasswordVisibility(passwordInput: HTMLInputElement, passwordSwitch: HTMLButtonElement): void {
+        const newInputType = passwordInput.type === 'password' ? 'text' : 'password';
+        const temporaryPasswordInput = passwordInput;
+        temporaryPasswordInput.type = newInputType;
+        passwordSwitch.classList.toggle('hide', newInputType === 'text');
+    }
 
-        if (isValid.length === 0) {
-            inputContainer.classList.remove('error');
+    public static showError(input: HTMLInputElement, messages: Array<string>): void {
+        const inputParent = input.parentElement as HTMLElement;
+        const errorUl = inputParent.querySelector('.error') as HTMLElement;
+        errorUl.innerHTML = '';
+
+        if (messages.length === 0) {
+            input.classList.remove('not-valid');
+            input.classList.add('valid');
         } else {
-            inputContainer.classList.add('error');
-            if ('innerHTML' in span) {
-                const errorList = document.createElement('ul');
-                isValid.forEach((errorMessage) => {
-                    const errorItem = document.createElement('li');
-                    errorItem.textContent = errorMessage;
-                    errorList.appendChild(errorItem);
-                });
+            input.classList.remove('valid');
+            input.classList.add('not-valid');
 
-                newSpan.appendChild(errorList);
-            }
+            messages.forEach((message) => {
+                const li = document.createElement('li');
+                li.textContent = message;
+                errorUl.append(li);
+            });
         }
-
-        span.parentNode?.replaceChild(newSpan, span);
     }
 }

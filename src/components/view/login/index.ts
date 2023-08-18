@@ -1,6 +1,8 @@
 import './login.scss';
 import InputGenerator from '../../../helpers/inputGenerator';
 import validation from '../../../services/validation';
+import Controller from '../../controller';
+import { UserLoginData } from '../../../types/interfaces';
 import ValidationUtils from '../../../helpers/formValidator';
 
 export default class Login {
@@ -20,7 +22,13 @@ export default class Login {
 
     private passwordSwitch!: HTMLButtonElement;
 
-    constructor() {
+    private controller: Controller;
+
+    private navigateTo: (url: string) => void;
+
+    constructor(controller: Controller, navigateTo: (url: string) => void) {
+        this.controller = controller;
+        this.navigateTo = navigateTo;
         this.init();
     }
 
@@ -65,7 +73,7 @@ export default class Login {
         return this.login;
     }
 
-    private submit(e: Event): void {
+    private async submit(e: Event): Promise<void> {
         e.preventDefault();
         let valid = true;
 
@@ -77,12 +85,28 @@ export default class Login {
             }
         }
 
+        const userData: UserLoginData = {
+            email: this.loginInput.value,
+            password: this.passwordInput.value,
+        };
+
         if (!valid) {
-            console.log('not valid', { email: this.loginInput.value, password: this.passwordInput.value });
+            console.log('not valid', userData);
             return;
         }
 
-        console.log('valid', { email: this.loginInput.value, password: this.passwordInput.value });
+        console.log('valid', userData);
+
+        const result = await this.controller.signIn(userData);
+
+        if (result.success) {
+            // TODO: A success message is displayed to the user upon successful account creation
+            console.log('login success');
+            this.navigateTo('/');
+        } else {
+            // TODO: show error on page
+            console.log(result.message);
+        }
     }
 
     private togglePasswordVisibility(e: Event): void {

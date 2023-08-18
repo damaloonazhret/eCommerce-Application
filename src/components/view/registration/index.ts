@@ -2,9 +2,13 @@ import './registration.scss';
 
 import InputGenerator from '../../../helpers/inputGenerator';
 import validation from '../../../services/validation';
+import Controller from '../../controller';
+import { UserRegistrationData } from '../../../types/interfaces';
 import ValidationUtils from '../../../helpers/formValidator';
 
 export default class Registration {
+    private controller: Controller;
+
     private registration!: HTMLElement;
 
     private registrationForm!: HTMLFormElement;
@@ -49,7 +53,11 @@ export default class Registration {
 
     private passwordSwitch!: HTMLButtonElement;
 
-    constructor() {
+    private navigateTo: (url: string) => void;
+
+    constructor(controller: Controller, navigateTo: (url: string) => void) {
+        this.controller = controller;
+        this.navigateTo = navigateTo;
         this.init();
     }
 
@@ -147,7 +155,7 @@ export default class Registration {
         return this.registration;
     }
 
-    private submit(e: Event): void {
+    private async submit(e: Event): Promise<void> {
         e.preventDefault();
         let valid = true;
 
@@ -159,36 +167,38 @@ export default class Registration {
             }
         }
 
-        if (!valid) {
-            console.log('not valid', {
-                email: this.emailInput.value,
-                password: this.passwordInput.value,
-                firstName: this.firstNameInput.value,
-                lastName: this.lastNameInput.value,
-                dateOfBirth: this.dobInput.value,
-                addresses: {
-                    streetName: this.streetInput.value,
-                    city: this.cityInput.value,
-                    postalCode: this.postalCodeInput.value,
-                    country: this.countryInput.value,
-                },
-            });
-            return;
-        }
-
-        console.log('valid', {
+        const userData: UserRegistrationData = {
             email: this.emailInput.value,
             password: this.passwordInput.value,
             firstName: this.firstNameInput.value,
             lastName: this.lastNameInput.value,
             dateOfBirth: this.dobInput.value,
-            addresses: {
-                streetName: this.streetInput.value,
-                city: this.cityInput.value,
-                postalCode: this.postalCodeInput.value,
-                country: this.countryInput.value,
-            },
-        });
+            addresses: [
+                {
+                    streetName: this.streetInput.value,
+                    postalCode: this.postalCodeInput.value,
+                    city: this.cityInput.value,
+                    country: this.countryInput.value,
+                },
+            ],
+        };
+
+        if (!valid) {
+            console.log('not valid', userData);
+            return;
+        }
+
+        console.log('valid', userData);
+
+        const result = await this.controller.signUp(userData);
+
+        if (result.success) {
+            console.log('registration success');
+            this.navigateTo('/');
+        } else {
+            // TODO: show error on page
+            console.log(result.message);
+        }
     }
 
     private togglePasswordVisibility(e: Event): void {

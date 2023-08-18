@@ -1,18 +1,22 @@
-import Routes from '../../types/interfaces';
+import { Route } from '../../types/interfaces';
+import Controller from '../controller';
 import Error404 from '../view/error404';
 import Main from '../view/main';
 
 export default class Router {
     private main!: Main;
 
-    private routes!: Routes[];
+    private controller!: Controller;
 
-    constructor(main: Main) {
+    private routes!: Route[];
+
+    constructor(main: Main, controller: Controller) {
         this.main = main;
         this.bindListeners();
+        this.controller = controller;
     }
 
-    public setRoutes(newRoutes: Routes[]): void {
+    public setRoutes(newRoutes: Route[]): void {
         this.routes = newRoutes;
     }
 
@@ -61,7 +65,7 @@ export default class Router {
             };
         }
 
-        const view = new match.route.View();
+        const view = new match.route.View(this.controller, this.navigateTo.bind(this));
         this.main.setContent(view.getLayout());
     }
 }

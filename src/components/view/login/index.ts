@@ -22,8 +22,11 @@ export default class Login {
 
     private controller: Controller;
 
-    constructor(controller: Controller) {
+    private navigateTo: (url: string) => void;
+
+    constructor(controller: Controller, navigateTo: (url: string) => void) {
         this.controller = controller;
+        this.navigateTo = navigateTo;
         this.init();
     }
 
@@ -89,7 +92,7 @@ export default class Login {
         const result = await this.controller.signIn(this.loginInput.value, this.passwordInput.value);
         console.log(result);
         if (result) {
-            window.location.href = '/';
+            this.navigateTo('/');
         }
     }
 

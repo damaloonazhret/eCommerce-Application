@@ -65,7 +65,7 @@ export default class Router {
             };
         }
 
-        const view = new match.route.View(this.controller);
+        const view = new match.route.View(this.controller, this.navigateTo.bind(this));
         this.main.setContent(view.getLayout());
     }
 }

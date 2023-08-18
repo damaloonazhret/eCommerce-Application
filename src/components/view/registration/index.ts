@@ -51,8 +51,11 @@ export default class Registration {
 
     private passwordSwitch!: HTMLButtonElement;
 
-    constructor(controller: Controller) {
+    private navigateTo: (url: string) => void;
+
+    constructor(controller: Controller, navigateTo: (url: string) => void) {
         this.controller = controller;
+        this.navigateTo = navigateTo;
         this.init();
     }
 
@@ -206,7 +209,7 @@ export default class Registration {
         );
 
         if (result) {
-            window.location.href = '/';
+            this.navigateTo('/');
         }
     }
 

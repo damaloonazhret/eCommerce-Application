@@ -4,6 +4,7 @@ import InputGenerator from '../../../helpers/inputGenerator';
 import validation from '../../../services/validation';
 import Controller from '../../controller';
 import { UserRegistrationData } from '../../../types/interfaces';
+import ValidationUtils from '../../../helpers/formValidator';
 
 export default class Registration {
     private controller: Controller;
@@ -200,37 +201,12 @@ export default class Registration {
         }
     }
 
-    private showError(input: HTMLInputElement, messages: Array<string>): void {
-        const inputParent = input.parentElement as HTMLElement;
-        const errorUl = inputParent.querySelector('.error') as HTMLElement;
-
-        errorUl.innerHTML = '';
-
-        if (messages.length === 0) {
-            input.classList.remove('not-valid');
-            input.classList.add('valid');
-            return;
-        }
-
-        input.classList.remove('valid');
-        input.classList.add('not-valid');
-
-        messages.forEach((message) => {
-            const li = document.createElement('li');
-            li.textContent = message;
-            errorUl.append(li);
-        });
-    }
-
     private togglePasswordVisibility(e: Event): void {
         e.preventDefault();
+        ValidationUtils.togglePasswordVisibility(this.passwordInput, this.passwordSwitch);
+    }
 
-        if (this.passwordInput.type === 'password') {
-            this.passwordInput.type = 'text';
-            this.passwordSwitch.classList.add('hide');
-        } else {
-            this.passwordInput.type = 'password';
-            this.passwordSwitch.classList.remove('hide');
-        }
+    private showError(input: HTMLInputElement, messages: Array<string>): void {
+        ValidationUtils.showError(input, messages);
     }
 }

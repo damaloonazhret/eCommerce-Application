@@ -50,14 +50,20 @@ The application runs on the CommerceTools platform. This platform provides tools
 
 ## Scripts
 
-run ESLint
-`npm run lint`
+Launching the application  
+`npm start`  
 
-run Prettier
-`npm run prettier`
+Сreates an application build directory  
+`npm build`  
 
-run Jest tests
-`npm run test`
+run ESLint  
+`npm run lint`  
+
+run Prettier  
+`npm run prettier`  
+
+run Jest tests  
+`npm run test`  
 
 ## Instructions for running the project locally
 

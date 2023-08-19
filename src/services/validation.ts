@@ -1,6 +1,8 @@
 const isEmpty = (value: string): boolean => value === '';
+const hasOnlyLetters = (value: string): boolean => /^[A-Za-z]+$/.test(value);
 const hasAtSymbol = (value: string): boolean => /@/.test(value);
-const isAllowedEmailCharacters = (value: string): boolean => /^[a-zA-Z0-9.@]+$/.test(value);
+const isAllowedEmailCharacters = (value: string): boolean => /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.@\\-]+$/.test(value);
+const isEmailNameValid = (value: string): boolean => /^(?!.*\.\.)[^.].*[^.]$/.test(value);
 const isAllowedPasswordCharacters = (value: string): boolean => /^[a-zA-Z0-9!@#$%^&*]+$/.test(value);
 const hasLowerCase = (value: string): boolean => /[a-z]/.test(value);
 const hasUppercaseCharacters = (value: string): boolean => /[A-Z]/.test(value);
@@ -9,7 +11,7 @@ const hasLength = (value: string, length: number): boolean => value.length >= le
 const hasNoWhitespace = (value: string): boolean => !/^\s|\s$/.test(value);
 const hasSpecialCharacter = (value: string): boolean => /[!@#$%^&*"'`~]/.test(value);
 const isEmailFormatted = (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-const hasDomainName = (value: string): boolean => /\.[A-Za-z]{2,}$/.test(value);
+const hasDomainName = (value: string): boolean => /\.[A-Za-z]{2,}(?:\.?[A-Za-z]{2,})*$/.test(value);
 const isNameValid = (value: string): boolean => /^[a-zA-Z]+$/.test(value);
 const isPostalCodeValid = (value: string): boolean => /^[a-zA-Z0-9\s]+$/.test(value);
 
@@ -25,10 +27,16 @@ const isAgeValid = (birthDate: string, requiredAge: number, maxAge: number): boo
 
 const checkEmail = (email: string): string[] => {
     const errors = [];
+    const parts = email.split('@');
+    const [username, domain] = parts;
 
     if (isEmpty(email)) {
         errors.push('Email cannot be blank.');
         return errors;
+    }
+
+    if (!isEmailNameValid(username) || !isEmailNameValid(domain)) {
+        errors.push('Email address not valid.');
     }
 
     if (!isEmailFormatted(email)) {
@@ -39,7 +47,7 @@ const checkEmail = (email: string): string[] => {
         errors.push('Password cannot contain whitespace.');
     }
 
-    if (!hasDomainName(email)) {
+    if (!hasDomainName(domain)) {
         errors.push('Email address must contain a domain name.');
     }
 
@@ -48,7 +56,7 @@ const checkEmail = (email: string): string[] => {
     }
 
     if (!isAllowedEmailCharacters(email)) {
-        errors.push('Email address must contain only Latin characters and digits.');
+        errors.push('Email address must contain only Latin characters, digits, and symbols.');
     }
 
     return errors;
@@ -165,8 +173,8 @@ const checkCity = (street: string): string[] => {
         errors.push(`Street must contain at least ${minLength} character.`);
     }
 
-    if (hasSpecialCharacter(street)) {
-        errors.push('Street cannot contain special characters.');
+    if (!hasOnlyLetters(street)) {
+        errors.push('Street must contain only Latin characters.');
     }
 
     return errors;

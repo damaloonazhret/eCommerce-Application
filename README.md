@@ -53,7 +53,7 @@ The application runs on the CommerceTools platform. This platform provides tools
 Launching the application  
 `npm start`  
 
-Сreates an application build directory  
+Creating an application Build Directory  
 `npm build`  
 
 run ESLint  

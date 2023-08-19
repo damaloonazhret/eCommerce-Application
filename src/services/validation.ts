@@ -6,12 +6,13 @@ const hasLowerCase = (value: string): boolean => /[a-z]/.test(value);
 const hasUppercaseCharacters = (value: string): boolean => /[A-Z]/.test(value);
 const hasDigit = (value: string): boolean => /\d/.test(value);
 const hasLength = (value: string, length: number): boolean => value.length >= length;
+const hasExactLength = (value: string, length: number): boolean => value.length === length;
 const hasNoWhitespace = (value: string): boolean => !/^\s|\s$/.test(value);
 const hasSpecialCharacter = (value: string): boolean => /[!@#$%^&*"'`~]/.test(value);
 const isEmailFormatted = (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 const hasDomainName = (value: string): boolean => /\.[A-Za-z]{2,}$/.test(value);
 const isNameValid = (value: string): boolean => /^[a-zA-Z]+$/.test(value);
-const isPostalCodeValid = (value: string): boolean => /^[a-zA-Z0-9\s]+$/.test(value);
+const hasOnlyDigits = (value: string): boolean => /^[0-9]+$/.test(value);
 
 const isAgeValid = (birthDate: string, requiredAge: number, maxAge: number): boolean => {
     const today = new Date();
@@ -185,12 +186,12 @@ const checkPostalCode = (postalCode: string): string[] => {
         errors.push('Postal code cannot contain special characters.');
     }
 
-    if (!hasLength(postalCode, minLength)) {
-        errors.push(`Postal code must contain at least ${minLength} character.`);
+    if (!hasExactLength(postalCode, minLength)) {
+        errors.push(`Postal code must contain ${minLength} digits.`);
     }
 
-    if (!isPostalCodeValid(postalCode)) {
-        errors.push('Postal code is not properly formatted.');
+    if (!hasOnlyDigits(postalCode)) {
+        errors.push('Postal code must contain only digits.');
     }
 
     return errors;

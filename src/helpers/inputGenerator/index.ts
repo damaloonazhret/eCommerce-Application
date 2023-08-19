@@ -45,16 +45,16 @@ export default class InputGenerator {
         select.id = id;
 
         const optionUS = document.createElement('option');
-        optionUS.value = 'US';
-        optionUS.textContent = 'United States';
+        optionUS.value = 'FR';
+        optionUS.textContent = 'France';
         select.appendChild(optionUS);
 
         const optionCA = document.createElement('option');
-        optionCA.value = 'CA';
-        optionCA.textContent = 'Canada';
+        optionCA.value = 'FI';
+        optionCA.textContent = 'Finland';
         select.appendChild(optionCA);
 
-        select.value = 'US';
+        select.value = 'FR';
 
         return select;
     }

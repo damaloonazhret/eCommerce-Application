@@ -110,7 +110,7 @@ export default class Registration {
 
         this.postalCodeDiv = new InputGenerator(
             'text',
-            'Postal code',
+            'Postal code (e.g. 12345)',
             'registration__input-postal',
             'postal'
         ).getInputContainer();

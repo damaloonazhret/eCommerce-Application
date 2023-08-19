@@ -12,7 +12,8 @@ import {
 
 export default class Model {
     public async signIn(UserData: UserLoginData): Promise<LoginResult> {
-        const response = await signIn(UserData);
+        const token = getToken();
+        const response = await signIn((await token).access_token, UserData);
 
         return this.returnFormError(response);
     }

@@ -2,7 +2,8 @@ const isEmpty = (value: string): boolean => value === '';
 const hasOnlyLetters = (value: string): boolean => /^[A-Za-z]+$/.test(value);
 const hasAtSymbol = (value: string): boolean => /@/.test(value);
 const isAllowedEmailCharacters = (value: string): boolean => /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.@\\-]+$/.test(value);
-const isEmailNameValid = (value: string): boolean => /^(?!.*\.\.)[^.].*[^.]$/.test(value);
+const isEmailNameValidWithDots = (value: string): boolean => /^(?!.*\.\.)[^.].*[^.]$/.test(value);
+const isEmailNameValidWithDashes = (value: string): boolean => /^(?!.*--)[^-].*[^-]$/.test(value);
 const isAllowedPasswordCharacters = (value: string): boolean => /^[a-zA-Z0-9!@#$%^&*]+$/.test(value);
 const hasLowerCase = (value: string): boolean => /[a-z]/.test(value);
 const hasUppercaseCharacters = (value: string): boolean => /[A-Z]/.test(value);
@@ -12,6 +13,7 @@ const hasExactLength = (value: string, length: number): boolean => value.length 
 const hasNoWhitespace = (value: string): boolean => !/^\s|\s$/.test(value);
 const hasSpecialCharacter = (value: string): boolean => /[!@#$%^&*"'`~]/.test(value);
 const isEmailFormatted = (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const isAllowedDomainCharacters = (value: string): boolean => /^[A-Za-z0-9-.]+$/.test(value);
 const hasDomainName = (value: string): boolean => /\.[A-Za-z]{2,}(?:\.?[A-Za-z]{2,})*$/.test(value);
 const isNameValid = (value: string): boolean => /^[a-zA-Z]+$/.test(value);
 const hasOnlyDigits = (value: string): boolean => /^[0-9]+$/.test(value);
@@ -36,8 +38,18 @@ const checkEmail = (email: string): string[] => {
         return errors;
     }
 
-    if (!isEmailNameValid(username) || !isEmailNameValid(domain)) {
+    if (!isEmailNameValidWithDots(username)) {
+        if (!(hasExactLength(username, 1) && hasOnlyLetters(username))) {
+            errors.push('Email address not valid.');
+        }
+    }
+
+    if (!isEmailNameValidWithDots(domain) || !isEmailNameValidWithDashes(domain)) {
         errors.push('Email address not valid.');
+    }
+
+    if (!isAllowedDomainCharacters(domain)) {
+        errors.push('Domain part of email address is not valid.');
     }
 
     if (!isEmailFormatted(email)) {

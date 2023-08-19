@@ -67,7 +67,7 @@ export default class Registration {
 
         this.registrationForm = document.createElement('form');
 
-        this.emailDiv = new InputGenerator('email', 'Email', 'registration__input-email', 'email').getInputContainer();
+        this.emailDiv = new InputGenerator('text', 'Email', 'registration__input-email', 'email').getInputContainer();
         this.emailInput = this.emailDiv.querySelector('input') as HTMLInputElement;
 
         this.passwordDiv = new InputGenerator(

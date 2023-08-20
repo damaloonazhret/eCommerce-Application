@@ -5,6 +5,7 @@ import Controller from '../../controller';
 import { UserLoginData } from '../../../types/interfaces';
 import ValidationUtils from '../../../helpers/formValidator';
 import SuccessRegistration from '../../../helpers/successRegistratioin';
+import AlreadyRegister from '../../../helpers/alreadyRegisterGenerator';
 
 export default class Login {
     private login!: HTMLElement;
@@ -26,6 +27,8 @@ export default class Login {
     private controller: Controller;
 
     private errorMessage!: HTMLSpanElement;
+
+    private needRegistration!: HTMLElement;
 
     private popup!: HTMLElement;
 
@@ -63,9 +66,16 @@ export default class Login {
             (e) => this.submit(e)
         );
 
+        this.needRegistration = new AlreadyRegister(
+            'registration',
+            'Not registered yet?',
+            'Registration in here!'
+        ).getContainer();
+
         this.loginForm.append(this.loginDiv);
         this.loginForm.append(this.passwordDiv);
         this.loginForm.append(this.submitButton);
+        this.loginForm.append(this.needRegistration);
 
         this.login.append(this.loginForm);
 

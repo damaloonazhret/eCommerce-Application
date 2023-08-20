@@ -66,13 +66,17 @@ export interface UserRegistrationData extends UserLoginData {
             city: string;
             country: string;
         },
-        // {
-        //     streetNameBilling: string;
-        //     postalCodeBilling: string;
-        //     cityBilling: string;
-        //     countryBilling: string;
-        // },
+        {
+            streetName: string;
+            postalCode: string;
+            city: string;
+            country: string;
+        },
     ];
+    shippingAddress: number[];
+    defaultShippingAddressId?: string;
+    defaultBillingAddressId?: string;
+    billingAddress: number[];
 }
 
 export interface LoginResult {

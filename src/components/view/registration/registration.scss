@@ -51,13 +51,22 @@
         }
     }
 
+    &__already {
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        justify-content: space-around;
+        &_link {
+            color: #0000f1;
+        }
+    }
+
     &__title {
         display: flex;
         justify-content: center;
         padding-bottom: 10px;
 
         h3 {
-            width: 25%;
+            width: 50%;
             text-align: center;
         }
 

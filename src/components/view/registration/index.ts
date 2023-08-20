@@ -7,8 +7,17 @@ import { UserRegistrationData } from '../../../types/interfaces';
 import ValidationUtils from '../../../helpers/formValidator';
 import ButtonGenerator from '../../../helpers/buttonSwitchGenerator';
 import SuccessRegistration from '../../../helpers/successRegistratioin';
+import AlreadyRegister from '../../../helpers/alreadyRegisterGenerator';
 
 export default class Registration {
+    private defaultShippingAddressValue!: string;
+
+    private defaultBillingAddressValue!: string;
+
+    private shippingAddressValue!: number;
+
+    private billingAddressValue!: number;
+
     private controller: Controller;
 
     private registration!: HTMLElement;
@@ -96,6 +105,8 @@ export default class Registration {
     private passwordSwitch!: HTMLButtonElement;
 
     private errorMessage!: HTMLSpanElement;
+
+    private alreadyRegister!: HTMLElement;
 
     private popup!: HTMLElement;
 
@@ -249,6 +260,12 @@ export default class Registration {
             (e) => this.submit(e)
         );
 
+        this.alreadyRegister = new AlreadyRegister(
+            'registration',
+            'Already registered?',
+            'Sign in here!'
+        ).getContainer();
+
         this.registrationForm.append(this.emailDiv);
         this.registrationForm.append(this.passwordDiv);
         this.registrationForm.append(this.firstNameDiv);
@@ -274,6 +291,7 @@ export default class Registration {
         this.registrationForm.append(this.billingAddressContainer);
 
         this.registrationForm.append(this.submitButton);
+        this.registrationForm.append(this.alreadyRegister);
 
         this.registration.append(this.registrationForm);
 
@@ -286,19 +304,25 @@ export default class Registration {
         this.buttonSwitcherShippingBtn.addEventListener('click', (e) => {
             e.preventDefault();
             this.buttonSwitcherShippingBtn.classList.toggle('active');
+            this.shippingAddressValue = 0;
         });
         this.buttonSwitcherBillingBtn.addEventListener('click', (e) => {
             e.preventDefault();
             this.buttonSwitcherBillingBtn.classList.toggle('active');
+            this.billingAddressValue = 1;
         });
         let visibility = true;
         this.buttonSwitcherShippingCheckbox.addEventListener('click', () => {
             if (visibility) {
                 this.registrationForm.removeChild(this.billingAddressContainer);
                 visibility = false;
+                this.defaultBillingAddressValue = '1';
+                this.defaultShippingAddressValue = '0';
             } else {
                 this.registrationForm.insertBefore(this.billingAddressContainer, this.submitButton);
                 visibility = true;
+                this.defaultBillingAddressValue = '';
+                this.defaultShippingAddressValue = '';
             }
         });
     }
@@ -332,13 +356,17 @@ export default class Registration {
                     city: this.cityInput.value,
                     country: this.countryInput.value,
                 },
-                // {
-                //     streetNameBilling: this.streetInput.value,
-                //     postalCodeBilling: this.postalCodeInput.value,
-                //     cityBilling: this.cityInput.value,
-                //     countryBilling: this.countryInput.value,
-                // },
+                {
+                    streetName: this.streetInput.value,
+                    postalCode: this.postalCodeInput.value,
+                    city: this.cityInput.value,
+                    country: this.countryInput.value,
+                },
             ],
+            shippingAddress: [this.shippingAddressValue],
+            defaultShippingAddressId: this.defaultShippingAddressValue,
+            defaultBillingAddressId: this.defaultBillingAddressValue,
+            billingAddress: [this.billingAddressValue],
         };
 
         if (!valid) {

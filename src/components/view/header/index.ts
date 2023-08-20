@@ -23,7 +23,8 @@ export default class Header {
         this.ul = document.createElement('ul');
         this.ul.classList.add('header__nav-list');
         this.ul.innerHTML = `
-                            <li><a class="header__nav-link" href="/" data-route>Shop</a></li>
+                            <li><a class="header__nav-link" href="/" data-route>Home</a></li>
+                            <li><a class="header__nav-link" href="/shop" data-route>Shop</a></li>
                             <li><a class="header__nav-link" href="/about" data-route>About</a></li>
                             <li><a class="header__nav-link" href="/contact" data-route>Contact</a></li>
                             <li><a class="header__nav-link" href="/registration" data-route>Sign Up</a></li>

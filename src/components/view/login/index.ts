@@ -4,6 +4,7 @@ import validation from '../../../services/validation';
 import Controller from '../../controller';
 import { UserLoginData } from '../../../types/interfaces';
 import ValidationUtils from '../../../helpers/formValidator';
+import SuccessRegistration from '../../../helpers/successRegistratioin';
 
 export default class Login {
     private login!: HTMLElement;
@@ -24,6 +25,10 @@ export default class Login {
 
     private controller: Controller;
 
+    private errorMessage!: HTMLSpanElement;
+
+    private popup!: HTMLElement;
+
     private navigateTo: (url: string) => void;
 
     constructor(controller: Controller, navigateTo: (url: string) => void) {
@@ -35,6 +40,9 @@ export default class Login {
     private init(): void {
         this.login = document.createElement('section');
         this.login.classList.add('login');
+
+        this.errorMessage = document.createElement('span');
+        this.errorMessage.classList.add('registration__error');
 
         this.loginForm = document.createElement('form');
 
@@ -100,11 +108,15 @@ export default class Login {
         const result = await this.controller.signIn(userData);
 
         if (result.success) {
-            // TODO: A success message is displayed to the user upon successful account creation
-            console.log('login success');
-            this.navigateTo('/');
+            this.popup = new SuccessRegistration('popup', 'Success', 'Your login is success').getInputContainer();
+            document.body.append(this.popup);
+            setTimeout(() => {
+                document.body.removeChild(this.popup);
+                this.navigateTo('/');
+            }, 1400);
         } else {
-            // TODO: show error on page
+            this.errorMessage.innerText = result.message;
+            this.loginForm.insertBefore(this.errorMessage, this.submitButton);
             console.log(result.message);
         }
     }

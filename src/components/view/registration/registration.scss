@@ -4,7 +4,7 @@
     align-items: flex-start;
     width: 50%;
     min-width: 280px;
-    max-width: 400px;
+    max-width: 600px;
     padding: 25px 30px;
     border-radius: 10px;
     background-color: #fff;
@@ -49,6 +49,97 @@
                 border-color: #c62222;
             }
         }
+    }
+
+    &__title {
+        display: flex;
+        justify-content: center;
+        padding-bottom: 10px;
+
+        h3 {
+            width: 25%;
+            text-align: center;
+        }
+
+        &::after {
+            content: '';
+            width: 50%;
+            border-block-start: 1px solid transparent;
+            border-block-start-color: inherit;
+            border-block-end: 0;
+            transform: translateY(50%);
+        }
+
+        &::before {
+            content: '';
+            width: 50%;
+            border-block-start: 1px solid transparent;
+            border-block-start-color: inherit;
+            border-block-end: 0;
+            transform: translateY(50%);
+        }
+    }
+
+    &__button-switcher {
+        display: grid;
+        grid-template-columns: repeat(2, 49%);
+        justify-content: space-between;
+
+        > div {
+            display: grid;
+            align-items: center;
+            gap: 5px;
+            grid-template-columns: repeat(2, auto);
+        }
+
+        &_btn {
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+
+            button {
+                width: 60px;
+                height: 30px;
+                transition: 0.4s ease-in-out;
+                border-radius: 3px;
+                border: none;
+                background-color: #c6c6c6;
+                cursor: pointer;
+
+                &.active {
+                    background-color: #4c46f5;
+                    color: whitesmoke;
+                }
+            }
+
+            span {
+                text-align: center;
+                justify-self: start;
+            }
+        }
+
+        &_checkbox {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+
+            input {
+                width: 60px;
+                height: 30px;
+            }
+
+            span {
+                text-align: center;
+            }
+        }
+    }
+
+    &__address-container_shipping,
+    &__address-container_billing {
+        display: grid;
+        gap: 10px;
+    }
+
+    &__error {
+        color: #ff4848;
     }
 
     &__input-password {

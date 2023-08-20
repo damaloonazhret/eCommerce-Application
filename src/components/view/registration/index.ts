@@ -5,6 +5,8 @@ import validation from '../../../services/validation';
 import Controller from '../../controller';
 import { UserRegistrationData } from '../../../types/interfaces';
 import ValidationUtils from '../../../helpers/formValidator';
+import ButtonGenerator from '../../../helpers/buttonSwitchGenerator';
+import SuccessRegistration from '../../../helpers/successRegistratioin';
 
 export default class Registration {
     private controller: Controller;
@@ -33,6 +35,30 @@ export default class Registration {
 
     private dobInput!: HTMLInputElement;
 
+    private shippingAddressContainer!: HTMLElement;
+
+    private billingAddressContainer!: HTMLElement;
+
+    private shippingHead!: HTMLElement;
+
+    private billingHead!: HTMLElement;
+
+    private billingHeadSpan!: HTMLElement;
+
+    private shippingHeadSpan!: HTMLElement;
+
+    private buttonGenerator!: ButtonGenerator;
+
+    private buttonSwitcherShipping!: HTMLElement;
+
+    private buttonSwitcherShippingBtn!: HTMLElement;
+
+    private buttonSwitcherShippingCheckbox!: HTMLElement;
+
+    private buttonSwitcherBilling!: HTMLElement;
+
+    private buttonSwitcherBillingBtn!: HTMLElement;
+
     private streetDiv!: HTMLElement;
 
     private streetInput!: HTMLInputElement;
@@ -49,9 +75,29 @@ export default class Registration {
 
     private countryInput!: HTMLSelectElement;
 
+    private streetDivBilling!: HTMLElement;
+
+    private streetInputBilling!: HTMLInputElement;
+
+    private cityDivBilling!: HTMLElement;
+
+    private cityInputBilling!: HTMLInputElement;
+
+    private postalCodeDivBilling!: HTMLElement;
+
+    private postalCodeInputBilling!: HTMLInputElement;
+
+    private countryDivBilling!: HTMLElement;
+
+    private countryInputBilling!: HTMLSelectElement;
+
     private submitButton!: HTMLButtonElement;
 
     private passwordSwitch!: HTMLButtonElement;
+
+    private errorMessage!: HTMLSpanElement;
+
+    private popup!: HTMLElement;
 
     private navigateTo: (url: string) => void;
 
@@ -64,6 +110,25 @@ export default class Registration {
     private init(): void {
         this.registration = document.createElement('section');
         this.registration.classList.add('registration');
+
+        this.shippingAddressContainer = document.createElement('div');
+        this.shippingAddressContainer.classList.add('registration__address-container_shipping');
+
+        this.billingAddressContainer = document.createElement('div');
+        this.billingAddressContainer.classList.add('registration__address-container_billing');
+
+        this.shippingHead = document.createElement('div');
+        this.shippingHeadSpan = document.createElement('h3');
+        this.shippingHead.classList.add('registration__title');
+        this.shippingHeadSpan.innerText = 'Shipping';
+
+        this.billingHead = document.createElement('div');
+        this.billingHeadSpan = document.createElement('h3');
+        this.billingHead.classList.add('registration__title');
+        this.billingHeadSpan.innerText = 'Billing';
+
+        this.errorMessage = document.createElement('span');
+        this.errorMessage.classList.add('registration__error');
 
         this.registrationForm = document.createElement('form');
 
@@ -124,6 +189,60 @@ export default class Registration {
         ).getInputContainer();
         this.countryInput = this.countryDiv.querySelector('select') as HTMLSelectElement;
 
+        this.buttonGenerator = new ButtonGenerator();
+
+        this.buttonSwitcherShipping = this.buttonGenerator.createButtonWithCheckbox(
+            'registration__button-switcher',
+            'Set as default address',
+            'Also use as billing address'
+        );
+
+        this.buttonSwitcherBilling = this.buttonGenerator.createButtonWithCheckbox(
+            'registration__button-switcher',
+            'Set as default address',
+            'none'
+        );
+
+        this.buttonSwitcherShippingBtn = this.buttonSwitcherShipping.querySelector('div button') as HTMLButtonElement;
+
+        this.buttonSwitcherShippingCheckbox = this.buttonSwitcherShipping.querySelector(
+            'div input'
+        ) as HTMLInputElement;
+
+        this.buttonSwitcherBillingBtn = this.buttonSwitcherBilling.querySelector('div button') as HTMLButtonElement;
+
+        this.streetDivBilling = new InputGenerator(
+            'text',
+            'Street',
+            'registration__input-street-billing',
+            'street'
+        ).getInputContainer();
+        this.streetInputBilling = this.streetDivBilling.querySelector('input') as HTMLInputElement;
+
+        this.cityDivBilling = new InputGenerator(
+            'text',
+            'City',
+            'registration__input-city-billing',
+            'city'
+        ).getInputContainer();
+        this.cityInputBilling = this.cityDivBilling.querySelector('input') as HTMLInputElement;
+
+        this.postalCodeDivBilling = new InputGenerator(
+            'text',
+            'Postal code',
+            'registration__input-postal-billing',
+            'postal'
+        ).getInputContainer();
+        this.postalCodeInputBilling = this.postalCodeDivBilling.querySelector('input') as HTMLInputElement;
+
+        this.countryDivBilling = new InputGenerator(
+            'select',
+            'Country',
+            'registration__input-country-billing',
+            'country'
+        ).getInputContainer();
+        this.countryInputBilling = this.countryDivBilling.querySelector('select') as HTMLSelectElement;
+
         this.submitButton = new InputGenerator('button', 'Button Text', 'reg__button', 'reg-btn').getButton(
             'registration__button',
             'REGISTRATION',
@@ -135,10 +254,25 @@ export default class Registration {
         this.registrationForm.append(this.firstNameDiv);
         this.registrationForm.append(this.lastNameDiv);
         this.registrationForm.append(this.dobDiv);
-        this.registrationForm.append(this.streetDiv);
-        this.registrationForm.append(this.cityDiv);
-        this.registrationForm.append(this.postalCodeDiv);
-        this.registrationForm.append(this.countryDiv);
+
+        this.shippingHead.append(this.shippingHeadSpan);
+        this.shippingAddressContainer.append(this.shippingHead);
+        this.shippingAddressContainer.append(this.streetDiv);
+        this.shippingAddressContainer.append(this.cityDiv);
+        this.shippingAddressContainer.append(this.postalCodeDiv);
+        this.shippingAddressContainer.append(this.countryDiv);
+        this.shippingAddressContainer.appendChild(this.buttonSwitcherShipping);
+        this.billingHead.append(this.billingHeadSpan);
+        this.billingAddressContainer.append(this.billingHead);
+        this.billingAddressContainer.append(this.streetDivBilling);
+        this.billingAddressContainer.append(this.cityDivBilling);
+        this.billingAddressContainer.append(this.postalCodeDivBilling);
+        this.billingAddressContainer.append(this.countryDivBilling);
+        this.billingAddressContainer.append(this.buttonSwitcherBilling);
+
+        this.registrationForm.append(this.shippingAddressContainer);
+        this.registrationForm.append(this.billingAddressContainer);
+
         this.registrationForm.append(this.submitButton);
 
         this.registration.append(this.registrationForm);
@@ -149,6 +283,24 @@ export default class Registration {
 
         this.passwordSwitch = this.passwordDiv.querySelector('.password-switch') as HTMLButtonElement;
         this.passwordSwitch.addEventListener('click', (e) => this.togglePasswordVisibility(e));
+        this.buttonSwitcherShippingBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.buttonSwitcherShippingBtn.classList.toggle('active');
+        });
+        this.buttonSwitcherBillingBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.buttonSwitcherBillingBtn.classList.toggle('active');
+        });
+        let visibility = true;
+        this.buttonSwitcherShippingCheckbox.addEventListener('click', () => {
+            if (visibility) {
+                this.registrationForm.removeChild(this.billingAddressContainer);
+                visibility = false;
+            } else {
+                this.registrationForm.insertBefore(this.billingAddressContainer, this.submitButton);
+                visibility = true;
+            }
+        });
     }
 
     public getLayout(): HTMLElement {
@@ -180,6 +332,12 @@ export default class Registration {
                     city: this.cityInput.value,
                     country: this.countryInput.value,
                 },
+                // {
+                //     streetNameBilling: this.streetInput.value,
+                //     postalCodeBilling: this.postalCodeInput.value,
+                //     cityBilling: this.cityInput.value,
+                //     countryBilling: this.countryInput.value,
+                // },
             ],
         };
 
@@ -193,10 +351,19 @@ export default class Registration {
         const result = await this.controller.signUp(userData);
 
         if (result.success) {
-            console.log('registration success');
-            this.navigateTo('/');
+            this.popup = new SuccessRegistration(
+                'popup',
+                'success',
+                'Your registration is success'
+            ).getInputContainer();
+            document.body.append(this.popup);
+            setTimeout(() => {
+                document.body.removeChild(this.popup);
+                this.navigateTo('/');
+            }, 1400);
         } else {
-            // TODO: show error on page
+            this.errorMessage.innerText = result.message;
+            this.registrationForm.insertBefore(this.errorMessage, this.submitButton);
             console.log(result.message);
         }
     }

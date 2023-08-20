@@ -66,6 +66,12 @@ export interface UserRegistrationData extends UserLoginData {
             city: string;
             country: string;
         },
+        // {
+        //     streetNameBilling: string;
+        //     postalCodeBilling: string;
+        //     cityBilling: string;
+        //     countryBilling: string;
+        // },
     ];
 }
 

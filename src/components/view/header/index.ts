@@ -40,6 +40,9 @@ export default class Header {
             if (target.classList.contains('header__nav-link')) {
                 this.setActiveLink(new URL(target.href).pathname);
             }
+            if (target.getAttribute('href') === '/login' && localStorage.token !== undefined) {
+                this.setActiveLink('/');
+            }
         });
     }
 

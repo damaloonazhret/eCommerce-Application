@@ -30,6 +30,10 @@ export default class Router {
                     e.preventDefault();
                     this.navigateTo(target.href);
                 }
+                if (target.getAttribute('href') === '/login' && localStorage.token !== undefined) {
+                    e.preventDefault();
+                    this.navigateTo('/');
+                }
             });
 
             this.router();

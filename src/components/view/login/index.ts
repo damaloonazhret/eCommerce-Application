@@ -73,6 +73,11 @@ export default class Login {
         return this.login;
     }
 
+    public addBtnLogout(): void {
+        const logout = document.querySelector('.logout') as HTMLElement;
+        logout.style.display = 'block';
+    }
+
     private async submit(e: Event): Promise<void> {
         e.preventDefault();
         let valid = true;
@@ -101,8 +106,11 @@ export default class Login {
 
         if (result.success) {
             // TODO: A success message is displayed to the user upon successful account creation
+
             console.log('login success');
+            localStorage.setItem('token', '1234qwer');
             this.navigateTo('/');
+            this.addBtnLogout();
         } else {
             // TODO: show error on page
             console.log(result.message);

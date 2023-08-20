@@ -55,6 +55,7 @@
         display: grid;
         grid-template-columns: repeat(2, auto);
         justify-content: space-around;
+
         &_link {
             color: #0000f1;
         }
@@ -66,7 +67,7 @@
         padding-bottom: 10px;
 
         h3 {
-            width: 50%;
+            width: 60%;
             text-align: center;
         }
 
@@ -89,7 +90,8 @@
         }
     }
 
-    &__button-switcher {
+    &__button-switcher,
+    &__button-switcher_billing {
         display: grid;
         grid-template-columns: repeat(2, 49%);
         justify-content: space-between;
@@ -137,6 +139,27 @@
 
             span {
                 text-align: center;
+            }
+        }
+    }
+
+    &__button-switcher_billing {
+        grid-template-columns: auto;
+
+        span {
+            margin-left: 1vw;
+        }
+    }
+
+    @media (max-width: 700px) {
+        &__button-switcher {
+            grid-template-columns: auto;
+            grid-template-rows: repeat(2, auto);
+            gap: 15px;
+
+            &_checkbox {
+                grid-column: 1 / 2;
+                grid-row: 2 / 3;
             }
         }
     }

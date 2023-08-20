@@ -209,7 +209,7 @@ export default class Registration {
         );
 
         this.buttonSwitcherBilling = this.buttonGenerator.createButtonWithCheckbox(
-            'registration__button-switcher',
+            'registration__button-switcher_billing',
             'Set as default address',
             'none'
         );

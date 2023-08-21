@@ -330,7 +330,7 @@ export default class Registration {
                 if (!activeShipping) {
                     this.defaultShippingAddressValue = 0;
                     if (this.billingAddressValue === 0) {
-                        this.defaultBillingAddressValue = 1;
+                        this.defaultBillingAddressValue = 0;
                     }
                     activeShipping = true;
                 } else if (activeShipping) {

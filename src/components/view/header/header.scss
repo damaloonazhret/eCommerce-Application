@@ -32,16 +32,8 @@
     }
 }
 
-/*for logout*/
-.logout {
+/*logout*/
+.header__logout {
     display: none;
-    position: absolute;
-    right: 10px;
-    top: 35px;
-    color: #ffffff;
     cursor: pointer;
-
-    @media (max-width: 540px) {
-        flex-direction: column;
-    }
 }

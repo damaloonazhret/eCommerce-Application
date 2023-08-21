@@ -73,9 +73,26 @@ export default class Login {
         return this.login;
     }
 
-    public addBtnLogout(): void {
-        const logout = document.querySelector('.logout') as HTMLElement;
-        logout.style.display = 'block';
+    public delItemMenuRegAndLogin(): void {
+        const headerNavList = document.querySelector('.header__nav-list') as HTMLElement;
+        Array.from(headerNavList.children).forEach((el) => {
+            const itemMenu = el as HTMLElement;
+            if (itemMenu.classList.contains('header__sign-up') || itemMenu.classList.contains('header__login')) {
+                itemMenu.style.display = 'none';
+                Array.from(itemMenu.children).forEach((el2) => {
+                    el2.classList.remove('active');
+                });
+            }
+            if (itemMenu.classList.contains('header__home')) {
+                Array.from(itemMenu.children).forEach((el2) => {
+                    el2.classList.add('active');
+                });
+            }
+
+            if (itemMenu.classList.contains('header__logout')) {
+                itemMenu.style.display = 'block';
+            }
+        });
     }
 
     private async submit(e: Event): Promise<void> {
@@ -108,9 +125,9 @@ export default class Login {
             // TODO: A success message is displayed to the user upon successful account creation
 
             console.log('login success');
-            localStorage.setItem('token', '1234qwer');
+            localStorage.setItem('isTokenUser', 'true');
+            this.delItemMenuRegAndLogin();
             this.navigateTo('/');
-            this.addBtnLogout();
         } else {
             // TODO: show error on page
             console.log(result.message);

@@ -7,12 +7,88 @@ export default class Home {
         this.init();
     }
 
+    private abc(): void {
+        if (document.querySelector('.home__logout')) {
+            const btnHomeMenuLogout = document.querySelector('.home__logout') as HTMLElement;
+            btnHomeMenuLogout.addEventListener('click', () => {
+                localStorage.setItem('isTokenUser', 'false');
+                const headerNavList = document.querySelector('.header__nav-list') as HTMLElement;
+                Array.from(headerNavList.children).forEach((el) => {
+                    const itemMenu = el as HTMLElement;
+                    if (
+                        itemMenu.classList.contains('header__sign-up') ||
+                        itemMenu.classList.contains('header__login')
+                    ) {
+                        itemMenu.style.display = 'block';
+                    }
+                    if (itemMenu.classList.contains('header__logout')) {
+                        itemMenu.style.display = 'none';
+                    }
+                });
+                const homeMenu = document.querySelector('.home__menu') as HTMLElement;
+                homeMenu.innerHTML = `<div class="home__menu__item">
+                                      <a data-route href="/shop">Shop</a>
+                                    </div>
+                                    <div class="home__menu__item">
+                                      <a data-route href="/about">About</a>
+                                    </div>
+                                    <div class="home__menu__item">
+                                      <a data-route href="/contact">Contact</a>
+                                    </div>
+                                    <div class="home__menu__item">
+                                      <a data-route href="/login">Login</a>
+                                    </div>
+                                    <div class="home__menu__item">
+                                      <a data-route href="/registration">Sign up</a>
+                                    </div>`;
+            });
+        }
+    }
+
+    private initLogin(): void {
+        document.querySelector('.header__logout')?.addEventListener('click', () => {
+            if (document.querySelector('.home__menu') !== null) {
+                const homeMenu = document.querySelector('.home__menu') as HTMLElement;
+                homeMenu.innerHTML = `<div class="home__menu__item">
+                                    <a data-route href="/shop">Shop</a>
+                                  </div>
+                                  <div class="home__menu__item">
+                                    <a data-route href="/about">About</a>
+                                  </div>
+                                  <div class="home__menu__item">
+                                    <a data-route href="/contact">Contact</a>
+                                  </div>
+                                  <div class="home__menu__item">
+                                    <a data-route href="/login">Login</a>
+                                  </div>
+                                  <div class="home__menu__item">
+                                    <a data-route href="/registration">Sign up</a>
+                                  </div>`;
+            }
+        });
+    }
+
     private init(): void {
         this.home = document.createElement('section');
         this.home.classList.add('home');
         const menu = document.createElement('div');
         menu.classList.add('home__menu');
-        menu.innerHTML = `<div class="home__menu__item">
+        if (localStorage.isTokenUser === 'true') {
+            menu.innerHTML = `<div class="home__menu__item">
+                            <a data-route href="/shop">Shop</a>
+                          </div>
+                          <div class="home__menu__item">
+                            <a data-route href="/about">About</a>
+                          </div>
+                          <div class="home__menu__item">
+                            <a data-route href="/contact">Contact</a>
+                          </div>
+                          <div class="home__logout home__menu__item">
+                            <span>Logout</span>
+                           </div>
+                          `;
+        } else {
+            menu.innerHTML = `<div class="home__menu__item">
                             <a data-route href="/shop">Shop</a>
                           </div>
                           <div class="home__menu__item">
@@ -28,7 +104,11 @@ export default class Home {
                             <a data-route href="/registration">Sign up</a>
                           </div>
                           `;
+        }
         this.home.append(menu);
+        this.initLogin();
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        setTimeout(this.abc, 0);
     }
 
     public getLayout(): HTMLElement {

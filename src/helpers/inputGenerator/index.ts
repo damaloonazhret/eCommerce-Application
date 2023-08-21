@@ -18,6 +18,7 @@ export default class InputGenerator {
             const passwordSwitchSpan = document.createElement('button');
             // passwordSwitchSpan.setAttribute('disabled', '');
             passwordSwitchSpan.classList.add(`${id}-switch`);
+            // this.inputContainer.setAttribute('autocomplete', 'current-password');
             this.inputContainer.appendChild(passwordSwitchSpan);
         }
 
@@ -34,15 +35,21 @@ export default class InputGenerator {
 
     private createInput(type: string, placeholder: string, id: string): HTMLInputElement {
         const input = document.createElement('input');
+        input.id = id;
+        if (type === 'password') {
+            input.setAttribute('autocomplete', 'current-password');
+        }
+        if (type === 'email') {
+            input.setAttribute('autocomplete', 'username');
+        }
         input.type = type;
         input.placeholder = placeholder;
-        input.id = id;
         return input;
     }
 
     private createSelect(id: string): HTMLSelectElement {
         const select = document.createElement('select');
-        select.id = id;
+        select.classList.add(id);
 
         const optionUS = document.createElement('option');
         optionUS.value = 'US';
@@ -69,7 +76,6 @@ export default class InputGenerator {
         button.textContent = text;
         button.classList.add(`${id}`);
         button.addEventListener('click', clickHandler);
-        // button.setAttribute('disabled', '');
         return button;
     }
 }

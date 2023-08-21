@@ -14,9 +14,9 @@ export default class Registration {
 
     private defaultBillingAddressValue!: string;
 
-    private shippingAddressValue!: number;
+    private shippingAddressValue: number = 0;
 
-    private billingAddressValue!: number;
+    private billingAddressValue: number = 1;
 
     private controller: Controller;
 
@@ -177,18 +177,23 @@ export default class Registration {
             'text',
             'Street',
             'registration__input-street',
-            'street'
+            'street-shipping'
         ).getInputContainer();
         this.streetInput = this.streetDiv.querySelector('input') as HTMLInputElement;
 
-        this.cityDiv = new InputGenerator('text', 'City', 'registration__input-city', 'city').getInputContainer();
+        this.cityDiv = new InputGenerator(
+            'text',
+            'City',
+            'registration__input-city',
+            'city-shipping'
+        ).getInputContainer();
         this.cityInput = this.cityDiv.querySelector('input') as HTMLInputElement;
 
         this.postalCodeDiv = new InputGenerator(
             'text',
             'Postal code',
             'registration__input-postal',
-            'postal'
+            'postal-shipping'
         ).getInputContainer();
         this.postalCodeInput = this.postalCodeDiv.querySelector('input') as HTMLInputElement;
 
@@ -226,7 +231,7 @@ export default class Registration {
             'text',
             'Street',
             'registration__input-street-billing',
-            'street'
+            'street-billing'
         ).getInputContainer();
         this.streetInputBilling = this.streetDivBilling.querySelector('input') as HTMLInputElement;
 
@@ -234,7 +239,7 @@ export default class Registration {
             'text',
             'City',
             'registration__input-city-billing',
-            'city'
+            'city-billing'
         ).getInputContainer();
         this.cityInputBilling = this.cityDivBilling.querySelector('input') as HTMLInputElement;
 
@@ -242,7 +247,7 @@ export default class Registration {
             'text',
             'Postal code',
             'registration__input-postal-billing',
-            'postal'
+            'postal-billing'
         ).getInputContainer();
         this.postalCodeInputBilling = this.postalCodeDivBilling.querySelector('input') as HTMLInputElement;
 
@@ -304,25 +309,28 @@ export default class Registration {
         this.buttonSwitcherShippingBtn.addEventListener('click', (e) => {
             e.preventDefault();
             this.buttonSwitcherShippingBtn.classList.toggle('active');
-            this.shippingAddressValue = 0;
+            this.defaultShippingAddressValue = '0';
+            if (this.billingAddressValue === 0) {
+                this.defaultBillingAddressValue = '1';
+            }
         });
         this.buttonSwitcherBillingBtn.addEventListener('click', (e) => {
             e.preventDefault();
             this.buttonSwitcherBillingBtn.classList.toggle('active');
-            this.billingAddressValue = 1;
+            this.defaultBillingAddressValue = '1';
         });
         let visibility = true;
         this.buttonSwitcherShippingCheckbox.addEventListener('click', () => {
             if (visibility) {
                 this.registrationForm.removeChild(this.billingAddressContainer);
                 visibility = false;
-                this.defaultBillingAddressValue = '1';
-                this.defaultShippingAddressValue = '0';
+                this.shippingAddressValue = 0;
+                this.billingAddressValue = 0;
             } else {
                 this.registrationForm.insertBefore(this.billingAddressContainer, this.submitButton);
                 visibility = true;
-                this.defaultBillingAddressValue = '';
-                this.defaultShippingAddressValue = '';
+                this.shippingAddressValue = 0;
+                this.billingAddressValue = 1;
             }
         });
     }

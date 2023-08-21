@@ -17,8 +17,10 @@ export default class AlreadyRegister {
         const link = document.createElement('a');
         if (text === 'Not registered yet?') {
             link.setAttribute('href', '/registration');
+            link.setAttribute('data-route', '');
         } else {
             link.setAttribute('href', '/login');
+            link.setAttribute('data-route', '');
         }
         link.innerText = linkText;
         link.classList.add(`${className}__already_link`);

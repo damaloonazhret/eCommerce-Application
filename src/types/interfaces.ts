@@ -74,7 +74,17 @@ export interface UserRegistrationData extends UserLoginData {
             city: string;
             country: string;
         },
+        {
+            streetName: string;
+            postalCode: string;
+            city: string;
+            country: string;
+        },
     ];
+    shippingAddresses: number[];
+    defaultShippingAddress?: number;
+    defaultBillingAddress?: number;
+    billingAddresses: number[];
 }
 
 export interface LoginResult {

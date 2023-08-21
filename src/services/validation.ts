@@ -235,13 +235,22 @@ const validation = (
         case 'dob':
             errorHandler(input, checkAge(input.value));
             return checkAge(input.value);
-        case 'street':
+        case 'street-shipping':
             errorHandler(input, checkStreet(input.value));
             return checkStreet(input.value);
-        case 'city':
+        case 'street-billing':
+            errorHandler(input, checkStreet(input.value));
+            return checkStreet(input.value);
+        case 'city-billing':
             errorHandler(input, checkCity(input.value));
             return checkCity(input.value);
-        case 'postal':
+        case 'city-shipping':
+            errorHandler(input, checkCity(input.value));
+            return checkCity(input.value);
+        case 'postal-shipping':
+            errorHandler(input, checkPostalCode(input.value));
+            return checkPostalCode(input.value);
+        case 'postal-billing':
             errorHandler(input, checkPostalCode(input.value));
             return checkPostalCode(input.value);
         default:

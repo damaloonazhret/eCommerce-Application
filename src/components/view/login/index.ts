@@ -4,6 +4,8 @@ import validation from '../../../services/validation';
 import Controller from '../../controller';
 import { UserLoginData } from '../../../types/interfaces';
 import ValidationUtils from '../../../helpers/formValidator';
+import SuccessRegistration from '../../../helpers/successRegistratioin';
+import AlreadyRegister from '../../../helpers/alreadyRegisterGenerator';
 
 export default class Login {
     private login!: HTMLElement;
@@ -24,6 +26,12 @@ export default class Login {
 
     private controller: Controller;
 
+    private errorMessage!: HTMLSpanElement;
+
+    private needRegistration!: HTMLElement;
+
+    private popup!: HTMLElement;
+
     private navigateTo: (url: string) => void;
 
     constructor(controller: Controller, navigateTo: (url: string) => void) {
@@ -39,7 +47,10 @@ export default class Login {
             this.login = document.createElement('section');
             this.login.classList.add('login');
 
-            this.loginForm = document.createElement('form');
+        this.errorMessage = document.createElement('span');
+        this.errorMessage.classList.add('registration__error');
+
+        this.loginForm = document.createElement('form');
 
             this.loginDiv = new InputGenerator('text', 'Enter Email', 'login__email', 'email').getInputContainer();
             this.loginInput = this.loginDiv.querySelector('input') as HTMLInputElement;
@@ -58,9 +69,16 @@ export default class Login {
                 (e) => this.submit(e)
             );
 
-            this.loginForm.append(this.loginDiv);
-            this.loginForm.append(this.passwordDiv);
-            this.loginForm.append(this.submitButton);
+        this.needRegistration = new AlreadyRegister(
+            'registration',
+            'Not registered yet?',
+            'Registration in here!'
+        ).getContainer();
+
+        this.loginForm.append(this.loginDiv);
+        this.loginForm.append(this.passwordDiv);
+        this.loginForm.append(this.submitButton);
+        this.loginForm.append(this.needRegistration);
 
             this.login.append(this.loginForm);
 
@@ -126,14 +144,18 @@ export default class Login {
         const result = await this.controller.signIn(userData);
 
         if (result.success) {
-            // TODO: A success message is displayed to the user upon successful account creation
+            this.popup = new SuccessRegistration('popup', 'Success', 'Your login is success').getInputContainer();
+            document.body.append(this.popup);
+            setTimeout(() => {
+                document.body.removeChild(this.popup);
+                localStorage.setItem('isTokenUser', 'true');
+                this.delItemMenuRegAndLogin();
+                this.navigateTo('/');
+            }, 1400);
 
-            console.log('login success');
-            localStorage.setItem('isTokenUser', 'true');
-            this.delItemMenuRegAndLogin();
-            this.navigateTo('/');
         } else {
-            // TODO: show error on page
+            this.errorMessage.innerText = result.message;
+            this.loginForm.insertBefore(this.errorMessage, this.submitButton);
             console.log(result.message);
         }
     }

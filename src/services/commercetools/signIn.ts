@@ -1,31 +1,22 @@
-import { AccessTokenResponse, UserLoginData } from '../../types/interfaces';
-import { CTP_AUTH_URL, CTP_CLIENT_ID, CTP_CLIENT_SECRET, CTP_PROJECT_KEY, CTP_SCOPES } from './credential';
+import { AccessTokenResponse, Customer, UserLoginData } from '../../types/interfaces';
+import { CTP_API_URL, CTP_PROJECT_KEY } from './credential';
 
-export async function signIn(userData: UserLoginData): Promise<AccessTokenResponse> {
-    const response = await fetch(`${CTP_AUTH_URL}/oauth/${CTP_PROJECT_KEY}/customers/token`, {
+async function signIn(token: string, userData: UserLoginData): Promise<AccessTokenResponse | Customer> {
+    const response = await fetch(`${CTP_API_URL}/${CTP_PROJECT_KEY}/login`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${btoa(`${CTP_CLIENT_ID}:${CTP_CLIENT_SECRET}`)}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
         },
-        body: `grant_type=password&username=${userData.email}&password=${userData.password}&scope=${CTP_SCOPES}`,
+        body: JSON.stringify(userData),
     });
 
-    const result = (await response.json()) as AccessTokenResponse;
-
     if (!response.ok) {
+        const result = (await response.json()) as AccessTokenResponse;
         return result;
     }
 
-    const scopeParts = result.scope.split(' ');
-    const customerIdPart = scopeParts.find((part) => part.startsWith('customer_id:')) || '';
-
-    const output = {
-        ...result,
-        customer_id: customerIdPart.split(':')[1],
-    };
-
-    return output;
+    return (await response.json()) as Customer;
 }
 
 export default signIn;

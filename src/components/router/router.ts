@@ -26,9 +26,22 @@ export default class Router {
         document.addEventListener('DOMContentLoaded', () => {
             document.body.addEventListener('click', (e) => {
                 const target = e.target as HTMLAnchorElement;
+                const itemsMenu = document.querySelectorAll<HTMLDivElement>('.header__nav-link');
                 if (target.matches('[data-route]')) {
                     e.preventDefault();
                     this.navigateTo(target.href);
+                }
+                if (target.parentElement?.classList.contains('header__logout')) {
+                    e.preventDefault();
+                    this.navigateTo('/');
+                    itemsMenu.forEach((el, index) => {
+                        if (el.classList.contains('active')) {
+                            el.classList.remove('active');
+                        }
+                        if (index === 0) {
+                            el.classList.add('active');
+                        }
+                    });
                 }
             });
 

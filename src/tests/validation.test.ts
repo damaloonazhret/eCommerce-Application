@@ -8,8 +8,8 @@ import {
     checkPostalCode,
 } from '../services/validation';
 
-import { getToken } from '../services/commercetools/getToken';
-import { signIn } from '../services/commercetools/signIn';
+import getToken from '../services/commercetools/getToken';
+import signIn from '../services/commercetools/signIn';
 
 describe('Checking input "Email"', () => {
     const testCase = [
@@ -218,8 +218,8 @@ describe('Checking input "Postal code"', () => {
             valuePostalCode: '`',
             expected: [
                 'Postal code cannot contain special characters.',
-                'Postal code must contain at least 5 character.',
-                'Postal code is not properly formatted.',
+                'Postal code must contain 5 digits.',
+                'Postal code must contain only digits.',
             ],
         },
     ];
@@ -249,11 +249,13 @@ const userData = {
     password: 'Aqswdefr1!',
 };
 
+const userToken = 'a';
+
 test('checking request getToken', () => {
-    return signIn(userData).then((data) => {
+    return signIn(userToken, userData).then((data) => {
         // eslint-disable-next-line consistent-return, @typescript-eslint/explicit-function-return-type
         function checkAccessToken() {
-            if (data.access_token) {
+            if (data) {
                 return 'true';
             }
         }

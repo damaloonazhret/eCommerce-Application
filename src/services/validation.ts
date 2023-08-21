@@ -1,17 +1,22 @@
 const isEmpty = (value: string): boolean => value === '';
+const hasOnlyLetters = (value: string): boolean => /^[A-Za-z]+$/.test(value);
 const hasAtSymbol = (value: string): boolean => /@/.test(value);
-const isAllowedEmailCharacters = (value: string): boolean => /^[a-zA-Z0-9.@]+$/.test(value);
+const isAllowedEmailCharacters = (value: string): boolean => /^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~.@\\-]+$/.test(value);
+const isEmailNameValidWithDots = (value: string): boolean => /^(?!.*\.\.)[^.].*[^.]$/.test(value);
+const isEmailNameValidWithDashes = (value: string): boolean => /^(?!.*--)[^-].*[^-]$/.test(value);
 const isAllowedPasswordCharacters = (value: string): boolean => /^[a-zA-Z0-9!@#$%^&*]+$/.test(value);
 const hasLowerCase = (value: string): boolean => /[a-z]/.test(value);
 const hasUppercaseCharacters = (value: string): boolean => /[A-Z]/.test(value);
 const hasDigit = (value: string): boolean => /\d/.test(value);
 const hasLength = (value: string, length: number): boolean => value.length >= length;
+const hasExactLength = (value: string, length: number): boolean => value.length === length;
 const hasNoWhitespace = (value: string): boolean => !/^\s|\s$/.test(value);
 const hasSpecialCharacter = (value: string): boolean => /[!@#$%^&*"'`~]/.test(value);
 const isEmailFormatted = (value: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-const hasDomainName = (value: string): boolean => /\.[A-Za-z]{2,}$/.test(value);
+const isAllowedDomainCharacters = (value: string): boolean => /^[A-Za-z0-9-.]+$/.test(value);
+const hasDomainName = (value: string): boolean => /\.[A-Za-z]{2,}(?:\.?[A-Za-z]{2,})*$/.test(value);
 const isNameValid = (value: string): boolean => /^[a-zA-Z]+$/.test(value);
-const isPostalCodeValid = (value: string): boolean => /^[a-zA-Z0-9\s]+$/.test(value);
+const hasOnlyDigits = (value: string): boolean => /^[0-9]+$/.test(value);
 
 const isAgeValid = (birthDate: string, requiredAge: number, maxAge: number): boolean => {
     const today = new Date();
@@ -24,10 +29,26 @@ const isAgeValid = (birthDate: string, requiredAge: number, maxAge: number): boo
 
 export const checkEmail = (email: string): string[] => {
     const errors = [];
+    const parts = email.split('@');
+    const [username, domain] = parts;
 
     if (isEmpty(email)) {
         errors.push('Email cannot be blank.');
         return errors;
+    }
+
+    if (!isEmailNameValidWithDots(username)) {
+        if (!(hasExactLength(username, 1) && hasOnlyLetters(username))) {
+            errors.push('Email address not valid.');
+        }
+    }
+
+    if (!isEmailNameValidWithDots(domain) || !isEmailNameValidWithDashes(domain)) {
+        errors.push('Email address not valid.');
+    }
+
+    if (!isAllowedDomainCharacters(domain)) {
+        errors.push('Domain part of email address is not valid.');
     }
 
     if (!isEmailFormatted(email)) {
@@ -38,7 +59,7 @@ export const checkEmail = (email: string): string[] => {
         errors.push('Password cannot contain whitespace.');
     }
 
-    if (!hasDomainName(email)) {
+    if (!hasDomainName(domain)) {
         errors.push('Email address must contain a domain name.');
     }
 
@@ -47,7 +68,7 @@ export const checkEmail = (email: string): string[] => {
     }
 
     if (!isAllowedEmailCharacters(email)) {
-        errors.push('Email address must contain only Latin characters and digits.');
+        errors.push('Email address must contain only Latin characters, digits, and symbols.');
     }
 
     return errors;
@@ -164,8 +185,8 @@ export const checkCity = (street: string): string[] => {
         errors.push(`Street must contain at least ${minLength} character.`);
     }
 
-    if (hasSpecialCharacter(street)) {
-        errors.push('Street cannot contain special characters.');
+    if (!hasOnlyLetters(street)) {
+        errors.push('Street must contain only Latin characters.');
     }
 
     return errors;
@@ -184,12 +205,12 @@ export const checkPostalCode = (postalCode: string): string[] => {
         errors.push('Postal code cannot contain special characters.');
     }
 
-    if (!hasLength(postalCode, minLength)) {
-        errors.push(`Postal code must contain at least ${minLength} character.`);
+    if (!hasExactLength(postalCode, minLength)) {
+        errors.push(`Postal code must contain ${minLength} digits.`);
     }
 
-    if (!isPostalCodeValid(postalCode)) {
-        errors.push('Postal code is not properly formatted.');
+    if (!hasOnlyDigits(postalCode)) {
+        errors.push('Postal code must contain only digits.');
     }
 
     return errors;

@@ -434,6 +434,14 @@ export default class Registration {
             billingAddresses: [this.billingAddressValue],
         };
 
+        if (this.defaultBillingAddressValue === '') {
+            delete userData.defaultBillingAddress;
+        }
+
+        if (this.defaultShippingAddressValue === '') {
+            delete userData.defaultShippingAddress;
+        }
+
         if (!valid) {
             console.log('not valid', userData);
             return;

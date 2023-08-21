@@ -1,7 +1,7 @@
 import { AccessTokenResponse, UserLoginData } from '../../types/interfaces';
 import { CTP_AUTH_URL, CTP_CLIENT_ID, CTP_CLIENT_SECRET, CTP_PROJECT_KEY, CTP_SCOPES } from './credential';
 
-async function signIn(userData: UserLoginData): Promise<AccessTokenResponse> {
+export async function signIn(userData: UserLoginData): Promise<AccessTokenResponse> {
     const response = await fetch(`${CTP_AUTH_URL}/oauth/${CTP_PROJECT_KEY}/customers/token`, {
         method: 'POST',
         headers: {

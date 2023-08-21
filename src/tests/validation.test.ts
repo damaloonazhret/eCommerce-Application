@@ -8,6 +8,9 @@ import {
     checkPostalCode,
 } from '../services/validation';
 
+import { getToken } from '../services/commercetools/getToken';
+import { signIn } from '../services/commercetools/signIn';
+
 describe('Checking input "Email"', () => {
     const testCase = [
         {
@@ -224,5 +227,36 @@ describe('Checking input "Postal code"', () => {
         it(`Value input "${test.valuePostalCode}"`, () => {
             expect(checkPostalCode(test.valuePostalCode)).toEqual(test.expected);
         });
+    });
+});
+
+// test request getToken
+test('checking request getToken', () => {
+    return getToken().then((data) => {
+        // eslint-disable-next-line consistent-return, @typescript-eslint/explicit-function-return-type
+        function checkAccessToken() {
+            if (data.access_token) {
+                return 'true';
+            }
+        }
+        expect(checkAccessToken()).toBe('true');
+    });
+});
+
+// test request signIn
+const userData = {
+    email: 'abc@a.ru',
+    password: 'Aqswdefr1!',
+};
+
+test('checking request getToken', () => {
+    return signIn(userData).then((data) => {
+        // eslint-disable-next-line consistent-return, @typescript-eslint/explicit-function-return-type
+        function checkAccessToken() {
+            if (data.access_token) {
+                return 'true';
+            }
+        }
+        expect(checkAccessToken()).toBe('true');
     });
 });

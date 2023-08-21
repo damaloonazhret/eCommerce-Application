@@ -1,7 +1,7 @@
 import { AccessTokenResponse } from '../../types/interfaces';
 import { CTP_AUTH_URL, CTP_CLIENT_ID, CTP_CLIENT_SECRET, CTP_SCOPES } from './credential';
 
-async function getToken(): Promise<AccessTokenResponse> {
+export async function getToken(): Promise<AccessTokenResponse> {
     try {
         const response = await fetch(`${CTP_AUTH_URL}/oauth/token`, {
             method: 'POST',

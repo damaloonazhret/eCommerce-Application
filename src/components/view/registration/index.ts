@@ -429,8 +429,6 @@ export default class Registration {
                 },
             ],
             shippingAddresses: [this.shippingAddressValue],
-            defaultShippingAddress: this.defaultShippingAddressValue,
-            defaultBillingAddress: this.defaultBillingAddressValue,
             billingAddresses: [this.billingAddressValue],
         };
 
@@ -440,6 +438,14 @@ export default class Registration {
 
         if (this.defaultShippingAddressValue === '') {
             delete userData.defaultShippingAddress;
+        }
+
+        if (this.defaultShippingAddressValue === '0') {
+            userData.defaultShippingAddress = this.defaultShippingAddressValue;
+        }
+
+        if (this.defaultBillingAddressValue === '1') {
+            userData.defaultBillingAddress = this.defaultBillingAddressValue;
         }
 
         if (!valid) {

@@ -26,5 +26,10 @@ export default class App {
 
         this.root.append(header.getLayout());
         this.root.append(main.getLayout());
+
+        // saving the token in localstorage, if it is missing
+        if (localStorage.isTokenUser === undefined) {
+            localStorage.setItem('isTokenUser', 'false');
+        }
     }
 }

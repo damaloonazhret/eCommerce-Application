@@ -10,9 +10,9 @@ import SuccessRegistration from '../../../helpers/successRegistratioin';
 import AlreadyRegister from '../../../helpers/alreadyRegisterGenerator';
 
 export default class Registration {
-    private defaultShippingAddressValue!: string;
+    private defaultShippingAddressValue!: number;
 
-    private defaultBillingAddressValue!: string;
+    private defaultBillingAddressValue!: number;
 
     private shippingAddressValue: number = 0;
 
@@ -328,15 +328,15 @@ export default class Registration {
                 this.buttonSwitcherShippingBtn.classList.toggle('active');
 
                 if (!activeShipping) {
-                    this.defaultShippingAddressValue = '0';
+                    this.defaultShippingAddressValue = 0;
                     if (this.billingAddressValue === 0) {
-                        this.defaultBillingAddressValue = '1';
+                        this.defaultBillingAddressValue = 1;
                     }
                     activeShipping = true;
                 } else if (activeShipping) {
-                    this.defaultShippingAddressValue = '';
+                    this.defaultShippingAddressValue = -1;
                     if (this.billingAddressValue === 0) {
-                        this.defaultBillingAddressValue = '';
+                        this.defaultBillingAddressValue = -1;
                     }
                     activeShipping = false;
                 }
@@ -346,10 +346,10 @@ export default class Registration {
                 this.buttonSwitcherBillingBtn.classList.toggle('active');
 
                 if (!activeBilling) {
-                    this.defaultBillingAddressValue = '1';
+                    this.defaultBillingAddressValue = 1;
                     activeBilling = true;
                 } else if (activeBilling) {
-                    this.defaultBillingAddressValue = '';
+                    this.defaultBillingAddressValue = -1;
                     activeBilling = false;
                 }
             });
@@ -432,19 +432,19 @@ export default class Registration {
             billingAddresses: [this.billingAddressValue],
         };
 
-        if (this.defaultBillingAddressValue === '') {
+        if (this.defaultBillingAddressValue === -1) {
             delete userData.defaultBillingAddress;
         }
 
-        if (this.defaultShippingAddressValue === '') {
+        if (this.defaultShippingAddressValue === -1) {
             delete userData.defaultShippingAddress;
         }
 
-        if (this.defaultShippingAddressValue === '0') {
+        if (this.defaultShippingAddressValue === 0) {
             userData.defaultShippingAddress = this.defaultShippingAddressValue;
         }
 
-        if (this.defaultBillingAddressValue === '1') {
+        if (this.defaultBillingAddressValue === 1) {
             userData.defaultBillingAddress = this.defaultBillingAddressValue;
         }
 

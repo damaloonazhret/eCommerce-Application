@@ -82,8 +82,8 @@ export interface UserRegistrationData extends UserLoginData {
         },
     ];
     shippingAddresses: number[];
-    defaultShippingAddress?: string;
-    defaultBillingAddress?: string;
+    defaultShippingAddress?: number;
+    defaultBillingAddress?: number;
     billingAddresses: number[];
 }
 

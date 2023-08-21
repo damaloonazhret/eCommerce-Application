@@ -169,6 +169,28 @@ export default class Registration {
         return this.registration;
     }
 
+    public delItemMenuRegAndLogin(): void {
+        const headerNavList = document.querySelector('.header__nav-list') as HTMLElement;
+        Array.from(headerNavList.children).forEach((el) => {
+            const itemMenu = el as HTMLElement;
+            if (itemMenu.classList.contains('header__sign-up') || itemMenu.classList.contains('header__login')) {
+                itemMenu.style.display = 'none';
+                Array.from(itemMenu.children).forEach((el2) => {
+                    el2.classList.remove('active');
+                });
+            }
+            if (itemMenu.classList.contains('header__home')) {
+                Array.from(itemMenu.children).forEach((el2) => {
+                    el2.classList.add('active');
+                });
+            }
+
+            if (itemMenu.classList.contains('header__logout')) {
+                itemMenu.style.display = 'block';
+            }
+        });
+    }
+
     private async submit(e: Event): Promise<void> {
         e.preventDefault();
         let valid = true;
@@ -208,7 +230,9 @@ export default class Registration {
 
         if (result.success) {
             console.log('registration success');
+            localStorage.setItem('isTokenUser', 'true');
             this.navigateTo('/');
+            this.delItemMenuRegAndLogin();
         } else {
             // TODO: show error on page
             console.log(result.message);

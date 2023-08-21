@@ -306,18 +306,36 @@ export default class Registration {
 
         this.passwordSwitch = this.passwordDiv.querySelector('.password-switch') as HTMLButtonElement;
         this.passwordSwitch.addEventListener('click', (e) => this.togglePasswordVisibility(e));
+        let activeShipping = false;
+        let activeBilling = false;
         this.buttonSwitcherShippingBtn.addEventListener('click', (e) => {
             e.preventDefault();
             this.buttonSwitcherShippingBtn.classList.toggle('active');
-            this.defaultShippingAddressValue = '0';
-            if (this.billingAddressValue === 0) {
-                this.defaultBillingAddressValue = '1';
+            if (!activeShipping) {
+                this.defaultShippingAddressValue = '0';
+                if (this.billingAddressValue === 0) {
+                    this.defaultBillingAddressValue = '1';
+                }
+                activeShipping = true;
+            }
+            if (activeShipping) {
+                this.defaultShippingAddressValue = '';
+                if (this.billingAddressValue === 0) {
+                    this.defaultBillingAddressValue = '';
+                }
+                activeShipping = false;
             }
         });
         this.buttonSwitcherBillingBtn.addEventListener('click', (e) => {
             e.preventDefault();
             this.buttonSwitcherBillingBtn.classList.toggle('active');
-            this.defaultBillingAddressValue = '1';
+            if (!activeBilling) {
+                this.defaultBillingAddressValue = '1';
+                activeBilling = true;
+            }
+            if (activeBilling) {
+                this.defaultBillingAddressValue = '';
+            }
         });
         let visibility = true;
         this.buttonSwitcherShippingCheckbox.addEventListener('click', () => {
@@ -365,16 +383,16 @@ export default class Registration {
                     country: this.countryInput.value,
                 },
                 {
-                    streetName: this.streetInput.value,
-                    postalCode: this.postalCodeInput.value,
-                    city: this.cityInput.value,
-                    country: this.countryInput.value,
+                    streetName: this.streetInputBilling.value,
+                    postalCode: this.postalCodeInputBilling.value,
+                    city: this.cityInputBilling.value,
+                    country: this.countryInputBilling.value,
                 },
             ],
-            shippingAddress: [this.shippingAddressValue],
-            defaultShippingAddressId: this.defaultShippingAddressValue,
-            defaultBillingAddressId: this.defaultBillingAddressValue,
-            billingAddress: [this.billingAddressValue],
+            shippingAddresses: [this.shippingAddressValue],
+            defaultShippingAddress: this.defaultShippingAddressValue,
+            defaultBillingAddress: this.defaultBillingAddressValue,
+            billingAddresses: [this.billingAddressValue],
         };
 
         if (!valid) {

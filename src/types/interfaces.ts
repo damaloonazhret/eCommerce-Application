@@ -73,10 +73,10 @@ export interface UserRegistrationData extends UserLoginData {
             country: string;
         },
     ];
-    shippingAddress: number[];
-    defaultShippingAddressId?: string;
-    defaultBillingAddressId?: string;
-    billingAddress: number[];
+    shippingAddresses: number[];
+    defaultShippingAddress?: string;
+    defaultBillingAddress?: string;
+    billingAddresses: number[];
 }
 
 export interface LoginResult {

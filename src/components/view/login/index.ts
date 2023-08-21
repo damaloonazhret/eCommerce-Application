@@ -41,30 +41,33 @@ export default class Login {
     }
 
     private init(): void {
-        this.login = document.createElement('section');
-        this.login.classList.add('login');
+        if (localStorage.isTokenUser === 'true') {
+            window.location.href = '/';
+        } else {
+            this.login = document.createElement('section');
+            this.login.classList.add('login');
 
         this.errorMessage = document.createElement('span');
         this.errorMessage.classList.add('registration__error');
 
         this.loginForm = document.createElement('form');
 
-        this.loginDiv = new InputGenerator('text', 'Enter Email', 'login__email', 'email').getInputContainer();
-        this.loginInput = this.loginDiv.querySelector('input') as HTMLInputElement;
+            this.loginDiv = new InputGenerator('text', 'Enter Email', 'login__email', 'email').getInputContainer();
+            this.loginInput = this.loginDiv.querySelector('input') as HTMLInputElement;
 
-        this.passwordDiv = new InputGenerator(
-            'password',
-            'Enter password',
-            'login__password',
-            'password'
-        ).getInputContainer();
-        this.passwordInput = this.passwordDiv.querySelector('input') as HTMLInputElement;
+            this.passwordDiv = new InputGenerator(
+                'password',
+                'Enter password',
+                'login__password',
+                'password'
+            ).getInputContainer();
+            this.passwordInput = this.passwordDiv.querySelector('input') as HTMLInputElement;
 
-        this.submitButton = new InputGenerator('button', 'Button Text', 'login__button', 'login-btn').getButton(
-            'login__button',
-            'LOGIN',
-            (e) => this.submit(e)
-        );
+            this.submitButton = new InputGenerator('button', 'Button Text', 'login__button', 'login-btn').getButton(
+                'login__button',
+                'LOGIN',
+                (e) => this.submit(e)
+            );
 
         this.needRegistration = new AlreadyRegister(
             'registration',
@@ -77,18 +80,41 @@ export default class Login {
         this.loginForm.append(this.submitButton);
         this.loginForm.append(this.needRegistration);
 
-        this.login.append(this.loginForm);
+            this.login.append(this.loginForm);
 
-        this.loginForm.addEventListener('input', (e) =>
-            validation(e.target as HTMLInputElement, this.showError.bind(this))
-        );
+            this.loginForm.addEventListener('input', (e) =>
+                validation(e.target as HTMLInputElement, this.showError.bind(this))
+            );
 
-        this.passwordSwitch = this.passwordDiv.querySelector('.password-switch') as HTMLButtonElement;
-        this.passwordSwitch.addEventListener('click', (e) => this.togglePasswordVisibility(e));
+            this.passwordSwitch = this.passwordDiv.querySelector('.password-switch') as HTMLButtonElement;
+            this.passwordSwitch.addEventListener('click', (e) => this.togglePasswordVisibility(e));
+        }
     }
 
     public getLayout(): HTMLElement {
         return this.login;
+    }
+
+    public delItemMenuRegAndLogin(): void {
+        const headerNavList = document.querySelector('.header__nav-list') as HTMLElement;
+        Array.from(headerNavList.children).forEach((el) => {
+            const itemMenu = el as HTMLElement;
+            if (itemMenu.classList.contains('header__sign-up') || itemMenu.classList.contains('header__login')) {
+                itemMenu.style.display = 'none';
+                Array.from(itemMenu.children).forEach((el2) => {
+                    el2.classList.remove('active');
+                });
+            }
+            if (itemMenu.classList.contains('header__home')) {
+                Array.from(itemMenu.children).forEach((el2) => {
+                    el2.classList.add('active');
+                });
+            }
+
+            if (itemMenu.classList.contains('header__logout')) {
+                itemMenu.style.display = 'block';
+            }
+        });
     }
 
     private async submit(e: Event): Promise<void> {
@@ -122,8 +148,11 @@ export default class Login {
             document.body.append(this.popup);
             setTimeout(() => {
                 document.body.removeChild(this.popup);
+                localStorage.setItem('isTokenUser', 'true');
+                this.delItemMenuRegAndLogin();
                 this.navigateTo('/');
             }, 1400);
+
         } else {
             this.errorMessage.innerText = result.message;
             this.loginForm.insertBefore(this.errorMessage, this.submitButton);

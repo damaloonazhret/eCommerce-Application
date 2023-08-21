@@ -9,7 +9,7 @@
     "prepare": "husky install",
     "eslint": "eslint ./src",
     "prettier": "prettier ./src --write",
-    "test": "jest .src/",
+    "test": "jest --coverage .src/",
     "typescheck": "tsc --noEmit"
   },
   "repository": {

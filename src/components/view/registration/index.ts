@@ -119,6 +119,9 @@ export default class Registration {
     }
 
     private init(): void {
+      if (localStorage.isTokenUser === 'true') {
+            window.location.href = '/';
+        } else {
         this.registration = document.createElement('section');
         this.registration.classList.add('registration');
 
@@ -333,10 +336,33 @@ export default class Registration {
                 this.billingAddressValue = 1;
             }
         });
+       }
     }
 
     public getLayout(): HTMLElement {
         return this.registration;
+    }
+
+    public delItemMenuRegAndLogin(): void {
+        const headerNavList = document.querySelector('.header__nav-list') as HTMLElement;
+        Array.from(headerNavList.children).forEach((el) => {
+            const itemMenu = el as HTMLElement;
+            if (itemMenu.classList.contains('header__sign-up') || itemMenu.classList.contains('header__login')) {
+                itemMenu.style.display = 'none';
+                Array.from(itemMenu.children).forEach((el2) => {
+                    el2.classList.remove('active');
+                });
+            }
+            if (itemMenu.classList.contains('header__home')) {
+                Array.from(itemMenu.children).forEach((el2) => {
+                    el2.classList.add('active');
+                });
+            }
+
+            if (itemMenu.classList.contains('header__logout')) {
+                itemMenu.style.display = 'block';
+            }
+        });
     }
 
     private async submit(e: Event): Promise<void> {
@@ -393,8 +419,10 @@ export default class Registration {
                 'Your registration is success'
             ).getInputContainer();
             document.body.append(this.popup);
+            localStorage.setItem('isTokenUser', 'true');
             setTimeout(() => {
                 document.body.removeChild(this.popup);
+                this.delItemMenuRegAndLogin();
                 this.navigateTo('/');
             }, 1400);
         } else {

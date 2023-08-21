@@ -9,6 +9,7 @@ export default class Controller {
     }
 
     public async signIn(userData: UserLoginData): Promise<LoginResult> {
+        console.log(userData);
         return this.model.signIn(userData);
     }
 

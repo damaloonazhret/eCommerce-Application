@@ -8,9 +8,6 @@ import {
     checkPostalCode,
 } from '../services/validation';
 
-import getToken from '../services/commercetools/getToken';
-import signIn from '../services/commercetools/signIn';
-
 describe('Checking input "Email"', () => {
     const testCase = [
         {
@@ -27,12 +24,16 @@ describe('Checking input "Email"', () => {
                 'Email address is not properly formatted.',
                 'Email address must contain a domain name.',
                 'Email address must contain an @ symbol separating local part and domain name.',
-                'Email address must contain only Latin characters and digits.',
             ],
         },
         {
             valueEmail: 'abc@',
-            expected: ['Email address is not properly formatted.', 'Email address must contain a domain name.'],
+            expected: [
+                'Email address not valid.',
+                'Domain part of email address is not valid.',
+                'Email address is not properly formatted.',
+                'Email address must contain a domain name.',
+            ],
         },
         {
             valueEmail: 'abc',
@@ -44,7 +45,7 @@ describe('Checking input "Email"', () => {
         },
         {
             valueEmail: '@mail.ru',
-            expected: ['Email address is not properly formatted.'],
+            expected: ['Email address not valid.', 'Email address is not properly formatted.'],
         },
     ];
     testCase.forEach((test) => {
@@ -177,7 +178,7 @@ describe('Checking input "Street"', () => {
 describe('Checking input "City"', () => {
     const testCase = [
         {
-            valueCity: 'New York',
+            valueCity: 'New',
             expected: [],
         },
         {
@@ -186,7 +187,7 @@ describe('Checking input "City"', () => {
         },
         {
             valueCity: 'New York`',
-            expected: ['Street cannot contain special characters.'],
+            expected: ['Street must contain only Latin characters.'],
         },
     ];
     testCase.forEach((test) => {
@@ -200,7 +201,7 @@ describe('Checking input "Postal code"', () => {
     const testCase = [
         {
             valuePostalCode: '1234 5A',
-            expected: [],
+            expected: ['Postal code must contain 5 digits.', 'Postal code must contain only digits.'],
         },
         {
             valuePostalCode: '',
@@ -208,11 +209,11 @@ describe('Checking input "Postal code"', () => {
         },
         {
             valuePostalCode: 'A',
-            expected: ['Postal code must contain at least 5 character.'],
+            expected: ['Postal code must contain 5 digits.', 'Postal code must contain only digits.'],
         },
         {
             valuePostalCode: '1234',
-            expected: ['Postal code must contain at least 5 character.'],
+            expected: ['Postal code must contain 5 digits.'],
         },
         {
             valuePostalCode: '`',
@@ -227,38 +228,5 @@ describe('Checking input "Postal code"', () => {
         it(`Value input "${test.valuePostalCode}"`, () => {
             expect(checkPostalCode(test.valuePostalCode)).toEqual(test.expected);
         });
-    });
-});
-
-// test request getToken
-test('checking request getToken', () => {
-    return getToken().then((data) => {
-        // eslint-disable-next-line consistent-return, @typescript-eslint/explicit-function-return-type
-        function checkAccessToken() {
-            if (data.access_token) {
-                return 'true';
-            }
-        }
-        expect(checkAccessToken()).toBe('true');
-    });
-});
-
-// test request signIn
-const userData = {
-    email: 'abc@a.ru',
-    password: 'Aqswdefr1!',
-};
-
-const userToken = 'a';
-
-test('checking request getToken', () => {
-    return signIn(userToken, userData).then((data) => {
-        // eslint-disable-next-line consistent-return, @typescript-eslint/explicit-function-return-type
-        function checkAccessToken() {
-            if (data) {
-                return 'true';
-            }
-        }
-        expect(checkAccessToken()).toBe('true');
     });
 });

@@ -2,6 +2,8 @@ import getToken from '../services/commercetools/getToken';
 import signIn from '../services/commercetools/signIn';
 import signUp from '../services/commercetools/signUp';
 import { Customer, UserRegistrationData } from '../types/interfaces';
+import Model from '../components/model/index';
+import Controller from '../components/controller/index';
 
 // test request getToken
 test('checking request getToken', () => {
@@ -157,5 +159,66 @@ test('checking request signup, response code 400', () => {
             }
             expect(checkRegistration()).toBe(400);
         });
+    });
+});
+
+test('test class Model.signIn', async () => {
+    const obj = new Model();
+    const result = await obj.signIn(userDataExist);
+    expect(result).toEqual({ success: true, message: '' });
+});
+
+test('test class Model.signUp', async () => {
+    const obj = new Model();
+    const result = await obj.signUp(dataUserRegistration);
+    expect(result).toEqual({
+        success: false,
+        message: 'There is already an existing customer with the provided email.',
+    });
+});
+
+const res: Customer = {
+    customer: {
+        id: '6d3586e7-056f-45bc-847e-dffcbcb6b9cb',
+        email: 'abc@a.ru',
+        firstName: 'Evgeniy',
+        lastName: 'A',
+        dateOfBirth: '1990-01-01',
+        password: '****qT4=',
+        addresses: [
+            {
+                id: 'a',
+                streetName: 'a',
+                postalCode: 'a',
+                city: 'a',
+                country: 'a',
+            },
+        ],
+    },
+};
+
+test('test class Model.returnFormError', async () => {
+    const obj = new Model();
+    const result = obj.returnFormError(res);
+    expect(result).toEqual({
+        success: true,
+        message: '',
+    });
+});
+
+test('test class Controller.signUp', async () => {
+    const newModel = new Model();
+    const newController = new Controller(newModel);
+    const result = await newController.model.signIn(userDataExist);
+    expect(result).toEqual({ message: '', success: true });
+});
+
+test('test class Controller.signUp', async () => {
+    const newModel = new Model();
+    const newController = new Controller(newModel);
+    const result = await newController.model.signUp(dataUserRegistration);
+    expect(result).toEqual({
+        message: 'There is already an existing customer with the provided email.',
+        success: false,
     });
 });

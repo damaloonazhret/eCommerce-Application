@@ -1,18 +1,19 @@
 import getToken from '../services/commercetools/getToken';
 import signIn from '../services/commercetools/signIn';
 import signUp from '../services/commercetools/signUp';
-import { UserRegistrationData } from '../types/interfaces';
+import { Customer, UserRegistrationData } from '../types/interfaces';
 
 // test request getToken
 test('checking request getToken', () => {
-    return getToken().then((data) => {
-        // eslint-disable-next-line consistent-return, @typescript-eslint/explicit-function-return-type
-        function checkAccessToken() {
-            if (data.access_token) {
-                return 'true';
+    return getToken().then((dataGetToken) => {
+        let numberCode: number;
+        function checkAccessToken(): number {
+            if (dataGetToken.access_token) {
+                numberCode = 200;
             }
+            return numberCode;
         }
-        expect(checkAccessToken()).toBe('true');
+        expect(checkAccessToken()).toBe(200);
     });
 });
 
@@ -22,16 +23,17 @@ const userDataExist = {
     password: 'Aqswdefr1!',
 };
 
-test('checking request sign, user exist', () => {
+test('checking request sign, response code 200', () => {
     return getToken().then((dataGetToken) => {
         const token = dataGetToken.access_token;
         return signIn(token, userDataExist).then((dataSignIn) => {
-            // eslint-disable-next-line consistent-return, @typescript-eslint/explicit-function-return-type
-            function checkLogin() {
-                if (dataSignIn.statusCode) {
-                    return dataSignIn.statusCode;
+            const objdataSignIn = dataSignIn as Customer;
+            let numberCode: number;
+            function checkLogin(): number {
+                if (objdataSignIn.customer.id) {
+                    numberCode = 200;
                 }
-                return 200;
+                return numberCode;
             }
             expect(checkLogin()).toBe(200);
         });
@@ -39,20 +41,20 @@ test('checking request sign, user exist', () => {
 });
 
 const userDataNoExist = {
-    email: 'abcaaaaaaaaaaaaaa@a.ru',
+    email: 'abc1159423648732@a.ru',
     password: 'Aqswdefr1!',
 };
 
-test('checking request sign, user noexist', () => {
+test('checking request sign, response code 400', () => {
     return getToken().then((dataGetToken) => {
         const token = dataGetToken.access_token;
+        let numberCode: number;
         return signIn(token, userDataNoExist).then((dataSignIn) => {
-            // eslint-disable-next-line consistent-return, @typescript-eslint/explicit-function-return-type
-            function checkLogin() {
+            function checkLogin(): number {
                 if (dataSignIn.statusCode) {
-                    return dataSignIn.statusCode;
+                    numberCode = dataSignIn.statusCode;
                 }
-                return 'acess';
+                return numberCode;
             }
             expect(checkLogin()).toBe(400);
         });
@@ -61,20 +63,63 @@ test('checking request sign, user noexist', () => {
 
 const tokenInvaild = '';
 
-test('checking request sign, invalid token', () => {
+test('checking request sign, response code 401', () => {
     return signIn(tokenInvaild, userDataNoExist).then((dataSignIn) => {
-        // eslint-disable-next-line consistent-return, @typescript-eslint/explicit-function-return-type
-        function checkLogin() {
+        let numberCode: number;
+        function checkLogin(): number {
             if (dataSignIn.statusCode) {
-                return dataSignIn.statusCode;
+                numberCode = dataSignIn.statusCode;
             }
-            return 'acess';
+            return numberCode;
         }
         expect(checkLogin()).toBe(401);
     });
 });
 
 // test request signUp
+const date = Date.now();
+
+const dataNewUserRegistration: UserRegistrationData = {
+    email: `test${date}@a.ru`,
+    password: 'Aqswdefr1!',
+    firstName: 'Jonh',
+    lastName: 'Travolta',
+    dateOfBirth: '1970-01-01',
+    addresses: [
+        {
+            streetName: 'State Street',
+            postalCode: '12345',
+            city: 'Boston',
+            country: 'FR',
+        },
+        {
+            streetName: 'State Street',
+            postalCode: '12345',
+            city: 'Boston',
+            country: 'FR',
+        },
+    ],
+    shippingAddresses: [0],
+    billingAddresses: [1],
+};
+
+test('checking request signup, response code 200', () => {
+    return getToken().then((dataGetToken) => {
+        const token = dataGetToken.access_token;
+        return signUp(token, dataNewUserRegistration).then((dataSignUp) => {
+            const objDataSignUp = dataSignUp as Customer;
+            let numberCode: number;
+            function checkRegistration(): number {
+                if (objDataSignUp.customer.id) {
+                    numberCode = 200;
+                }
+                return numberCode;
+            }
+            expect(checkRegistration()).toBe(200);
+        });
+    });
+});
+
 const dataUserRegistration: UserRegistrationData = {
     email: 'abc@a.ru',
     password: 'Aqswdefr1!',
@@ -99,18 +144,18 @@ const dataUserRegistration: UserRegistrationData = {
     billingAddresses: [1],
 };
 
-test('checking request signup', () => {
+test('checking request signup, response code 400', () => {
     return getToken().then((dataGetToken) => {
         const token = dataGetToken.access_token;
         return signUp(token, dataUserRegistration).then((dataSignUp) => {
-            // eslint-disable-next-line consistent-return, @typescript-eslint/explicit-function-return-type
-            function checkRegistration() {
+            let numberCode: number;
+            function checkRegistration(): number {
                 if (dataSignUp.statusCode) {
-                    return dataSignUp.statusCode;
+                    numberCode = dataSignUp.statusCode;
                 }
-                return 200;
+                return numberCode;
             }
-            expect(checkRegistration()).toBe(200);
+            expect(checkRegistration()).toBe(400);
         });
     });
 });

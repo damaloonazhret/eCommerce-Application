@@ -9,7 +9,7 @@ export default class SuccessRegistration {
         this.popupContainer.appendChild(this.popup);
     }
 
-    private createPopup(className: string, textTop: string, textBottom: string): HTMLDivElement {
+    public createPopup(className: string, textTop: string, textBottom: string): HTMLDivElement {
         const popupBox = document.createElement('div');
         const popupTop = document.createElement('div');
         const popupBottom = document.createElement('div');

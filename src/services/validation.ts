@@ -24,11 +24,10 @@ const isAgeValid = (birthDate: string, requiredAge: number, maxAge: number): boo
 
     const timeDiff = today.getTime() - parsedBirthDate.getTime();
     const ageInYears = timeDiff / (1000 * 60 * 60 * 24 * 365.25);
-
     return ageInYears >= requiredAge && ageInYears <= maxAge;
 };
 
-const checkEmail = (email: string): string[] => {
+export const checkEmail = (email: string): string[] => {
     const errors = [];
     const parts = email.split('@');
     const [username, domain] = parts;
@@ -75,7 +74,7 @@ const checkEmail = (email: string): string[] => {
     return errors;
 };
 
-const checkPassword = (password: string): string[] => {
+export const checkPassword = (password: string): string[] => {
     const errors = [];
     const minLength = 8;
 
@@ -115,7 +114,7 @@ const checkPassword = (password: string): string[] => {
     return errors;
 };
 
-const checkName = (name: string): string[] => {
+export const checkName = (name: string): string[] => {
     const errors = [];
 
     const minLength = 1;
@@ -140,7 +139,7 @@ const checkName = (name: string): string[] => {
     return errors;
 };
 
-const checkAge = (birthDate: string): string[] => {
+export const checkAge = (birthDate: string): string[] => {
     const errors = [];
     const minAge = 13;
     const maxAge = 100;
@@ -157,7 +156,7 @@ const checkAge = (birthDate: string): string[] => {
     return errors;
 };
 
-const checkStreet = (street: string): string[] => {
+export const checkStreet = (street: string): string[] => {
     const errors = [];
     const minLength = 1;
 
@@ -173,7 +172,7 @@ const checkStreet = (street: string): string[] => {
     return errors;
 };
 
-const checkCity = (street: string): string[] => {
+export const checkCity = (street: string): string[] => {
     const errors = [];
     const minLength = 1;
 
@@ -193,7 +192,7 @@ const checkCity = (street: string): string[] => {
     return errors;
 };
 
-const checkPostalCode = (postalCode: string): string[] => {
+export const checkPostalCode = (postalCode: string): string[] => {
     const errors = [];
     const minLength = 5;
 
@@ -224,6 +223,7 @@ const validation = (
     switch (input.id) {
         case 'email':
             errorHandler(input, checkEmail(input.value));
+            console.log(input, checkEmail(input.value));
             return checkEmail(input.value);
         case 'password':
             errorHandler(input, checkPassword(input.value));

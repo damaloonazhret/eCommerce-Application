@@ -2,7 +2,7 @@ import { LoginResult, RegistrationResult, UserLoginData, UserRegistrationData } 
 import Model from '../model';
 
 export default class Controller {
-    private model: Model;
+    public model: Model;
 
     constructor(model: Model) {
         this.model = model;

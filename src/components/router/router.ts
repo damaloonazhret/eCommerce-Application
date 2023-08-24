@@ -49,7 +49,7 @@ export default class Router {
         });
     }
 
-    private generatePathRegex(path: string): RegExp {
+    public generatePathRegex(path: string): RegExp {
         const escapedPath = path.replace(/\//g, '\\/');
         const dynamicPathRegex = escapedPath.replace(/:\w+/g, '(.+)');
         const regexString = `^${dynamicPathRegex}$`;

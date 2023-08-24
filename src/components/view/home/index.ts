@@ -13,7 +13,6 @@ export default class Home {
         const menu = document.createElement('div');
         menu.classList.add('home__menu');
         if (localStorage.isTokenUser === 'true') {
-            console.log('aaa');
             menu.innerHTML = `<div class="home__menu__item">
                             <a data-route href="/shop">Shop</a>
                           </div>
@@ -28,7 +27,6 @@ export default class Home {
                            </div>
                           `;
         } else {
-            console.log('bbb');
             menu.innerHTML = `<div class="home__menu__item">
                             <a data-route href="/shop">Shop</a>
                           </div>

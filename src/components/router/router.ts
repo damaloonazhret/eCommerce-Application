@@ -49,6 +49,21 @@ export default class Router {
         });
     }
 
+    public getParams(match: { route: Route; result: RegExpMatchArray | null }): Record<string, string> {
+        if (match.result === null) {
+            return {};
+        }
+
+        const values = match.result.slice(1);
+        const keys: string[] = Array.from(match.route.path.matchAll(/:(\w+)/g)).map((result) => result[1]);
+
+        return Object.fromEntries(
+            keys.map((key: string, i: number) => {
+                return [key, values[i]];
+            })
+        );
+    }
+
     public generatePathRegex(path: string): RegExp {
         const escapedPath = path.replace(/\//g, '\\/');
         const dynamicPathRegex = escapedPath.replace(/:\w+/g, '(.+)');
@@ -78,7 +93,7 @@ export default class Router {
             };
         }
 
-        const view = new match.route.View(this.controller, this.navigateTo.bind(this));
+        const view = new match.route.View(this.controller, this.navigateTo.bind(this), this.getParams(match));
         this.main.setContent(view.getLayout());
     }
 }

@@ -1,0 +1,96 @@
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 50%;
+    min-width: 280px;
+    max-width: 400px;
+    padding: 25px 30px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 9px 12px 4px rgba(0, 0, 0, 0.16);
+
+    form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        font-size: 14px;
+        font-family: 'Open Sans', sans-serif;
+        gap: 10px;
+
+        * {
+            width: 100%;
+        }
+
+        div {
+            ul {
+                display: block;
+                color: #c62222;
+                font-size: 14px;
+            }
+        }
+
+        input {
+            padding: 6px;
+            border: 1px solid #8d8d8db8;
+            border-radius: 5px;
+
+            &:focus {
+                border-color: #1d34e4;
+                outline: none;
+            }
+
+            &.valid {
+                border-color: #2db660;
+            }
+
+            &.not-valid {
+                border-color: #c62222;
+            }
+        }
+    }
+
+    &__email {
+    }
+
+    &__password {
+        position: relative;
+
+        .password-switch {
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 32px;
+            height: 32px;
+            border: 1px solid #8d8d8db8;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: transparent;
+            background-image: url('../../../assets/icons/visible-show.svg');
+
+            &.hide {
+                background-image: url('../../../assets/icons/visible-hide.svg');
+            }
+        }
+    }
+
+    &__button {
+        display: block;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        background-color: #c6c6c6;
+        transition: 0.4s ease-in-out;
+
+        &:hover {
+            color: #fff;
+            background-color: #4c46f5;
+        }
+    }
+
+    .error {
+        margin-top: 5px;
+    }
+}

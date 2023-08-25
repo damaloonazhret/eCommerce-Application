@@ -1,5 +1,6 @@
 # Игнорирование временных файлов и каталогов
 node_modules/
+coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

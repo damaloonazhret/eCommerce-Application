@@ -23,7 +23,6 @@ export default class App {
         const main = new Main();
         const router = new Router(main, this.controller);
         router.setRoutes(routes);
-
         this.root.append(header.getLayout());
         this.root.append(main.getLayout());
 
@@ -31,5 +30,9 @@ export default class App {
         if (localStorage.isTokenUser === undefined) {
             localStorage.setItem('isTokenUser', 'false');
         }
+
+        // ???
+        const getProducts = new Model();
+        void getProducts.getProducts();
     }
 }

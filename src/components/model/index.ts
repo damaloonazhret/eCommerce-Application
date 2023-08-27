@@ -1,6 +1,8 @@
 import getToken from '../../services/commercetools/getToken';
 import signIn from '../../services/commercetools/signIn';
 import signUp from '../../services/commercetools/signUp';
+import getProducts from '../../services/commercetools/getProducts';
+import getAnonymousToken from '../../services/commercetools/getAnonymousToken';
 import {
     Customer,
     UserRegistrationData,
@@ -33,5 +35,10 @@ export default class Model {
 
         result.success = true;
         return result;
+    }
+
+    public async getProducts(): Promise<void> {
+        const anonymousToken = getAnonymousToken();
+        await getProducts((await anonymousToken).access_token);
     }
 }

@@ -5,6 +5,6 @@ export const CTP_AUTH_URL = 'https://auth.europe-west1.gcp.commercetools.com';
 export const CTP_API_URL = 'https://api.europe-west1.gcp.commercetools.com';
 export const CTP_SCOPES = 'manage_project:commercetools-team-project';
 
-export const ANON_CTP_CLIENT_SECRET = 'm49_COLWWWO2fMNak-BJTm_EM4U96lE8';
-export const ANON_CTP_CLIENT_ID = 'e_fCRb0ZN2v2C1iRJ-gD5cqh';
-export const ANON_CTP_SCOPES = 'create_anonymous_token:commercetools-team-project';
+export const ANON_CTP_CLIENT_SECRET = 'stfT9tH41wjDky870K88Z1ClP1k388I2';
+export const ANON_CTP_CLIENT_ID = 'Z4kcWcAHlH3E7ZwHUt1YzZGG';
+export const ANON_CTP_SCOPES = 'view_products:commercetools-team-project';

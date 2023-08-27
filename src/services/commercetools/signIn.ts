@@ -16,6 +16,7 @@ async function signIn(token: string, userData: UserLoginData): Promise<AccessTok
         return result;
     }
 
+    console.log(token);
     return (await response.json()) as Customer;
 }
 

@@ -30,9 +30,5 @@ export default class App {
         if (localStorage.isTokenUser === undefined) {
             localStorage.setItem('isTokenUser', 'false');
         }
-
-        // ???
-        const getProducts = new Model();
-        void getProducts.getProducts();
     }
 }

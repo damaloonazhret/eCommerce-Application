@@ -10,6 +10,7 @@ import {
     LoginResult,
     RegistrationResult,
     AccessTokenResponse,
+    QueryProducts,
 } from '../../types/interfaces';
 
 export default class Model {
@@ -37,8 +38,9 @@ export default class Model {
         return result;
     }
 
-    public async getProducts(): Promise<void> {
+    public async getProducts(): Promise<QueryProducts> {
         const anonymousToken = getAnonymousToken();
-        await getProducts((await anonymousToken).access_token);
+        const response = await getProducts((await anonymousToken).access_token);
+        return response;
     }
 }

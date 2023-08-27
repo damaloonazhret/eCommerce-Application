@@ -15,7 +15,6 @@ async function getProducts(anonymousToken: string): Promise<QueryProducts> {
         }
 
         const result = (await response.json()) as QueryProducts;
-
         return result;
     } catch (error) {
         throw Error(`Error fetching get products: ${error as string}`);

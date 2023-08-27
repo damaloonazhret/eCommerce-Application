@@ -106,7 +106,7 @@ export interface Product {
                 },
             ];
             description: {
-                en: string;
+                'en-US': string;
             };
             masterVariant: {
                 attributes: [];
@@ -122,6 +122,14 @@ export interface Product {
                 ];
                 prices: [
                     {
+                        discounted: {
+                            value: {
+                                type: string;
+                                fractionDigits: number;
+                                centAmount: number;
+                                currencyCode: string;
+                            };
+                        };
                         value: {
                             type: string;
                             fractionDigits: number;

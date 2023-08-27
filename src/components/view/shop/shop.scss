@@ -1,9 +1,42 @@
-.product {
+.shop {
     display: flex;
-    color: #ffffff;
-    margin-bottom: 10px;
-    img {
-        width: 30%;
-        padding-right: 10px;
+    flex-direction: column;
+    width: 80%;
+    .product {
+        display: flex;
+        color: #ffffff;
+        margin-bottom: 20px;
+        img {
+            width: 30%;
+            margin-right: 15px;
+            border-radius: 5px;
+            box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.8);
+        }
+        span {
+            display: block;
+        }
+        .name-car {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .desc-car {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .price-car {
+            font-size: 20px;
+        }
+        .old-price-car {
+            font-size: 20px;
+            text-decoration: line-through;
+        }
+        .disc-price-car {
+            display: inline;
+            background: #c71212;
+            padding-left: 4px;
+            padding-right: 4px;
+            font-size: 20px;
+        }
     }
 }

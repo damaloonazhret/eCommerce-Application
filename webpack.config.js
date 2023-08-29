@@ -2,6 +2,7 @@ const path = require('path');
 const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const baseConfig = {
   entry: path.resolve(__dirname, './src/index.ts'),
@@ -26,13 +27,14 @@ const baseConfig = {
   },
   resolve: {
     extensions: ['.js', '.ts'],
-    alias: {'node-fetch' : 'isomorphic-fetch'},
+    alias: { 'node-fetch': 'isomorphic-fetch' },
   },
   output: {
     filename: 'index.[contenthash].js',
     path: path.resolve(__dirname, './dist'),
   },
   plugins: [
+    new Dotenv(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, './src/index.html'),
       filename: 'index.html',

@@ -9,11 +9,19 @@ import {
     RegistrationResult,
     AccessTokenResponse,
 } from '../../types/interfaces';
+import Header from '../view/header';
 
 export default class Model {
+    private header?: Header;
+
+    constructor(header?: Header) {
+        this.header = header || undefined;
+    }
+
     public async signIn(UserData: UserLoginData): Promise<LoginResult> {
         const token = getToken();
         const response = await signIn((await token).access_token, UserData);
+        this.header?.setLoggedLayout();
         return this.returnFormError(response);
     }
 

@@ -1,19 +1,23 @@
 import { Route } from '../../types/interfaces';
 import Controller from '../controller';
 import Error404 from '../view/error404';
+import Header from '../view/header';
 import Main from '../view/main';
 
 export default class Router {
-    private main!: Main;
+    private routes!: Route[];
 
     private controller!: Controller;
 
-    private routes!: Route[];
+    private header!: Header;
 
-    constructor(main: Main, controller: Controller) {
+    private main!: Main;
+
+    constructor(controller: Controller, header: Header, main: Main) {
+        this.controller = controller;
+        this.header = header;
         this.main = main;
         this.bindListeners();
-        this.controller = controller;
     }
 
     public setRoutes(newRoutes: Route[]): void {
@@ -26,22 +30,10 @@ export default class Router {
         document.addEventListener('DOMContentLoaded', () => {
             document.body.addEventListener('click', (e) => {
                 const target = e.target as HTMLAnchorElement;
-                const itemsMenu = document.querySelectorAll<HTMLDivElement>('.header__nav-link');
+
                 if (target.matches('[data-route]')) {
                     e.preventDefault();
                     this.navigateTo(target.href);
-                }
-                if (target.parentElement?.classList.contains('header__logout')) {
-                    e.preventDefault();
-                    this.navigateTo('/');
-                    itemsMenu.forEach((el, index) => {
-                        if (el.classList.contains('active')) {
-                            el.classList.remove('active');
-                        }
-                        if (index === 0) {
-                            el.classList.add('active');
-                        }
-                    });
                 }
             });
 
@@ -93,7 +85,9 @@ export default class Router {
             };
         }
 
+        
         const view = new match.route.View(this.controller, this.navigateTo.bind(this), this.getParams(match));
         this.main.setContent(view.getLayout());
+        this.header.setActiveLink(match.route.path);
     }
 }

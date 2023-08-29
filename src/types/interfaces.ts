@@ -209,7 +209,30 @@ export interface Product {
     lastModifiedAt: string;
 }
 
-export interface QueryProducts {
+export interface GetProducts {
+    limit: number;
+    offset: number;
+    count: number;
+    total: number;
+    results: [];
+}
+
+export interface GetCategories {
+    limit: number;
+    offset: number;
+    count: number;
+    total: number;
+    results: [
+        {
+            id: string;
+            description: {
+                'en-US': string;
+            };
+        },
+    ];
+}
+
+export interface GetSearchProducts {
     limit: number;
     offset: number;
     count: number;

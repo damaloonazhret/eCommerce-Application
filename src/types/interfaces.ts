@@ -209,6 +209,59 @@ export interface Product {
     lastModifiedAt: string;
 }
 
+export interface Product2 {
+    categories: [
+        {
+            id: string;
+            typeId: string;
+        },
+    ];
+    description: {
+        'en-US': string;
+    };
+    masterVariant: {
+        attributes: [];
+        id: number;
+        images: [
+            {
+                dimensions: {
+                    h: number;
+                    w: number;
+                };
+                url: string;
+            },
+        ];
+        prices: [
+            {
+                discounted: {
+                    value: {
+                        type: string;
+                        fractionDigits: number;
+                        centAmount: number;
+                        currencyCode: string;
+                    };
+                };
+                value: {
+                    type: string;
+                    fractionDigits: number;
+                    centAmount: number;
+                    currencyCode: string;
+                };
+                id: string;
+            },
+        ];
+        sku: string;
+    };
+    name: {
+        'en-US': string;
+    };
+    slug: {
+        en: string;
+    };
+    variants: [];
+    searchKeywords: object;
+}
+
 export interface GetProducts {
     limit: number;
     offset: number;

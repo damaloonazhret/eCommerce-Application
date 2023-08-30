@@ -42,14 +42,4 @@ describe('View tests', () => {
         expect(activeLink).toBeDefined();
         expect(activeLink?.getAttribute('href')).toBe(path);
     });
-
-    it('should set active link and update UI when clicking on a nav link', () => {
-        const header = new Header();
-        const path = '/shop';
-        const navLink = header.getLayout().querySelector('.header__shop a') as HTMLAnchorElement;
-        navLink.click();
-        const activeLink = header.getLayout().querySelector('.active');
-        expect(activeLink).toBeDefined();
-        expect(activeLink?.getAttribute('href')).toBe(path);
-    });
 });

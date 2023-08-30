@@ -2,6 +2,7 @@ import getToken from '../../services/commercetools/getToken';
 import signIn from '../../services/commercetools/signIn';
 import signUp from '../../services/commercetools/signUp';
 import getProducts from '../../services/commercetools/getProducts';
+import getProduct from '../../services/commercetools/getProduct';
 import getCategories from '../../services/commercetools/getCategories';
 import getAnonymousToken from '../../services/commercetools/getAnonymousToken';
 import getSearchProducts from '../../services/commercetools/getSearchProducts';
@@ -15,12 +16,21 @@ import {
     GetProducts,
     GetCategories,
     GetSearchProducts,
+    ProductAll,
 } from '../../types/interfaces';
+import Header from '../view/header';
 
 export default class Model {
+    private header?: Header;
+
+    constructor(header?: Header) {
+        this.header = header || undefined;
+    }
+
     public async signIn(UserData: UserLoginData): Promise<LoginResult> {
         const token = getToken();
         const response = await signIn((await token).access_token, UserData);
+        this.header?.setLoggedLayout();
         return this.returnFormError(response);
     }
 
@@ -57,6 +67,13 @@ export default class Model {
     public async getSearchProducts(paramSearch: string): Promise<GetSearchProducts> {
         const anonymousToken = getAnonymousToken();
         const response = await getSearchProducts((await anonymousToken).access_token, paramSearch);
+        return response;
+    }
+
+    public async getProduct(productKey: string): Promise<ProductAll> {
+        const anonymousToken = getAnonymousToken();
+        const response = await getProduct((await anonymousToken).access_token, productKey);
+        console.log('response1', response);
         return response;
     }
 }

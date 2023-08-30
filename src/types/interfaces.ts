@@ -3,6 +3,7 @@ import Contact from '../components/view/contact';
 import Error404 from '../components/view/error404';
 import Home from '../components/view/home';
 import Login from '../components/view/login';
+import Product from '../components/view/product';
 import Registration from '../components/view/registration';
 import Shop from '../components/view/shop';
 
@@ -15,7 +16,8 @@ export interface Route {
         | typeof Registration
         | typeof Error404
         | typeof About
-        | typeof Contact;
+        | typeof Contact
+        | typeof Product;
 }
 
 export interface RequestOptions {
@@ -94,7 +96,7 @@ export interface LoginResult {
 
 export type RegistrationResult = LoginResult;
 
-export interface Product {
+export interface ProductAll {
     id: string;
     version: number;
     masterData: {
@@ -207,9 +209,10 @@ export interface Product {
     };
     createdAt: string;
     lastModifiedAt: string;
+    key: string;
 }
 
-export interface Product2 {
+export interface ProductFromCategory {
     categories: [
         {
             id: string;
@@ -260,6 +263,7 @@ export interface Product2 {
     };
     variants: [];
     searchKeywords: object;
+    key: string;
 }
 
 export interface GetProducts {

@@ -1,6 +1,6 @@
 import './shop.scss';
 import Model from '../../model';
-import { Product, Product2 } from '../../../types/interfaces';
+import { ProductAll, ProductFromCategory } from '../../../types/interfaces';
 
 export default class Shop {
     private shop!: HTMLElement;
@@ -40,9 +40,8 @@ export default class Shop {
 
         void dataAllProducts.then((data) => {
             for (let i = 0; i < data.results.length; i += 1) {
-                const product: Product = data.results[i];
-                console.log('product', product);
-                const idCar: string = product.masterData.current.masterVariant.sku;
+                const product: ProductAll = data.results[i];
+                const idCar: string = product.key;
                 const nameCar: string = product.masterData.current.name['en-US'];
                 const urlImgCar: string = product.masterData.staged.masterVariant.images[0].url;
                 const descriptionCar: string = product.masterData.current.description['en-US'];
@@ -64,6 +63,12 @@ export default class Shop {
                 }
             }
         });
+
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const that2: this = this;
+        setTimeout(function () {
+            that2.clickOnProduct();
+        }, 500);
     }
 
     public createBlockProducts(): void {
@@ -135,9 +140,8 @@ export default class Shop {
                         void dataGetSearchProducts.then((data) => {
                             this.productsDiv.innerHTML = '';
                             for (let i = 0; i < data.results.length; i += 1) {
-                                const product: Product2 = data.results[i];
-                                console.log('product', product);
-                                const idCar: string = product.masterVariant.sku;
+                                const product: ProductFromCategory = data.results[i];
+                                const idCar: string = product.key;
                                 const nameCar: string = product.name['en-US'];
                                 const urlImgCar: string = product.masterVariant.images[0].url;
                                 const descriptionCar: string = product.description['en-US'];
@@ -159,8 +163,25 @@ export default class Shop {
                                 }
                             }
                         });
+                        // eslint-disable-next-line @typescript-eslint/no-this-alias
+                        const that2: this = this;
+                        setTimeout(function () {
+                            that2.clickOnProduct();
+                        }, 500);
                     }
                 });
+            });
+        });
+    }
+
+    public clickOnProduct(): void {
+        const product = document.querySelectorAll<HTMLDivElement>('.product');
+        product.forEach((el) => {
+            el.addEventListener('click', () => {
+                const idForUrl = el.getAttribute('id');
+                if (idForUrl) {
+                    window.location.href = `http://localhost:8081/product/${idForUrl}`;
+                }
             });
         });
     }

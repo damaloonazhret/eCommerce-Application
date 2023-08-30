@@ -1,15 +1,16 @@
 import { AccessTokenResponse } from '../../types/interfaces';
-import { CTP_AUTH_URL, CTP_CLIENT_ID, CTP_CLIENT_SECRET, CTP_SCOPES } from './credential';
 
 async function getToken(): Promise<AccessTokenResponse> {
     try {
-        const response = await fetch(`${CTP_AUTH_URL}/oauth/token`, {
+        const response = await fetch(`${process.env.CTP_AUTH_URL as string}/oauth/token`, {
             method: 'POST',
             headers: {
-                Authorization: `Basic ${btoa(`${CTP_CLIENT_ID}:${CTP_CLIENT_SECRET}`)}`,
+                Authorization: `Basic ${btoa(
+                    `${process.env.CTP_CLIENT_ID as string}:${process.env.CTP_CLIENT_SECRET as string}`
+                )}`,
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `grant_type=client_credentials&scope=${CTP_SCOPES}`,
+            body: `grant_type=client_credentials&scope=${process.env.CTP_SCOPES as string}`,
         });
 
         if (!response.ok) {

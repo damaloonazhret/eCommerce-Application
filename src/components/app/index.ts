@@ -12,23 +12,25 @@ export default class App {
 
     private model: Model;
 
+    private header: Header;
+
+    private main: Main;
+
+    private router: Router;
+
     constructor(root: HTMLElement) {
         this.root = root;
-        this.model = new Model();
+        this.main = new Main();
+        this.header = new Header();
+        this.model = new Model(this.header);
         this.controller = new Controller(this.model);
+        this.router = new Router(this.controller, this.header, this.main);
     }
 
     public start(): void {
-        const header = new Header();
-        const main = new Main();
-        const router = new Router(main, this.controller);
-        router.setRoutes(routes);
-        this.root.append(header.getLayout());
-        this.root.append(main.getLayout());
+        this.router.setRoutes(routes);
 
-        // saving the token in localstorage, if it is missing
-        if (localStorage.isTokenUser === undefined) {
-            localStorage.setItem('isTokenUser', 'false');
-        }
+        this.root.append(this.header.getLayout());
+        this.root.append(this.main.getLayout());
     }
 }

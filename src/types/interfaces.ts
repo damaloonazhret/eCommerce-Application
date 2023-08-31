@@ -212,7 +212,7 @@ export interface ProductAll {
     key: string;
 }
 
-export interface ProductFromCategory {
+export interface ProductOne {
     categories: [
         {
             id: string;
@@ -295,4 +295,8 @@ export interface GetSearchProducts {
     count: number;
     total: number;
     results: [];
+}
+
+export interface CaracteristicProduct {
+    [index: number]: { name: string; value: string };
 }

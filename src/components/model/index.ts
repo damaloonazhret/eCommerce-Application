@@ -73,7 +73,6 @@ export default class Model {
     public async getProduct(productKey: string): Promise<ProductAll> {
         const anonymousToken = getAnonymousToken();
         const response = await getProduct((await anonymousToken).access_token, productKey);
-        console.log('response1', response);
         return response;
     }
 }

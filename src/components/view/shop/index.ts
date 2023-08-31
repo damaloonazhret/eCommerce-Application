@@ -1,6 +1,6 @@
 import './shop.scss';
 import Model from '../../model';
-import { ProductAll, ProductFromCategory } from '../../../types/interfaces';
+import { ProductAll, ProductOne, CaracteristicProduct } from '../../../types/interfaces';
 
 export default class Shop {
     private shop!: HTMLElement;
@@ -21,6 +21,22 @@ export default class Shop {
 
     private filterButton!: HTMLElement;
 
+    private dataProduct!: ProductAll;
+
+    private dataProductOne!: ProductOne;
+
+    private nameProduct!: string;
+
+    private urlImgProduct!: string;
+
+    private descriptionProduct!: string;
+
+    private keyProduct!: string;
+
+    private priceProduct!: string;
+
+    private characteristicCar!: CaracteristicProduct;
+
     constructor() {
         this.init();
     }
@@ -36,39 +52,44 @@ export default class Shop {
             that.showProductsFilter();
         }, 500);
 
+        this.showAllProduct();
+
+        this.setTiemClickOnProduct();
+    }
+
+    public showAllProduct(): void {
+        this.productsDiv.innerHTML = '';
+
         const dataAllProducts = new Model().getProducts();
 
         void dataAllProducts.then((data) => {
             for (let i = 0; i < data.results.length; i += 1) {
-                const product: ProductAll = data.results[i];
-                const idCar: string = product.key;
-                const nameCar: string = product.masterData.current.name['en-US'];
-                const urlImgCar: string = product.masterData.staged.masterVariant.images[0].url;
-                const descriptionCar: string = product.masterData.current.description['en-US'];
-                const priceCar: string = String(product.masterData.current.masterVariant.prices[0].value.centAmount);
-                const editPriceCar = priceCar.split('');
+                this.dataProduct = data.results[i];
+                this.keyProduct = this.dataProduct.key;
+                this.nameProduct = this.dataProduct.masterData.current.name['en-US'];
+                this.urlImgProduct = this.dataProduct.masterData.staged.masterVariant.images[0].url;
+                /* this.descriptionProduct = this.dataProduct.masterData.current.description['en-US']; */
+                this.characteristicCar = this.dataProduct.masterData.current.masterVariant.attributes;
+                this.priceProduct = String(
+                    this.dataProduct.masterData.current.masterVariant.prices[0].value.centAmount
+                );
+                const editPriceCar = this.priceProduct.split('');
                 editPriceCar.splice(-2, 0, '.');
                 const finalEditPriceCar = editPriceCar.join('');
-                let discountedPriceCar: string;
-                if (product.masterData.current.masterVariant.prices[0].discounted) {
-                    discountedPriceCar = String(
-                        product.masterData.current.masterVariant.prices[0].discounted.value.centAmount
+                if (this.dataProduct.masterData.current.masterVariant.prices[0].discounted) {
+                    const discountedPriceCar = String(
+                        this.dataProduct.masterData.current.masterVariant.prices[0].discounted.value.centAmount
                     );
                     const DescEditPriceCar = discountedPriceCar.split('');
                     DescEditPriceCar.splice(-2, 0, '.');
                     const finalEditDescPriceCar = DescEditPriceCar.join('');
-                    this.productsDiv.innerHTML += `<div class="product" id="${idCar}"><img src="${urlImgCar}" alt="${urlImgCar}"><div class="info-car"><span class="name-car">${nameCar}</span><span class="desc-car">${descriptionCar}</span><span class="old-price-car">${finalEditPriceCar} €</span><span class="disc-price-car">${finalEditDescPriceCar} €</span></div></div>`;
+                    this.productsDiv.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicCar[0].value} <li>Transmission: ${this.characteristicCar[1].value}</li><li>Maximum speed: ${this.characteristicCar[2].value} km/h</li></ul><span class="old-price-product">${finalEditPriceCar} €</span><span class="disc-price-product">${finalEditDescPriceCar} €</span></div></div>`;
                 } else {
-                    this.productsDiv.innerHTML += `<div class="product" id="${idCar}"><img src="${urlImgCar}" alt="${urlImgCar}"><div class="info-car"><span class="name-car">${nameCar}</span><span class="desc-car">${descriptionCar}</span><span class="price-car">${finalEditPriceCar} €</span></div></div>`;
+                    this.productsDiv.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicCar[0].value} <li>Transmission: ${this.characteristicCar[1].value}</li><li>Maximum speed: ${this.characteristicCar[2].value} km/h</li></ul><span class="price-product">${finalEditPriceCar} €</span></span></div></div>`;
                 }
             }
         });
-
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const that2: this = this;
-        setTimeout(function () {
-            that2.clickOnProduct();
-        }, 500);
+        this.setTiemClickOnProduct();
     }
 
     public createBlockProducts(): void {
@@ -103,10 +124,8 @@ export default class Shop {
         this.selectCategories = document.createElement('select');
         this.selectCategories.classList.add('select-category-car');
         this.optionSelectCategories = document.createElement('option');
-        this.optionSelectCategories.value = 'Select a category';
-        this.optionSelectCategories.text = 'Select a category';
-        this.optionSelectCategories.setAttribute('disabled', '');
-        this.optionSelectCategories.setAttribute('selected', '');
+        this.optionSelectCategories.value = 'All category';
+        this.optionSelectCategories.text = 'All category';
         this.selectCategories.appendChild(this.optionSelectCategories);
         this.filterDiv.appendChild(this.selectCategories);
 
@@ -131,46 +150,48 @@ export default class Shop {
         const filterButton = document.querySelector('.filter-button') as HTMLElement;
         filterButton.addEventListener('click', () => {
             const selectCategoryCar = document.querySelector('.select-category-car') as HTMLSelectElement;
-            const dataAllCategories = new Model().getCategories();
-            void dataAllCategories.then((data) => {
-                data.results.forEach((el) => {
-                    if (selectCategoryCar.value === el.description['en-US']) {
-                        const dataGetSearchProducts = new Model().getSearchProducts(`categories.id:"${el.id}"`);
-                        // eslint-disable-next-line @typescript-eslint/no-shadow
-                        void dataGetSearchProducts.then((data) => {
-                            this.productsDiv.innerHTML = '';
-                            for (let i = 0; i < data.results.length; i += 1) {
-                                const product: ProductFromCategory = data.results[i];
-                                const idCar: string = product.key;
-                                const nameCar: string = product.name['en-US'];
-                                const urlImgCar: string = product.masterVariant.images[0].url;
-                                const descriptionCar: string = product.description['en-US'];
-                                const priceCar: string = String(product.masterVariant.prices[0].value.centAmount);
-                                const editPriceCar = priceCar.split('');
-                                editPriceCar.splice(-2, 0, '.');
-                                const finalEditPriceCar = editPriceCar.join('');
-                                let discountedPriceCar: string;
-                                if (product.masterVariant.prices[0].discounted) {
-                                    discountedPriceCar = String(
-                                        product.masterVariant.prices[0].discounted.value.centAmount
+            if (selectCategoryCar.value === 'All category') {
+                this.showAllProduct();
+            } else {
+                void new Model().getCategories().then((data) => {
+                    data.results.forEach((el) => {
+                        if (selectCategoryCar.value === el.description['en-US']) {
+                            const dataGetSearchProducts = new Model().getSearchProducts(`categories.id:"${el.id}"`);
+                            // eslint-disable-next-line @typescript-eslint/no-shadow
+                            void dataGetSearchProducts.then((data) => {
+                                this.productsDiv.innerHTML = '';
+                                for (let i = 0; i < data.results.length; i += 1) {
+                                    this.dataProductOne = data.results[i];
+                                    this.keyProduct = this.dataProductOne.key;
+                                    this.nameProduct = this.dataProductOne.name['en-US'];
+                                    this.urlImgProduct = this.dataProductOne.masterVariant.images[0].url;
+                                    this.descriptionProduct = this.dataProductOne.description['en-US'];
+                                    this.priceProduct = String(
+                                        this.dataProductOne.masterVariant.prices[0].value.centAmount
                                     );
-                                    const DescEditPriceCar = discountedPriceCar.split('');
-                                    DescEditPriceCar.splice(-2, 0, '.');
-                                    const finalEditDescPriceCar = DescEditPriceCar.join('');
-                                    this.productsDiv.innerHTML += `<div class="product" id="${idCar}"><img src="${urlImgCar}" alt="${urlImgCar}"><div class="info-car"><span class="name-car">${nameCar}</span><span class="desc-car">${descriptionCar}</span><span class="old-price-car">${finalEditPriceCar} €</span><span class="disc-price-car">${finalEditDescPriceCar} €</span></div></div>`;
-                                } else {
-                                    this.productsDiv.innerHTML += `<div class="product" id="${idCar}"><img src="${urlImgCar}" alt="${urlImgCar}"><div class="info-car"><span class="name-car">${nameCar}</span><span class="desc-car">${descriptionCar}</span><span class="price-car">${finalEditPriceCar} €</span></div></div>`;
+                                    const editPriceCar = this.priceProduct.split('');
+                                    editPriceCar.splice(-2, 0, '.');
+                                    const finalEditPriceCar = editPriceCar.join('');
+                                    let discountedPriceCar: string;
+                                    if (this.dataProductOne.masterVariant.prices[0].discounted) {
+                                        discountedPriceCar = String(
+                                            this.dataProductOne.masterVariant.prices[0].discounted.value.centAmount
+                                        );
+                                        const DescEditPriceCar = discountedPriceCar.split('');
+                                        DescEditPriceCar.splice(-2, 0, '.');
+                                        const finalEditDescPriceCar = DescEditPriceCar.join('');
+
+                                        this.productsDiv.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicCar[0].value} <li>Transmission: ${this.characteristicCar[1].value}</li><li>Maximum speed: ${this.characteristicCar[2].value} km/h</li></ul><span class="old-price-product">${finalEditPriceCar} €</span><span class="disc-price-product">${finalEditDescPriceCar} €</span></div></div>`;
+                                    } else {
+                                        this.productsDiv.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicCar[0].value} <li>Transmission: ${this.characteristicCar[1].value}</li><li>Maximum speed: ${this.characteristicCar[2].value} km/h</li></ul><span class="price-product">${finalEditPriceCar} €</span></span></div></div>`;
+                                    }
                                 }
-                            }
-                        });
-                        // eslint-disable-next-line @typescript-eslint/no-this-alias
-                        const that2: this = this;
-                        setTimeout(function () {
-                            that2.clickOnProduct();
-                        }, 500);
-                    }
+                            });
+                            this.setTiemClickOnProduct();
+                        }
+                    });
                 });
-            });
+            }
         });
     }
 
@@ -184,6 +205,15 @@ export default class Shop {
                 }
             });
         });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-dupe-class-members
+    public setTiemClickOnProduct(): void {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const that2: this = this;
+        setTimeout(function () {
+            that2.clickOnProduct();
+        }, 500);
     }
 
     public getLayout(): HTMLElement {

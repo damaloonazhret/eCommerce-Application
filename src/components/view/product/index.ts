@@ -69,14 +69,14 @@ export default class Product {
     }
 
     public showDiscPriceProduct(): void {
+        const priceProduct = document.querySelector('.price-product') as HTMLElement;
+        priceProduct.style.textDecoration = 'line-through';
+
         const infoProduct = document.querySelector('.info-product') as HTMLElement;
         this.discPriceProductDiv = document.createElement('div');
         this.discPriceProductDiv.classList.add('disc-price-product');
         this.discPriceProductDiv.innerHTML = `${this.newFormatDiscPriceProduct} €`;
         infoProduct.appendChild(this.discPriceProductDiv);
-
-        const priceProduct = document.querySelector('.price-product') as HTMLElement;
-        priceProduct.style.textDecoration = 'line-through';
     }
 
     public newFormatPrice(priceCar: number): string {

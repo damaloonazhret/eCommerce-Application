@@ -25,6 +25,13 @@
                 outline: none;
             }
         }
+        input[type='number']::-webkit-outer-spin-button,
+        input[type='number']::-webkit-inner-spin-button {
+            appearance: none;
+        }
+        .input-error {
+            border: 1px solid #dd4747;
+        }
         .price-from {
             border-radius: 5px 0 0 5px;
             border-right: none;

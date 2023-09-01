@@ -289,14 +289,6 @@ export interface GetCategories {
     ];
 }
 
-export interface GetSearchProducts {
-    limit: number;
-    offset: number;
-    count: number;
-    total: number;
-    results: [];
-}
-
 export interface CaracteristicProduct {
     [index: number]: { name: string; value: string };
 }

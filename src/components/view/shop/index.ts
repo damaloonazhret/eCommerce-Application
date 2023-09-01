@@ -7,7 +7,7 @@ export default class Shop {
 
     private filterDiv!: HTMLElement;
 
-    private productsDiv!: HTMLElement;
+    private product!: HTMLElement;
 
     private priceFromInput!: HTMLInputElement;
 
@@ -29,13 +29,17 @@ export default class Shop {
 
     private urlImgProduct!: string;
 
-    private descriptionProduct!: string;
-
     private keyProduct!: string;
 
     private priceProduct!: string;
 
-    private characteristicCar!: CaracteristicProduct;
+    private newFormatPriceProduct!: string;
+
+    private newFormatDiscPriceProduct!: string;
+
+    private characteristicProduct!: CaracteristicProduct;
+
+    private discPriceProductDiv!: HTMLElement;
 
     constructor() {
         this.init();
@@ -58,7 +62,7 @@ export default class Shop {
     }
 
     public showAllProduct(): void {
-        this.productsDiv.innerHTML = '';
+        this.product.innerHTML = '';
 
         const dataAllProducts = new Model().getProducts();
 
@@ -68,24 +72,16 @@ export default class Shop {
                 this.keyProduct = this.dataProduct.key;
                 this.nameProduct = this.dataProduct.masterData.current.name['en-US'];
                 this.urlImgProduct = this.dataProduct.masterData.staged.masterVariant.images[0].url;
-                /* this.descriptionProduct = this.dataProduct.masterData.current.description['en-US']; */
-                this.characteristicCar = this.dataProduct.masterData.current.masterVariant.attributes;
-                this.priceProduct = String(
+                this.characteristicProduct = this.dataProduct.masterData.current.masterVariant.attributes;
+                this.newFormatPriceProduct = this.newFormatPrice(
                     this.dataProduct.masterData.current.masterVariant.prices[0].value.centAmount
                 );
-                const editPriceCar = this.priceProduct.split('');
-                editPriceCar.splice(-2, 0, '.');
-                const finalEditPriceCar = editPriceCar.join('');
+                this.initCartProductWithoutDescPrice();
                 if (this.dataProduct.masterData.current.masterVariant.prices[0].discounted) {
-                    const discountedPriceCar = String(
+                    this.newFormatDiscPriceProduct = this.newFormatPrice(
                         this.dataProduct.masterData.current.masterVariant.prices[0].discounted.value.centAmount
                     );
-                    const DescEditPriceCar = discountedPriceCar.split('');
-                    DescEditPriceCar.splice(-2, 0, '.');
-                    const finalEditDescPriceCar = DescEditPriceCar.join('');
-                    this.productsDiv.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicCar[0].value} <li>Transmission: ${this.characteristicCar[1].value}</li><li>Maximum speed: ${this.characteristicCar[2].value} km/h</li></ul><span class="old-price-product">${finalEditPriceCar} €</span><span class="disc-price-product">${finalEditDescPriceCar} €</span></div></div>`;
-                } else {
-                    this.productsDiv.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicCar[0].value} <li>Transmission: ${this.characteristicCar[1].value}</li><li>Maximum speed: ${this.characteristicCar[2].value} km/h</li></ul><span class="price-product">${finalEditPriceCar} €</span></span></div></div>`;
+                    this.showDiscPriceProduct();
                 }
             }
         });
@@ -93,9 +89,9 @@ export default class Shop {
     }
 
     public createBlockProducts(): void {
-        this.productsDiv = document.createElement('div');
-        this.productsDiv.classList.add('products');
-        this.shop.appendChild(this.productsDiv);
+        this.product = document.createElement('div');
+        this.product.classList.add('products');
+        this.shop.appendChild(this.product);
     }
 
     public creatBlockfilter(): void {
@@ -159,31 +155,22 @@ export default class Shop {
                             const dataGetSearchProducts = new Model().getSearchProducts(`categories.id:"${el.id}"`);
                             // eslint-disable-next-line @typescript-eslint/no-shadow
                             void dataGetSearchProducts.then((data) => {
-                                this.productsDiv.innerHTML = '';
+                                this.product.innerHTML = '';
                                 for (let i = 0; i < data.results.length; i += 1) {
                                     this.dataProductOne = data.results[i];
                                     this.keyProduct = this.dataProductOne.key;
                                     this.nameProduct = this.dataProductOne.name['en-US'];
                                     this.urlImgProduct = this.dataProductOne.masterVariant.images[0].url;
-                                    this.descriptionProduct = this.dataProductOne.description['en-US'];
-                                    this.priceProduct = String(
+                                    this.characteristicProduct = this.dataProductOne.masterVariant.attributes;
+                                    this.newFormatPriceProduct = this.newFormatPrice(
                                         this.dataProductOne.masterVariant.prices[0].value.centAmount
                                     );
-                                    const editPriceCar = this.priceProduct.split('');
-                                    editPriceCar.splice(-2, 0, '.');
-                                    const finalEditPriceCar = editPriceCar.join('');
-                                    let discountedPriceCar: string;
+                                    this.initCartProductWithoutDescPrice();
                                     if (this.dataProductOne.masterVariant.prices[0].discounted) {
-                                        discountedPriceCar = String(
+                                        this.newFormatDiscPriceProduct = this.newFormatPrice(
                                             this.dataProductOne.masterVariant.prices[0].discounted.value.centAmount
                                         );
-                                        const DescEditPriceCar = discountedPriceCar.split('');
-                                        DescEditPriceCar.splice(-2, 0, '.');
-                                        const finalEditDescPriceCar = DescEditPriceCar.join('');
-
-                                        this.productsDiv.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicCar[0].value} <li>Transmission: ${this.characteristicCar[1].value}</li><li>Maximum speed: ${this.characteristicCar[2].value} km/h</li></ul><span class="old-price-product">${finalEditPriceCar} €</span><span class="disc-price-product">${finalEditDescPriceCar} €</span></div></div>`;
-                                    } else {
-                                        this.productsDiv.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicCar[0].value} <li>Transmission: ${this.characteristicCar[1].value}</li><li>Maximum speed: ${this.characteristicCar[2].value} km/h</li></ul><span class="price-product">${finalEditPriceCar} €</span></span></div></div>`;
+                                        this.showDiscPriceProduct();
                                     }
                                 }
                             });
@@ -195,13 +182,32 @@ export default class Shop {
         });
     }
 
+    public initCartProductWithoutDescPrice(): void {
+        this.product.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicProduct[0].value} <li>Transmission: ${this.characteristicProduct[1].value}</li><li>Maximum speed: ${this.characteristicProduct[2].value} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div></div>`;
+    }
+
+    public newFormatPrice(priceCar: number): string {
+        this.priceProduct = String(priceCar);
+        const newFormatPriceCar = this.priceProduct.split('');
+        newFormatPriceCar.splice(-2, 0, '.');
+        return newFormatPriceCar.join('');
+    }
+
+    public showDiscPriceProduct(): void {
+        const infoProduct = document.querySelector('.info-product') as HTMLElement;
+        this.discPriceProductDiv = document.createElement('div');
+        this.discPriceProductDiv.classList.add('disc-price-product');
+        this.discPriceProductDiv.innerHTML = `${this.newFormatDiscPriceProduct} €`;
+        infoProduct.appendChild(this.discPriceProductDiv);
+    }
+
     public clickOnProduct(): void {
         const product = document.querySelectorAll<HTMLDivElement>('.product');
         product.forEach((el) => {
             el.addEventListener('click', () => {
-                const idForUrl = el.getAttribute('id');
-                if (idForUrl) {
-                    window.location.href = `http://localhost:8081/product/${idForUrl}`;
+                const idUrl = el.getAttribute('id');
+                if (idUrl) {
+                    window.location.href = `http://localhost:8081/product/${idUrl}`;
                 }
             });
         });

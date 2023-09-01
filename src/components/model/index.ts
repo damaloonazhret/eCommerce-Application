@@ -15,7 +15,6 @@ import {
     AccessTokenResponse,
     GetProducts,
     GetCategories,
-    GetSearchProducts,
     ProductAll,
 } from '../../types/interfaces';
 import Header from '../view/header';
@@ -64,7 +63,7 @@ export default class Model {
         return response;
     }
 
-    public async getSearchProducts(paramSearch: string): Promise<GetSearchProducts> {
+    public async getSearchProducts(paramSearch: string): Promise<GetProducts> {
         const anonymousToken = getAnonymousToken();
         const response = await getSearchProducts((await anonymousToken).access_token, paramSearch);
         return response;

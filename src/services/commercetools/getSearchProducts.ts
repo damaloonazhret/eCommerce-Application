@@ -1,7 +1,7 @@
-import { GetSearchProducts } from '../../types/interfaces';
+import { GetProducts } from '../../types/interfaces';
 import { CTP_API_URL, CTP_PROJECT_KEY } from './credential';
 
-async function getSearchProducts(anonymousToken: string, paramSearch?: string): Promise<GetSearchProducts> {
+async function getSearchProducts(anonymousToken: string, paramSearch?: string): Promise<GetProducts> {
     try {
         const response = await fetch(
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -18,7 +18,7 @@ async function getSearchProducts(anonymousToken: string, paramSearch?: string): 
             throw Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const result = (await response.json()) as GetSearchProducts;
+        const result = (await response.json()) as GetProducts;
         return result;
     } catch (error) {
         throw Error(`Error fetching get products: ${error as string}`);

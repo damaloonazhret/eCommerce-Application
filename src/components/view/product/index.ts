@@ -16,6 +16,8 @@ export default class Product {
 
     private dataProduct!: ProductAll;
 
+    private keyProduct!: string;
+
     private nameProduct!: string;
 
     private urlImgProduct!: string;
@@ -25,6 +27,12 @@ export default class Product {
     private priceProduct!: string;
 
     private characteristicProduct!: CaracteristicProduct;
+
+    private newFormatDiscPriceProduct!: string;
+
+    private newFormatPriceProduct!: string;
+
+    private discPriceProductDiv!: HTMLElement;
 
     constructor(controller: Controller, navigateTo: (url: string) => void, params: Record<string, string>) {
         this.controller = controller;
@@ -40,28 +48,42 @@ export default class Product {
 
         void new Model().getProduct(this.params.id).then((data) => {
             this.dataProduct = data;
+            this.keyProduct = this.dataProduct.key;
             this.nameProduct = this.dataProduct.masterData.current.name['en-US'];
             this.urlImgProduct = this.dataProduct.masterData.current.masterVariant.images[0].url;
             this.descriptionProduct = this.dataProduct.masterData.current.description['en-US'];
-            this.priceProduct = String(this.dataProduct.masterData.current.masterVariant.prices[0].value.centAmount);
             this.characteristicProduct = this.dataProduct.masterData.current.masterVariant.attributes;
-            const editPriceCar = this.priceProduct.split('');
-            editPriceCar.splice(-2, 0, '.');
-            const finalEditPriceCar = editPriceCar.join('');
-            let discountedPriceCar: string;
+            this.newFormatPriceProduct = this.newFormatPrice(
+                this.dataProduct.masterData.current.masterVariant.prices[0].value.centAmount
+            );
+
+            this.product.innerHTML += `<img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><span class="desc-product">${this.descriptionProduct}</span><ul><li>Type of drive: ${this.characteristicProduct[0].value} <li>Transmission: ${this.characteristicProduct[1].value}</li><li>Maximum speed: ${this.characteristicProduct[2].value} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div>`;
+
             if (this.dataProduct.masterData.current.masterVariant.prices[0].discounted) {
-                discountedPriceCar = String(
+                this.newFormatDiscPriceProduct = this.newFormatPrice(
                     this.dataProduct.masterData.current.masterVariant.prices[0].discounted.value.centAmount
                 );
-                const DescEditPriceCar = discountedPriceCar.split('');
-                DescEditPriceCar.splice(-2, 0, '.');
-                const finalEditDescPriceCar = DescEditPriceCar.join('');
-
-                this.product.innerHTML += `<img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><span class="desc-product">${this.descriptionProduct}</span><ul><li>Type of drive: ${this.characteristicProduct[0].value} <li>Transmission: ${this.characteristicProduct[1].value}</li><li>Maximum speed: ${this.characteristicProduct[2].value} km/h</li></ul><span class="old-price-product">${finalEditPriceCar} €</span><span class="disc-price-product">${finalEditDescPriceCar} €</span></div>`;
-            } else {
-                this.product.innerHTML += `<img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><span class="desc-product">${this.descriptionProduct}</span><ul><li>Type of drive: ${this.characteristicProduct[0].value} <li>Transmission: ${this.characteristicProduct[1].value}</li><li>Maximum speed: ${this.characteristicProduct[2].value} km/h</li></ul><span class="price-product">${finalEditPriceCar} €</span></span></div>`;
+                this.showDiscPriceProduct();
             }
         });
+    }
+
+    public showDiscPriceProduct(): void {
+        const infoProduct = document.querySelector('.info-product') as HTMLElement;
+        this.discPriceProductDiv = document.createElement('div');
+        this.discPriceProductDiv.classList.add('disc-price-product');
+        this.discPriceProductDiv.innerHTML = `${this.newFormatDiscPriceProduct} €`;
+        infoProduct.appendChild(this.discPriceProductDiv);
+
+        const priceProduct = document.querySelector('.price-product') as HTMLElement;
+        priceProduct.style.textDecoration = 'line-through';
+    }
+
+    public newFormatPrice(priceCar: number): string {
+        this.priceProduct = String(priceCar);
+        const newFormatPriceCar = this.priceProduct.split('');
+        newFormatPriceCar.splice(-2, 0, '.');
+        return newFormatPriceCar.join('');
     }
 
     public getLayout(): HTMLElement {

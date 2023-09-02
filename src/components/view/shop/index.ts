@@ -1,6 +1,8 @@
 import './shop.scss';
 import Model from '../../model';
-import { ProductAll, ProductOne, CaracteristicProduct } from '../../../types/interfaces';
+import { ProductOne, CaracteristicProduct } from '../../../types/interfaces';
+
+const allBrendName = ['Audi', 'BMW', 'Mercedes-Benz'];
 
 export default class Shop {
     private shop!: HTMLElement;
@@ -15,13 +17,21 @@ export default class Shop {
 
     private priceDiv!: HTMLElement;
 
-    private selectCategories!: HTMLSelectElement;
+    private selectBodyCar!: HTMLSelectElement;
 
-    private optionSelectCategories!: HTMLOptionElement;
+    private optionSelectBodyCar!: HTMLOptionElement;
 
-    private filterButton!: HTMLElement;
+    private labelBodyCar!: HTMLLabelElement;
 
-    private dataProduct!: ProductAll;
+    private selectBrandCar!: HTMLSelectElement;
+
+    private optionSelectBrandCar!: HTMLOptionElement;
+
+    private labelBrandCar!: HTMLLabelElement;
+
+    private filterButton!: HTMLButtonElement;
+
+    private dataProduct!: ProductOne;
 
     private dataProductOne!: ProductOne;
 
@@ -41,6 +51,18 @@ export default class Shop {
 
     private discPriceProductDiv!: HTMLElement;
 
+    private selectBodydCarDiv!: HTMLElement;
+
+    private selectBrandCarDiv!: HTMLElement;
+
+    private searchDiv!: HTMLElement;
+
+    private searchInput!: HTMLInputElement;
+
+    private searchButton!: HTMLButtonElement;
+
+    private resultFilterSearchDiv!: HTMLElement;
+
     constructor() {
         this.init();
     }
@@ -49,45 +71,127 @@ export default class Shop {
         this.shop = document.createElement('section');
         this.shop.classList.add('shop');
         this.creatBlockfilter();
+        this.creatBlockSearch();
+        this.creatResultFilterSearch();
         this.createBlockProducts();
+
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that: this = this;
         setTimeout(function () {
-            that.showProductsFilter();
-        }, 500);
-
-        this.showAllProduct();
+            that.filterProducts();
+            that.searchProducts();
+        }, 0);
 
         this.setTiemClickOnProduct();
     }
 
-    public showAllProduct(): void {
+    public filterProducts(): void {
+        const filterButton = document.querySelector('.filter-button') as HTMLElement;
+        const filterPrice = document.querySelector('.filter-price') as HTMLElement;
+        const priceFrom = document.querySelector('.price-from') as HTMLInputElement;
+        const priceUp = document.querySelector('.price-up') as HTMLInputElement;
+        let stringRequestFilter = '';
+
+        this.showFilterProducts('');
+        this.setTiemClickOnProduct();
+
+        filterButton.addEventListener('click', () => {
+            this.resultFilterSearchDiv.innerHTML = '';
+            this.product.innerHTML = '';
+            // filter price
+            let priceFromValue = priceFrom.value;
+            let priceUpValue = priceUp.value;
+            if (priceFromValue === '' || priceFromValue === '0') {
+                priceFromValue = '0.';
+            }
+            if (priceUpValue === '' || priceUpValue === '0') {
+                priceUpValue = '0.';
+            }
+
+            if (Number(priceFrom.value) > Number(priceUp.value)) {
+                filterPrice.classList.add('shake');
+                priceUp.classList.add('input-error');
+            } else {
+                priceUp.classList.remove('input-error');
+            }
+
+            setTimeout(function () {
+                filterPrice.classList.remove('shake');
+            }, 500);
+
+            if (!(priceFromValue === '0.' && priceUpValue === '0.')) {
+                stringRequestFilter += `filter=variants.price.centAmount:range (${`${String(
+                    priceFromValue
+                )}00`} to ${`${String(priceUpValue)}00`})&`;
+            }
+
+            // filter category
+            const selectBodyCar = document.querySelector('.body-car') as HTMLSelectElement;
+            void new Model().getCategories().then((data) => {
+                data.results.forEach((el) => {
+                    if (selectBodyCar.value === el.description['en-US']) {
+                        stringRequestFilter += `filter=categories.id:"${el.id}"&`;
+                    }
+                });
+            });
+
+            // filter brand
+            const selectBrandCar = document.querySelector('.brand-car') as HTMLSelectElement;
+            allBrendName.forEach((el) => {
+                if (selectBrandCar.value === el) {
+                    stringRequestFilter += `filter=variants.attributes.brandCar.key:"${el}"&`;
+                }
+            });
+
+            setTimeout(() => {
+                this.showFilterProducts(stringRequestFilter);
+                this.setTiemClickOnProduct();
+                stringRequestFilter = '';
+            }, 500);
+        });
+    }
+
+    public searchProducts(): void {
+        const searchButton = document.querySelector('.search-button') as HTMLElement;
+        const dataSearchInput = document.querySelector('.search-input') as HTMLInputElement;
+        searchButton.addEventListener('click', () => {
+            this.resultFilterSearchDiv.innerHTML = '';
+            this.product.innerHTML = '';
+            setTimeout(() => {
+                this.showFilterProducts(`filter=searchKeywords.en-US.text:"${dataSearchInput.value}"`);
+                this.setTiemClickOnProduct();
+                this.resultFilterSearchDiv.innerHTML = `Search query result - "${dataSearchInput.value}"`;
+                dataSearchInput.value = '';
+            }, 500);
+        });
+    }
+
+    public showFilterProducts(stringRequestFilter: string): void {
         this.product.innerHTML = '';
-
-        const dataAllProducts = new Model().getProducts();
-
-        void dataAllProducts.then((data) => {
-            console.log(data);
+        void new Model().getSearchProducts(stringRequestFilter).then((data) => {
             for (let i = 0; i < data.results.length; i += 1) {
                 this.dataProduct = data.results[i];
                 this.keyProduct = this.dataProduct.key;
-                this.nameProduct = this.dataProduct.masterData.current.name['en-US'];
-                this.urlImgProduct = this.dataProduct.masterData.staged.masterVariant.images[0].url;
-                this.characteristicProduct = this.dataProduct.masterData.current.masterVariant.attributes;
+                this.nameProduct = this.dataProduct.name['en-US'];
+                this.urlImgProduct = this.dataProduct.masterVariant.images[0].url;
+                this.characteristicProduct = this.dataProduct.masterVariant.attributes;
                 this.newFormatPriceProduct = this.newFormatPrice(
-                    this.dataProduct.masterData.current.masterVariant.prices[0].value.centAmount
+                    this.dataProduct.masterVariant.prices[0].value.centAmount
                 );
-                if (this.dataProduct.masterData.current.masterVariant.prices[0].discounted) {
+                if (this.dataProduct.masterVariant.prices[0].discounted) {
                     this.newFormatDiscPriceProduct = this.newFormatPrice(
-                        this.dataProduct.masterData.current.masterVariant.prices[0].discounted.value.centAmount
+                        this.dataProduct.masterVariant.prices[0].discounted.value.centAmount
                     );
                     this.initCartProductWithDescPrice();
                 } else {
                     this.initCartProductWithoutDescPrice();
                 }
             }
+
+            if (data.results.length === 0) {
+                this.product.innerHTML = 'Nothing found';
+            }
         });
-        this.setTiemClickOnProduct();
     }
 
     public createBlockProducts(): void {
@@ -96,6 +200,7 @@ export default class Shop {
         this.shop.appendChild(this.product);
     }
 
+    // creat filter
     public creatBlockfilter(): void {
         this.filterDiv = document.createElement('div');
         this.filterDiv.classList.add('filter');
@@ -114,35 +219,90 @@ export default class Shop {
 
         this.priceUpInput = document.createElement('input');
         this.priceUpInput.type = 'number';
-        this.priceUpInput.value = '5000';
         this.priceUpInput.classList.add('price-up');
         this.priceUpInput.placeholder = 'Price up, €';
         this.priceDiv.appendChild(this.priceUpInput);
 
-        // change category
-        this.selectCategories = document.createElement('select');
-        this.selectCategories.classList.add('select-category-car');
-        this.optionSelectCategories = document.createElement('option');
-        this.optionSelectCategories.value = 'All category';
-        this.optionSelectCategories.text = 'All category';
-        this.selectCategories.appendChild(this.optionSelectCategories);
-        this.filterDiv.appendChild(this.selectCategories);
+        // creat select body car
+        this.selectBodydCarDiv = document.createElement('div');
+        this.selectBodydCarDiv.classList.add('filtr-body-car');
+        this.filterDiv.appendChild(this.selectBodydCarDiv);
+
+        this.labelBodyCar = document.createElement('label');
+        this.labelBodyCar.innerHTML = 'Choose a body type';
+        this.selectBodydCarDiv.appendChild(this.labelBodyCar);
+        this.selectBodyCar = document.createElement('select');
+        this.selectBodyCar.classList.add('body-car');
+        this.selectBodyCar.name = 'body-car';
+        this.optionSelectBodyCar = document.createElement('option');
+        this.optionSelectBodyCar.value = 'All body car';
+        this.optionSelectBodyCar.text = 'All body car';
+        this.selectBodyCar.appendChild(this.optionSelectBodyCar);
+        this.selectBodydCarDiv.appendChild(this.selectBodyCar);
 
         const dataAllCategories = new Model().getCategories();
         void dataAllCategories.then((data) => {
             data.results.forEach((el) => {
-                this.optionSelectCategories = document.createElement('option');
-                this.optionSelectCategories.value = el.description['en-US'];
-                this.optionSelectCategories.text = el.description['en-US'];
-                this.selectCategories.appendChild(this.optionSelectCategories);
+                this.optionSelectBodyCar = document.createElement('option');
+                this.optionSelectBodyCar.value = el.description['en-US'];
+                this.optionSelectBodyCar.text = el.description['en-US'];
+                this.selectBodyCar.appendChild(this.optionSelectBodyCar);
             });
         });
 
+        // creat select brand car
+        this.selectBrandCarDiv = document.createElement('div');
+        this.selectBrandCarDiv.classList.add('filtr-brand-car');
+        this.filterDiv.appendChild(this.selectBrandCarDiv);
+
+        this.labelBrandCar = document.createElement('label');
+        this.labelBrandCar.innerHTML = 'Choose a brand';
+        this.selectBrandCarDiv.appendChild(this.labelBrandCar);
+        this.selectBrandCar = document.createElement('select');
+        this.selectBrandCar.classList.add('brand-car');
+        this.selectBrandCar.name = 'brand-car';
+        this.optionSelectBrandCar = document.createElement('option');
+        this.optionSelectBrandCar.value = 'All brand car';
+        this.optionSelectBrandCar.text = 'All brand car';
+        this.selectBrandCar.appendChild(this.optionSelectBrandCar);
+        this.selectBrandCarDiv.appendChild(this.selectBrandCar);
+
+        allBrendName.forEach((el) => {
+            this.optionSelectBrandCar = document.createElement('option');
+            this.optionSelectBrandCar.value = el;
+            this.optionSelectBrandCar.text = el;
+            this.selectBrandCar.appendChild(this.optionSelectBrandCar);
+        });
+
         // button
-        this.filterButton = document.createElement('div');
+        this.filterButton = document.createElement('button');
         this.filterButton.classList.add('filter-button');
         this.filterButton.innerHTML = 'Show';
         this.filterDiv.appendChild(this.filterButton);
+    }
+
+    // creat block search
+    public creatBlockSearch(): void {
+        this.searchDiv = document.createElement('div');
+        this.searchDiv.classList.add('search');
+        this.shop.appendChild(this.searchDiv);
+
+        this.searchInput = document.createElement('input');
+        this.searchInput.type = 'text';
+        this.searchInput.placeholder = 'Enter the car name';
+        this.searchInput.classList.add('search-input');
+        this.searchDiv.appendChild(this.searchInput);
+
+        this.searchButton = document.createElement('button');
+        this.searchButton.classList.add('search-button');
+        this.searchButton.innerHTML = 'Search';
+        this.searchDiv.appendChild(this.searchButton);
+    }
+
+    public creatResultFilterSearch(): void {
+        this.resultFilterSearchDiv = document.createElement('div');
+        this.resultFilterSearchDiv.classList.add('result-filter-search');
+        this.searchDiv.appendChild(this.resultFilterSearchDiv);
     }
 
     public initCartProductWithDescPrice(): void {
@@ -187,63 +347,6 @@ export default class Shop {
         setTimeout(function () {
             that2.clickOnProduct();
         }, 500);
-    }
-
-    private showProductsFilter(): void {
-        const filterButton = document.querySelector('.filter-button') as HTMLElement;
-        const priceFrom = document.querySelector('.price-from') as HTMLInputElement;
-        const priceUp = document.querySelector('.price-up') as HTMLInputElement;
-        filterButton.addEventListener('click', () => {
-            const selectCategoryCar = document.querySelector('.select-category-car') as HTMLSelectElement;
-            // price
-            const priceFromValue = Number(priceFrom.value);
-            const priceUpValue = Number(priceUp.value);
-
-            if (priceFromValue > priceUpValue) {
-                priceUp.classList.add('input-error');
-            } else {
-                priceUp.classList.remove('input-error');
-            }
-
-            console.log(priceFromValue, priceUpValue);
-
-            // catgory
-            if (selectCategoryCar.value === 'All category') {
-                this.showAllProduct();
-            } else {
-                void new Model().getCategories().then((data) => {
-                    data.results.forEach((el) => {
-                        if (selectCategoryCar.value === el.description['en-US']) {
-                            const dataGetSearchProducts = new Model().getSearchProducts(`categories.id:"${el.id}"`);
-                            // eslint-disable-next-line @typescript-eslint/no-shadow
-                            void dataGetSearchProducts.then((data) => {
-                                console.log(data);
-                                this.product.innerHTML = '';
-                                for (let i = 0; i < data.results.length; i += 1) {
-                                    this.dataProductOne = data.results[i];
-                                    this.keyProduct = this.dataProductOne.key;
-                                    this.nameProduct = this.dataProductOne.name['en-US'];
-                                    this.urlImgProduct = this.dataProductOne.masterVariant.images[0].url;
-                                    this.characteristicProduct = this.dataProductOne.masterVariant.attributes;
-                                    this.newFormatPriceProduct = this.newFormatPrice(
-                                        this.dataProductOne.masterVariant.prices[0].value.centAmount
-                                    );
-                                    if (this.dataProductOne.masterVariant.prices[0].discounted) {
-                                        this.newFormatDiscPriceProduct = this.newFormatPrice(
-                                            this.dataProductOne.masterVariant.prices[0].discounted.value.centAmount
-                                        );
-                                        this.initCartProductWithDescPrice();
-                                    } else {
-                                        this.initCartProductWithoutDescPrice();
-                                    }
-                                }
-                            });
-                            this.setTiemClickOnProduct();
-                        }
-                    });
-                });
-            }
-        });
     }
 
     public getLayout(): HTMLElement {

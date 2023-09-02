@@ -5,7 +5,7 @@ async function getSearchProducts(anonymousToken: string, paramSearch?: string): 
     try {
         const response = await fetch(
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            `${CTP_API_URL}/${CTP_PROJECT_KEY}/product-projections/search?filter=${paramSearch}`,
+            `${CTP_API_URL}/${CTP_PROJECT_KEY}/product-projections/search?${paramSearch}`,
             {
                 method: 'GET',
                 headers: {

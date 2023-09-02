@@ -57,7 +57,7 @@ export default class Product {
                 this.dataProduct.masterData.current.masterVariant.prices[0].value.centAmount
             );
 
-            this.product.innerHTML += `<img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><span class="desc-product">${this.descriptionProduct}</span><ul><li>Type of drive: ${this.characteristicProduct[0].value} <li>Transmission: ${this.characteristicProduct[1].value}</li><li>Maximum speed: ${this.characteristicProduct[2].value} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div>`;
+            this.product.innerHTML += `<div class="breadcrumbs"> <a href="/">Home</a> / <a href='/shop'>Shop</a> / <span>${this.nameProduct}</span></div><img src="${this.urlImgProduct}" alt="${this.nameProduct}" align="left"><div class="info-product"><span class="name-product">${this.nameProduct}</span><span class="desc-product">${this.descriptionProduct}</span><ul><li>- Type of drive: ${this.characteristicProduct[0].value} <li>- Transmission: ${this.characteristicProduct[1].value}</li><li>- Maximum speed: ${this.characteristicProduct[2].value} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div>`;
 
             if (this.dataProduct.masterData.current.masterVariant.prices[0].discounted) {
                 this.newFormatDiscPriceProduct = this.newFormatPrice(

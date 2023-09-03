@@ -290,5 +290,19 @@ export interface GetCategories {
 }
 
 export interface CaracteristicProduct {
+    forEach(arg0: (el: CaracteristicProductString | CaracteristicProductObject) => void): unknown;
     [index: number]: { name: string; value: string };
+}
+
+export interface CaracteristicProductString {
+    name: string;
+    value: string;
+}
+
+export interface CaracteristicProductObject {
+    name: string;
+    value: {
+        key: string;
+        label: string;
+    };
 }

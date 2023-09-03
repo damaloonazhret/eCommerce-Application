@@ -1,15 +1,20 @@
 import './shop.scss';
 import Model from '../../model';
-import { ProductOne, CaracteristicProduct } from '../../../types/interfaces';
+import {
+    ProductOne,
+    CaracteristicProduct,
+    CaracteristicProductString,
+    CaracteristicProductObject,
+} from '../../../types/interfaces';
 
-const allBrendName = ['Audi', 'BMW', 'Mercedes-Benz'];
+const allBrendName = ['Audi', 'BMW', 'Mercedes-Benz', 'Toyota', 'Volkswagen', 'Ford'];
 
 export default class Shop {
     private shop!: HTMLElement;
 
     private filterDiv!: HTMLElement;
 
-    private product!: HTMLElement;
+    private products!: HTMLElement;
 
     private priceFromInput!: HTMLInputElement;
 
@@ -63,141 +68,25 @@ export default class Shop {
 
     private resultFilterSearchDiv!: HTMLElement;
 
+    private urlToGetSort: string;
+
+    private bodyTypeProductText!: string;
+
+    private transmissionProductText!: string;
+
+    private engineProductText!: string;
+
+    private maxSpeedProductText!: string;
+
     constructor() {
         this.init();
-    }
-
-    private init(): void {
-        this.shop = document.createElement('section');
-        this.shop.classList.add('shop');
-        this.creatBlockfilter();
-        this.creatBlockSearch();
-        this.creatResultFilterSearch();
-        this.createBlockProducts();
-
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const that: this = this;
-        setTimeout(function () {
-            that.filterProducts();
-            that.searchProducts();
-        }, 0);
-
-        this.setTiemClickOnProduct();
-    }
-
-    public filterProducts(): void {
-        const filterButton = document.querySelector('.filter-button') as HTMLElement;
-        const filterPrice = document.querySelector('.filter-price') as HTMLElement;
-        const priceFrom = document.querySelector('.price-from') as HTMLInputElement;
-        const priceUp = document.querySelector('.price-up') as HTMLInputElement;
-        let stringRequestFilter = '';
-
-        this.showFilterProducts('');
-        this.setTiemClickOnProduct();
-
-        filterButton.addEventListener('click', () => {
-            this.resultFilterSearchDiv.innerHTML = '';
-            this.product.innerHTML = '';
-            // filter price
-            let priceFromValue = priceFrom.value;
-            let priceUpValue = priceUp.value;
-            if (priceFromValue === '' || priceFromValue === '0') {
-                priceFromValue = '0.';
-            }
-            if (priceUpValue === '' || priceUpValue === '0') {
-                priceUpValue = '0.';
-            }
-
-            if (Number(priceFrom.value) > Number(priceUp.value)) {
-                filterPrice.classList.add('shake');
-                priceUp.classList.add('input-error');
-            } else {
-                priceUp.classList.remove('input-error');
-            }
-
-            setTimeout(function () {
-                filterPrice.classList.remove('shake');
-            }, 500);
-
-            if (!(priceFromValue === '0.' && priceUpValue === '0.')) {
-                stringRequestFilter += `filter=variants.price.centAmount:range (${`${String(
-                    priceFromValue
-                )}00`} to ${`${String(priceUpValue)}00`})&`;
-            }
-
-            // filter category
-            const selectBodyCar = document.querySelector('.body-car') as HTMLSelectElement;
-            void new Model().getCategories().then((data) => {
-                data.results.forEach((el) => {
-                    if (selectBodyCar.value === el.description['en-US']) {
-                        stringRequestFilter += `filter=categories.id:"${el.id}"&`;
-                    }
-                });
-            });
-
-            // filter brand
-            const selectBrandCar = document.querySelector('.brand-car') as HTMLSelectElement;
-            allBrendName.forEach((el) => {
-                if (selectBrandCar.value === el) {
-                    stringRequestFilter += `filter=variants.attributes.brandCar.key:"${el}"&`;
-                }
-            });
-
-            setTimeout(() => {
-                this.showFilterProducts(stringRequestFilter);
-                this.setTiemClickOnProduct();
-                stringRequestFilter = '';
-            }, 500);
-        });
-    }
-
-    public searchProducts(): void {
-        const searchButton = document.querySelector('.search-button') as HTMLElement;
-        const dataSearchInput = document.querySelector('.search-input') as HTMLInputElement;
-        searchButton.addEventListener('click', () => {
-            this.resultFilterSearchDiv.innerHTML = '';
-            this.product.innerHTML = '';
-            setTimeout(() => {
-                this.showFilterProducts(`filter=searchKeywords.en-US.text:"${dataSearchInput.value}"`);
-                this.setTiemClickOnProduct();
-                this.resultFilterSearchDiv.innerHTML = `Search query result - "${dataSearchInput.value}"`;
-                dataSearchInput.value = '';
-            }, 500);
-        });
-    }
-
-    public showFilterProducts(stringRequestFilter: string): void {
-        this.product.innerHTML = '';
-        void new Model().getSearchProducts(stringRequestFilter).then((data) => {
-            for (let i = 0; i < data.results.length; i += 1) {
-                this.dataProduct = data.results[i];
-                this.keyProduct = this.dataProduct.key;
-                this.nameProduct = this.dataProduct.name['en-US'];
-                this.urlImgProduct = this.dataProduct.masterVariant.images[0].url;
-                this.characteristicProduct = this.dataProduct.masterVariant.attributes;
-                this.newFormatPriceProduct = this.newFormatPrice(
-                    this.dataProduct.masterVariant.prices[0].value.centAmount
-                );
-                if (this.dataProduct.masterVariant.prices[0].discounted) {
-                    this.newFormatDiscPriceProduct = this.newFormatPrice(
-                        this.dataProduct.masterVariant.prices[0].discounted.value.centAmount
-                    );
-                    this.initCartProductWithDescPrice();
-                } else {
-                    this.initCartProductWithoutDescPrice();
-                }
-            }
-
-            if (data.results.length === 0) {
-                this.product.innerHTML = 'Nothing found';
-            }
-        });
+        this.urlToGetSort = '';
     }
 
     public createBlockProducts(): void {
-        this.product = document.createElement('div');
-        this.product.classList.add('products');
-        this.shop.appendChild(this.product);
+        this.products = document.createElement('div');
+        this.products.classList.add('products');
+        this.shop.appendChild(this.products);
     }
 
     // creat filter
@@ -305,12 +194,229 @@ export default class Shop {
         this.searchDiv.appendChild(this.resultFilterSearchDiv);
     }
 
+    // creat block sort
+    private creatBlockSortProduct(): void {
+        const sortProductDiv = document.createElement('div') as HTMLElement;
+        sortProductDiv.classList.add('sort');
+        sortProductDiv.innerHTML = 'Sort by: ';
+        this.shop.appendChild(sortProductDiv);
+
+        const sortByName = document.createElement('span') as HTMLElement;
+        sortByName.classList.add('sort-name');
+        sortByName.classList.add('asc');
+        sortByName.innerHTML = 'Product name▼';
+        sortProductDiv.appendChild(sortByName);
+
+        const sortByPrice = document.createElement('span') as HTMLElement;
+        sortByPrice.classList.add('sort-price');
+        sortByPrice.classList.add('asc');
+        sortByPrice.innerHTML = 'Product price▼';
+        sortProductDiv.appendChild(sortByPrice);
+    }
+
+    private init(): void {
+        this.shop = document.createElement('section');
+        this.shop.classList.add('shop');
+        this.creatBlockfilter();
+        this.creatBlockSearch();
+        this.creatResultFilterSearch();
+        this.creatBlockSortProduct();
+        this.createBlockProducts();
+
+        setTimeout(() => {
+            this.filterProducts();
+            this.searchProducts();
+            this.setTiemClickOnProduct();
+            const sortName = document.querySelector('.sort-name') as HTMLElement;
+            sortName.addEventListener('click', () => {
+                this.sortNameProducts(this.urlToGetSort);
+            });
+            const sortPrice = document.querySelector('.sort-price') as HTMLElement;
+            sortPrice.addEventListener('click', () => {
+                this.sortPriceProducts(this.urlToGetSort);
+            });
+        }, 0);
+    }
+
+    public filterProducts(): void {
+        const filterButton = document.querySelector('.filter-button') as HTMLElement;
+        const filterPrice = document.querySelector('.filter-price') as HTMLElement;
+        const priceFrom = document.querySelector('.price-from') as HTMLInputElement;
+        const priceUp = document.querySelector('.price-up') as HTMLInputElement;
+        let stringRequestFilter = '';
+
+        this.showProducts('');
+        this.setTiemClickOnProduct();
+
+        filterButton.addEventListener('click', () => {
+            this.resultFilterSearchDiv.innerHTML = '';
+            this.products.innerHTML = '';
+
+            // filter price
+            let priceFromValue = priceFrom.value;
+            let priceUpValue = priceUp.value;
+            if (priceFromValue === '' || priceFromValue === '0') {
+                priceFromValue = '0.';
+            }
+            if (priceUpValue === '' || priceUpValue === '0') {
+                priceUpValue = '0.';
+            }
+
+            if (Number(priceFrom.value) > Number(priceUp.value)) {
+                filterPrice.classList.add('shake');
+                priceUp.classList.add('input-error');
+            } else {
+                priceUp.classList.remove('input-error');
+            }
+
+            setTimeout(function () {
+                filterPrice.classList.remove('shake');
+            }, 300);
+
+            if (!(priceFromValue === '0.' && priceUpValue === '0.')) {
+                stringRequestFilter += `filter=variants.price.centAmount:range (${`${String(
+                    priceFromValue
+                )}00`} to ${`${String(priceUpValue)}00`})&`;
+            }
+
+            // filter category
+            const selectBodyCar = document.querySelector('.body-car') as HTMLSelectElement;
+            void new Model().getCategories().then((data) => {
+                data.results.forEach((el) => {
+                    if (selectBodyCar.value === el.description['en-US']) {
+                        stringRequestFilter += `filter=categories.id:"${el.id}"&`;
+                    }
+                });
+            });
+
+            // filter brand
+            const selectBrandCar = document.querySelector('.brand-car') as HTMLSelectElement;
+            allBrendName.forEach((el) => {
+                if (selectBrandCar.value === el) {
+                    stringRequestFilter += `filter=variants.attributes.brandCar.key:"${el}"&`;
+                }
+            });
+
+            setTimeout(() => {
+                this.showProducts(stringRequestFilter);
+                this.setTiemClickOnProduct();
+                this.urlToGetSort = stringRequestFilter;
+                stringRequestFilter = '';
+            }, 300);
+        });
+    }
+
+    public searchProducts(): void {
+        const searchButton = document.querySelector('.search-button') as HTMLElement;
+        const dataSearchInput = document.querySelector('.search-input') as HTMLInputElement;
+        searchButton.addEventListener('click', () => {
+            const stringRequestSearch = `filter=searchKeywords.en-US.text:"${dataSearchInput.value}"`;
+            this.resultFilterSearchDiv.innerHTML = '';
+            this.products.innerHTML = '';
+            this.showProducts(`${stringRequestSearch}&`);
+            this.setTiemClickOnProduct();
+            this.resultFilterSearchDiv.innerHTML = `Search query result - "${dataSearchInput.value}"`;
+            this.urlToGetSort = `${stringRequestSearch}&`;
+            dataSearchInput.value = '';
+        });
+    }
+
+    public sortNameProducts(param: string): void {
+        const sortName = document.querySelector('.sort-name') as HTMLElement;
+        const sortPrice = document.querySelector('.sort-price') as HTMLElement;
+        if (sortName.classList.contains('asc')) {
+            sortName.innerHTML = 'Product name▲';
+            sortName.classList.remove('asc');
+            sortName.classList.add('desc');
+            if (sortPrice.classList.contains('desc')) {
+                sortPrice.innerHTML = 'Product price▼';
+                sortPrice.classList.remove('desc');
+                sortPrice.classList.add('asc');
+            }
+            this.showProducts(`${param}sort=name.en-us desc`);
+            this.setTiemClickOnProduct();
+        } else {
+            sortName.innerHTML = 'Product name▼';
+            sortName.classList.remove('desc');
+            sortName.classList.add('asc');
+            this.showProducts(`${param}sort=name.en-us asc`);
+            this.setTiemClickOnProduct();
+        }
+    }
+
+    public sortPriceProducts(param: string): void {
+        const sortName = document.querySelector('.sort-name') as HTMLElement;
+        const sortPrice = document.querySelector('.sort-price') as HTMLElement;
+        if (sortPrice.classList.contains('asc')) {
+            sortPrice.innerHTML = 'Product price▲';
+            sortPrice.classList.remove('asc');
+            sortPrice.classList.add('desc');
+            if (sortName.classList.contains('desc')) {
+                sortName.innerHTML = 'Product name▼';
+                sortName.classList.remove('desc');
+                sortName.classList.add('asc');
+            }
+            this.showProducts(`${param}sort=price desc`);
+            this.setTiemClickOnProduct();
+        } else {
+            sortPrice.innerHTML = 'Product price▼';
+            sortPrice.classList.remove('desc');
+            sortPrice.classList.add('asc');
+            this.showProducts(`${param}sort=price asc`);
+            this.setTiemClickOnProduct();
+        }
+    }
+
+    public showProducts(stringRequest: string): void {
+        console.log(stringRequest);
+        this.products.innerHTML = '';
+        void new Model().getSearchProducts(stringRequest).then((data) => {
+            for (let i = 0; i < data.results.length; i += 1) {
+                this.dataProduct = data.results[i];
+                this.keyProduct = this.dataProduct.key;
+                this.nameProduct = this.dataProduct.name['en-US'];
+                this.urlImgProduct = this.dataProduct.masterVariant.images[0].url;
+                this.characteristicProduct = this.dataProduct.masterVariant.attributes;
+                this.characteristicProduct.forEach((el: CaracteristicProductString | CaracteristicProductObject) => {
+                    if (typeof el.value === 'string') {
+                        if (el.name === 'transmission') {
+                            this.transmissionProductText = el.value;
+                        }
+                        if (el.name === 'maximumSpeed') {
+                            this.maxSpeedProductText = el.value;
+                        }
+                    }
+                    if (typeof el.value === 'object') {
+                        if (el.name === 'bodyCar') {
+                            this.bodyTypeProductText = el.value.label;
+                        }
+                    }
+                });
+                this.newFormatPriceProduct = this.newFormatPrice(
+                    this.dataProduct.masterVariant.prices[0].value.centAmount
+                );
+                if (this.dataProduct.masterVariant.prices[0].discounted) {
+                    this.newFormatDiscPriceProduct = this.newFormatPrice(
+                        this.dataProduct.masterVariant.prices[0].discounted.value.centAmount
+                    );
+                    this.initCartProductWithDescPrice();
+                } else {
+                    this.initCartProductWithoutDescPrice();
+                }
+            }
+
+            if (data.results.length === 0) {
+                this.products.innerHTML = 'Nothing found';
+            }
+        });
+    }
+
     public initCartProductWithDescPrice(): void {
-        this.product.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicProduct[0].value} <li>Transmission: ${this.characteristicProduct[1].value}</li><li>Maximum speed: ${this.characteristicProduct[2].value} km/h</li></ul><span class="old-price-product">${this.newFormatPriceProduct} €</span></span><span class="disc-price-product">${this.newFormatDiscPriceProduct} €</span></span></div></div>`;
+        this.products.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText} <li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="old-price-product">${this.newFormatPriceProduct} €</span></span><span class="disc-price-product">${this.newFormatDiscPriceProduct} €</span></span></div></div>`;
     }
 
     public initCartProductWithoutDescPrice(): void {
-        this.product.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Type of drive: ${this.characteristicProduct[0].value} <li>Transmission: ${this.characteristicProduct[1].value}</li><li>Maximum speed: ${this.characteristicProduct[2].value} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div></div>`;
+        this.products.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText}<li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div></div>`;
     }
 
     public newFormatPrice(priceCar: number): string {
@@ -340,12 +446,11 @@ export default class Shop {
         });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-dupe-class-members
     public setTiemClickOnProduct(): void {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const that2: this = this;
+        const that: this = this;
         setTimeout(function () {
-            that2.clickOnProduct();
+            that.clickOnProduct();
         }, 500);
     }
 

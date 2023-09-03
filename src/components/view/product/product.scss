@@ -66,3 +66,19 @@
         /* list-style-type: '- '; */
     }
 }
+
+@media (max-width: 700px) {
+    .product-main {
+        display: flex;
+        flex-direction: column;
+        img {
+            width: 100%;
+        }
+        li {
+            margin-left: 0px;
+        }
+        .breadcrumbs {
+            font-size: 14px;
+        }
+    }
+}

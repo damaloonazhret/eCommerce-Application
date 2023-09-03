@@ -6,6 +6,7 @@ import Login from '../components/view/login';
 import Product from '../components/view/product';
 import Registration from '../components/view/registration';
 import Shop from '../components/view/shop';
+import Account from '../components/view/account';
 
 export interface Route {
     path: string;
@@ -13,6 +14,7 @@ export interface Route {
         | typeof Home
         | typeof Shop
         | typeof Login
+        | typeof Account
         | typeof Registration
         | typeof Error404
         | typeof About
@@ -95,3 +97,94 @@ export interface LoginResult {
 }
 
 export type RegistrationResult = LoginResult;
+
+export type EmailChangeResult = LoginResult;
+
+export type PasswordChangeResult = LoginResult;
+
+export type VersionGetResult = LoginResult;
+
+export type NameUpdateResult = LoginResult;
+
+export interface Address {
+    id: string;
+    streetName: string;
+    postalCode: string;
+    city: string;
+    country: string;
+}
+
+export interface UserInfo {
+    customer: {
+        id: string;
+        version: number;
+        versionModifiedAt: string;
+        lastMessageSequenceNumber: number;
+        createdAt: string;
+        lastModifiedAt: string;
+        lastModifiedBy: {
+            clientId: string;
+            isPlatformClient: boolean;
+        };
+        createdBy: {
+            clientId: string;
+            isPlatformClient: boolean;
+        };
+        email: string;
+        firstName: string;
+        lastName: string;
+        dateOfBirth: string;
+        password: string;
+        addresses: Address[];
+        shippingAddressIds: string[];
+        billingAddressIds: string[];
+        isEmailVerified: boolean;
+        stores: string[];
+        authenticationMode: string;
+    };
+}
+
+export interface CustomerResponse {
+    statusCode?: number;
+    id: string;
+    version: number;
+    createdAt: string;
+    lastModifiedAt: string;
+    lastModifiedBy: {
+        clientId: string;
+        isPlatformClient: boolean;
+    };
+    createdBy: {
+        clientId: string;
+        isPlatformClient: boolean;
+    };
+    email: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    addresses: Address[];
+    shippingAddressIds: string[];
+    billingAddressIds: string[];
+    isEmailVerified: boolean;
+    stores: string[];
+    authenticationMode: string;
+    message?: string;
+}
+
+export interface PasswordChange {
+    id: string;
+    currentPassword: string;
+    newPassword: string;
+}
+
+export interface ErrorResponse {
+    statusCode: number;
+    message: string;
+    errors: ErrorDetail[];
+}
+
+interface ErrorDetail {
+    code: string;
+    message: string;
+    currentVersion: number;
+}

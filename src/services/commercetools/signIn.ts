@@ -17,8 +17,9 @@ async function signIn(token: string, userData: UserLoginData): Promise<AccessTok
         const result = (await response.json()) as AccessTokenResponse;
         return result;
     }
-
-    return (await response.json()) as Customer;
+    const customerData = (await response.json()) as Customer;
+    sessionStorage.setItem('userData', JSON.stringify(customerData));
+    return customerData;
 }
 
 export default signIn;

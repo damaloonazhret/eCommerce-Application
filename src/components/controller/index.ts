@@ -1,4 +1,14 @@
-import { LoginResult, RegistrationResult, UserLoginData, UserRegistrationData } from '../../types/interfaces';
+import {
+    CustomerResponse,
+    EmailChangeResult,
+    LoginResult,
+    NameUpdateResult,
+    PasswordChange,
+    PasswordChangeResult,
+    RegistrationResult,
+    UserLoginData,
+    UserRegistrationData,
+} from '../../types/interfaces';
 import Model from '../model';
 
 export default class Controller {
@@ -9,8 +19,29 @@ export default class Controller {
     }
 
     public async signIn(userData: UserLoginData): Promise<LoginResult> {
-        console.log(userData);
         return this.model.signIn(userData);
+    }
+
+    public async getVersion(userId: string): Promise<CustomerResponse> {
+        return this.model.getVersion(userId);
+    }
+
+    public async changeEmail(email: string, version: number, id: string): Promise<EmailChangeResult> {
+        return this.model.changeEmail(email, version, id);
+    }
+
+    public async changePassword(data: PasswordChange, version: number): Promise<PasswordChangeResult> {
+        return this.model.changePassword(data, version);
+    }
+
+    public async updateName(
+        name: string,
+        version: number,
+        action: string,
+        setValue: string,
+        id: string
+    ): Promise<NameUpdateResult> {
+        return this.model.updateName(name, version, action, setValue, id);
     }
 
     public async signUp(userData: UserRegistrationData): Promise<RegistrationResult> {

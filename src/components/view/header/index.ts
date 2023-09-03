@@ -20,6 +20,8 @@ export default class Header {
 
     private loginListItem!: HTMLElement;
 
+    private accountListItem!: HTMLElement;
+
     private logoutListItem!: HTMLElement;
 
     constructor() {
@@ -39,6 +41,16 @@ export default class Header {
 
         this.createMenu();
 
+        // <li class="header__home"><a class="header__nav-link" href="/" data-route>Home</a></li>
+        // <li class="header__shop"><a class="header__nav-link" href="/shop" data-route>Shop</a></li>
+        // <li class="header__about"><a class="header__nav-link" href="/about" data-route>About</a></li>
+        // <li class="header__contact"><a class="header__nav-link" href="/contact" data-route>Contact</a></li>
+        // <li class="header__sign-up"><a class="header__nav-link" href="/registration" data-route>Sign Up</a></li>
+        // <li class="header__login"><a class="header__nav-link" href="/login" data-route>Login</a></li>
+        // <li class="header__login"><a class="header__nav-link" href="/account" data-route>Account</a></li>
+        // <li class="header__logout"><span class="header__nav-link">Logout</span></li>
+        // `;
+
         this.nav.append(this.ul);
         this.header.append(this.nav);
 
@@ -56,6 +68,7 @@ export default class Header {
         const contactLink = createNavLink('/contact', 'header__nav-link', 'Contact');
         const signUpLink = createNavLink('/registration', 'header__nav-link', 'Sign Up');
         const loginLink = createNavLink('/login', 'header__nav-link', 'Login');
+        const headerAccount = createNavLink('/account', 'header__nav-link', 'Account');
         const logoutLink = createNavLink('#', 'header__nav-link', 'Logout');
 
         this.homeListItem = document.createElement('li');
@@ -82,6 +95,10 @@ export default class Header {
         this.loginListItem.className = 'header__login';
         this.loginListItem.append(loginLink);
 
+        this.accountListItem = document.createElement('li');
+        this.accountListItem.className = 'header__account';
+        this.accountListItem.append(headerAccount);
+
         this.logoutListItem = document.createElement('li');
         this.logoutListItem.className = 'header__logout';
         this.logoutListItem.append(logoutLink);
@@ -92,6 +109,7 @@ export default class Header {
         this.ul.append(this.contactListItem);
         this.ul.append(this.signUpListItem);
         this.ul.append(this.loginListItem);
+        this.ul.append(this.accountListItem);
         this.ul.append(this.logoutListItem);
     }
 
@@ -121,12 +139,14 @@ export default class Header {
         this.loginListItem.style.display = 'none';
         this.signUpListItem.style.display = 'none';
         this.logoutListItem.style.display = 'block';
+        this.accountListItem.style.display = 'block';
     }
 
     public setNotLoggedLayout(): void {
         this.loginListItem.style.display = 'block';
         this.signUpListItem.style.display = 'block';
         this.logoutListItem.style.display = 'none';
+        this.accountListItem.style.display = 'none';
     }
 
     public getLayout(): HTMLElement {

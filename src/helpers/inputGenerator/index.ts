@@ -3,11 +3,13 @@ export default class InputGenerator {
 
     private readonly input: HTMLInputElement | HTMLSelectElement;
 
-    constructor(type: string, placeholder: string, className: string, id: string) {
+    constructor(type: string, placeholder: string, className: string, id: string, attr?: string) {
         this.inputContainer = this.createInputContainer(className);
 
         if (type === 'select') {
             this.input = this.createSelect(id);
+        } else if (attr) {
+            this.input = this.createInput(type, placeholder, id, attr);
         } else {
             this.input = this.createInput(type, placeholder, id);
         }
@@ -33,7 +35,7 @@ export default class InputGenerator {
         return container;
     }
 
-    private createInput(type: string, placeholder: string, id: string): HTMLInputElement {
+    private createInput(type: string, placeholder: string, id: string, attr?: string): HTMLInputElement {
         const input = document.createElement('input');
         input.id = id;
         if (type === 'password') {
@@ -41,6 +43,9 @@ export default class InputGenerator {
         }
         if (type === 'email') {
             input.setAttribute('autocomplete', 'username');
+        }
+        if (attr) {
+            input.setAttribute('disabled', 'true');
         }
         input.type = type;
         input.placeholder = placeholder;

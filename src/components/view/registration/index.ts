@@ -246,7 +246,7 @@ export default class Registration {
                 'text',
                 'Street',
                 'registration__input-street-billing',
-                'street-billing'
+                'street-shipping'
             ).getInputContainer();
             this.streetInputBilling = this.streetDivBilling.querySelector('input') as HTMLInputElement;
 

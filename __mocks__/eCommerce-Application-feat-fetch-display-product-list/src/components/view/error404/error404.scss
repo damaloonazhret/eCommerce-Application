@@ -1,0 +1,17 @@
+.error404 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+    &__container {
+        width: 100%;
+        max-width: 300px;
+        background-color: #fff;
+    }
+
+    &__text {
+        font-size: 2rem;
+        text-align: center;
+    }
+}

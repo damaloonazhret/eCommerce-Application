@@ -59,7 +59,7 @@ export default class Header {
         const signUpLink = createNavLink('/registration', 'header__nav-link', 'Sign Up');
         const loginLink = createNavLink('/login', 'header__nav-link', 'Login');
         const headerAccount = createNavLink('/account', 'header__nav-link', 'Account');
-        const logoutLink = createNavLink('#', 'header__nav-link', 'Logout');
+        const logoutLink = createNavLink('/', 'header__nav-link', 'Logout');
 
         this.homeListItem = document.createElement('li');
         this.homeListItem.className = 'header__home';

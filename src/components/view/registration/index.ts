@@ -8,6 +8,7 @@ import ValidationUtils from '../../../helpers/formValidator';
 import ButtonGenerator from '../../../helpers/buttonSwitchGenerator';
 import SuccessRegistration from '../../../helpers/successRegistratioin';
 import AlreadyRegister from '../../../helpers/alreadyRegisterGenerator';
+import Header from '../header';
 
 export default class Registration {
     private defaultShippingAddressValue!: number;
@@ -375,6 +376,8 @@ export default class Registration {
     }
 
     public delItemMenuRegAndLogin(): void {
+        const headerInstance = new Header();
+        headerInstance.setLoggedLayout();
         const headerNavList = document.querySelector('.header__nav-list') as HTMLElement;
         Array.from(headerNavList.children).forEach((el) => {
             const itemMenu = el as HTMLElement;
@@ -469,10 +472,16 @@ export default class Registration {
             ).getInputContainer();
             document.body.append(this.popup);
             localStorage.setItem('isTokenUser', 'true');
+
             setTimeout(() => {
                 document.body.removeChild(this.popup);
+                this.popup = new SuccessRegistration('popup', 'Success', 'Your login is success').getInputContainer();
                 this.delItemMenuRegAndLogin();
                 this.navigateTo('/');
+                document.body.append(this.popup);
+                setTimeout(() => {
+                    document.body.removeChild(this.popup);
+                }, 1400);
             }, 1400);
         } else {
             this.errorMessage.innerText = result.message;

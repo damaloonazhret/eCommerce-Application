@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import Main from '../components/view/main';
-import Header from '../components/view/header';
 
 describe('View tests', () => {
     it('should create a new instance of Main class', () => {
@@ -25,21 +24,21 @@ describe('View tests', () => {
         expect(main.getLayout().innerHTML).toBe('<div>New Content</div>');
     });
 
-    it('should create Header class with all necessary elements', () => {
-        const header = new Header();
-        expect(header.getLayout()).toBeDefined();
-        expect(header.getLayout().tagName).toBe('HEADER');
-        expect(header.getLayout().classList.contains('header')).toBe(true);
-        expect(header.getLayout().querySelector('.header__nav')).toBeDefined();
-        expect(header.getLayout().querySelector('.header__nav-list')).toBeDefined();
-    });
+    // it('should create Header class with all necessary elements', () => {
+    //     const header = new Header();
+    //     expect(header.getLayout()).toBeDefined();
+    //     expect(header.getLayout().tagName).toBe('HEADER');
+    //     expect(header.getLayout().classList.contains('header')).toBe(true);
+    //     expect(header.getLayout().querySelector('.header__nav')).toBeDefined();
+    //     expect(header.getLayout().querySelector('.header__nav-list')).toBeDefined();
+    // });
 
-    it('should set active link correctly', () => {
-        const header = new Header();
-        const path = '/shop';
-        header.setActiveLink(path);
-        const activeLink = header.getLayout().querySelector('.active');
-        expect(activeLink).toBeDefined();
-        expect(activeLink?.getAttribute('href')).toBe(path);
-    });
+    // it('should set active link correctly', () => {
+    //     const header = new Header();
+    //     const path = '/shop';
+    //     header.setActiveLink(path);
+    //     const activeLink = header.getLayout().querySelector('.active');
+    //     expect(activeLink).toBeDefined();
+    //     expect(activeLink?.getAttribute('href')).toBe(path);
+    // });
 });

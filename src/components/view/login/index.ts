@@ -114,11 +114,6 @@ export default class Login {
             if (itemMenu.classList.contains('header__logout')) {
                 itemMenu.style.display = 'block';
             }
-
-            // if (itemMenu.classList.contains('header__login')) {
-            //     itemMenu.classList.add('active');
-            //     save();
-            // }
         });
     }
 

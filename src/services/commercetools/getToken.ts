@@ -18,7 +18,7 @@ async function getToken(): Promise<AccessTokenResponse> {
         }
 
         const result = (await response.json()) as AccessTokenResponse;
-        sessionStorage.setItem('token', JSON.stringify(result));
+        localStorage.setItem('token', JSON.stringify(result));
 
         return result;
     } catch (error) {

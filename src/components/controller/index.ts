@@ -1,4 +1,6 @@
 import {
+    Address,
+    AddressAddResult,
     CustomerResponse,
     EmailChangeResult,
     LoginResult,
@@ -28,6 +30,18 @@ export default class Controller {
 
     public async changeEmail(email: string, version: number, id: string): Promise<EmailChangeResult> {
         return this.model.changeEmail(email, version, id);
+    }
+
+    public async addAddress(addressDate: Address, version: number): Promise<AddressAddResult> {
+        return this.model.addAddress(addressDate, version);
+    }
+
+    public async removeAddress(id: string, customerId: string, version: number): Promise<AddressAddResult> {
+        return this.model.removeAddress(id, customerId, version);
+    }
+
+    public async updateAddress(addressDate: Address, version: number, addressId: string): Promise<AddressAddResult> {
+        return this.model.updateAddress(addressDate, version, addressId);
     }
 
     public async changePassword(data: PasswordChange, version: number): Promise<PasswordChangeResult> {

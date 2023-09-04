@@ -41,16 +41,6 @@ export default class Header {
 
         this.createMenu();
 
-        // <li class="header__home"><a class="header__nav-link" href="/" data-route>Home</a></li>
-        // <li class="header__shop"><a class="header__nav-link" href="/shop" data-route>Shop</a></li>
-        // <li class="header__about"><a class="header__nav-link" href="/about" data-route>About</a></li>
-        // <li class="header__contact"><a class="header__nav-link" href="/contact" data-route>Contact</a></li>
-        // <li class="header__sign-up"><a class="header__nav-link" href="/registration" data-route>Sign Up</a></li>
-        // <li class="header__login"><a class="header__nav-link" href="/login" data-route>Login</a></li>
-        // <li class="header__login"><a class="header__nav-link" href="/account" data-route>Account</a></li>
-        // <li class="header__logout"><span class="header__nav-link">Logout</span></li>
-        // `;
-
         this.nav.append(this.ul);
         this.header.append(this.nav);
 

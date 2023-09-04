@@ -6,6 +6,8 @@ import ValidationUtils from '../../../helpers/formValidator';
 import PasswordChange from '../../../helpers/passwordChange';
 import { Address, UserInfo } from '../../../types/interfaces';
 import Controller from '../../controller';
+import ButtonGenerator from '../../../helpers/buttonSwitchGenerator';
+import getCustomer from '../../../services/commercetools/getUser';
 
 export default class Account {
     private controller!: Controller;
@@ -64,13 +66,11 @@ export default class Account {
     }
 
     private async init(): Promise<void> {
-        const storedData = sessionStorage.getItem('userData');
-        const storedToken = sessionStorage.getItem('token');
+        const storedData = localStorage.getItem('userData');
+        const storedToken = localStorage.getItem('token');
 
         if (storedData && storedToken) {
             const userData = JSON.parse(storedData) as UserInfo;
-            console.log(userData.customer.firstName);
-            console.log(userData.customer);
             this.updatePageWithData(
                 userData,
                 userData.customer.firstName,
@@ -213,7 +213,9 @@ export default class Account {
             this.birthDayInput.value = birthDay;
             this.birthDayInput.placeholder = birthDay;
         };
+
         let isDisabledSave = this.buttonSaveBtn.hasAttribute('disabled');
+
         const checkCount = (): void => {
             if (saveCount === 4) {
                 isDisabled = true;
@@ -276,7 +278,7 @@ export default class Account {
                     const updatedUserData = { ...userData };
                     updatedUserData.customer.version = resultVersion.version;
                     updatedUserData.customer[setValue] = input.value;
-                    sessionStorage.setItem('userData', JSON.stringify(updatedUserData));
+                    localStorage.setItem('userData', JSON.stringify(updatedUserData));
                     actualVersion = resultVersion.version;
                 } else {
                     console.log(result.message);
@@ -301,6 +303,7 @@ export default class Account {
         this.buttonPassword.addEventListener('click', (e) => {
             e.preventDefault();
             const firstName = document.getElementById('first-name');
+            const btnPass = this.buttonPassword.querySelector('button');
             if (firstName) {
                 this.account.insertBefore(this.popupChangePassword, this.buttonBox);
                 this.account.removeChild(this.accountHeader);
@@ -312,6 +315,9 @@ export default class Account {
                 this.account.removeChild(this.addressBillingDiv);
                 this.buttonBox.removeChild(this.buttonEdit);
                 this.buttonBox.removeChild(this.buttonSave);
+                if (btnPass) {
+                    btnPass.innerText = 'User data';
+                }
                 this.buttonBox.classList.add('password');
             } else {
                 this.account.removeChild(this.popupChangePassword);
@@ -325,6 +331,9 @@ export default class Account {
                 this.buttonBox.prepend(this.buttonSave);
                 this.buttonBox.prepend(this.buttonEdit);
                 this.buttonBox.classList.remove('password');
+                if (btnPass) {
+                    btnPass.innerText = 'Change Password';
+                }
             }
         });
 
@@ -350,6 +359,318 @@ export default class Account {
             if (e.code === 'Enter') {
                 await updateAllData(e, this.birthDayInput, this.birthDayDiv, 'setDateOfBirth', 'dateOfBirth', 'dob');
             }
+        });
+
+        this.buttonAddress.addEventListener('click', (e: Event) => {
+            e.preventDefault();
+
+            const popup = document.createElement('div');
+            popup.classList.add('popup-addresses');
+
+            function removeAllChildNodes(parent: HTMLElement): void {
+                while (parent.firstChild) {
+                    parent.removeChild(parent.firstChild);
+                }
+            }
+
+            popup.addEventListener('click', (ePopup) => {
+                ePopup.preventDefault();
+                const target = ePopup.target as HTMLElement;
+                if (target.classList.contains('popup-addresses')) {
+                    removeAllChildNodes(popup);
+                    document.body.removeChild(popup);
+                }
+            });
+
+            const changeAddressesForm = document.createElement('div');
+            changeAddressesForm.classList.add('popup-addresses__form');
+            changeAddressesForm.classList.add('registration');
+
+            const buttonAddAddress = document.createElement('button');
+            buttonAddAddress.classList.add('popup-addresses__btn_add');
+            buttonAddAddress.innerText = 'Add new address';
+
+            const form = document.createElement('form');
+
+            changeAddressesForm.addEventListener('input', (newEvent: Event) =>
+                validation(newEvent.target as HTMLInputElement, this.showError.bind(this))
+            );
+
+            const getLocalStorage = localStorage.getItem('userData');
+            let newUserData: UserInfo;
+            if (getLocalStorage) {
+                newUserData = JSON.parse(getLocalStorage) as UserInfo;
+            } else {
+                newUserData = userData;
+            }
+            const addressChange = newUserData.customer.addresses;
+
+            function updateAddressById(newAddressData: Address, addressId: string): void {
+                const addressIndex = newUserData.customer.addresses.findIndex(
+                    (addressCur) => addressCur.id === addressId
+                );
+
+                if (addressIndex !== -1) {
+                    newUserData.customer.addresses[addressIndex] = {
+                        id: addressId,
+                        country: newAddressData.country,
+                        streetName: newAddressData.streetName,
+                        postalCode: newAddressData.postalCode,
+                        city: newAddressData.city,
+                    };
+                }
+                const updatedUserData = {
+                    ...newUserData,
+                };
+
+                localStorage.setItem('userData', JSON.stringify(updatedUserData));
+            }
+
+            const updateToServerUserAddress = async (
+                street: HTMLInputElement,
+                city: HTMLInputElement,
+                code: HTMLInputElement,
+                country: HTMLSelectElement,
+                userIdAddress: string,
+                addressId: string
+            ): Promise<void> => {
+                const resultVersionCurrent = await this.controller.getVersion(userId);
+                const userDataPost = {
+                    country: country.value,
+                    streetName: street.value,
+                    city: city.value,
+                    postalCode: code.value,
+                    id: userIdAddress,
+                };
+                const addressData: Address = {
+                    country: userDataPost.country,
+                    streetName: userDataPost.streetName,
+                    city: userDataPost.city,
+                    postalCode: userDataPost.postalCode,
+                    id: userDataPost.id.toString(),
+                };
+                const result = await this.controller.updateAddress(
+                    addressData,
+                    resultVersionCurrent.version,
+                    addressId
+                );
+                if (result.success) {
+                    // const updatedUserData = { ...newUserData };
+                    updateAddressById(userDataPost, addressId);
+                }
+            };
+
+            // const removeAddressById = (customer: UserInfo, id: string) => {
+            //     const updatedAddresses = customer.customer.addresses.filter((addressRemove) => addressRemove.id !== id);
+            //     const updatedCustomer = {
+            //         ...customer.customer,
+            //         addresses: updatedAddresses,
+            //     };
+            //     console.log(removeAddressById());
+            //     localStorage.setItem('userData', JSON.stringify(updatedCustomer));
+            // };
+
+            // const deleteToServerUserAddress = async (id: string, customerId: string, container: HTMLElement) => {
+            //     const resultVersionCurrent = await this.controller.getVersion(userId);
+            //     const result = await this.controller.removeAddress(id, customerId, resultVersionCurrent.version);
+            //     if (result.success) {
+            //         console.log(result);
+            //         form.removeChild(container);
+            //         const updatedUserData = {
+            //             ...newUserData,
+            //         };
+            //         console.log(updatedUserData);
+            //         // removeAddressById(updatedUserData, id);
+            //     }
+            // };
+
+            const saveToServerUserAddress = async (
+                street: HTMLInputElement,
+                city: HTMLInputElement,
+                code: HTMLInputElement,
+                country: HTMLSelectElement,
+                addressId: string,
+                addPostAddress: HTMLButtonElement,
+                clickHandler: EventListener
+            ): Promise<void> => {
+                const resultVersionCurrent = await this.controller.getVersion(userId);
+                const userDataPost = {
+                    country: country.value,
+                    streetName: street.value,
+                    city: city.value,
+                    postalCode: code.value,
+                    id: addressId,
+                };
+                const addressData: Address = {
+                    country: userDataPost.country,
+                    streetName: userDataPost.streetName,
+                    city: userDataPost.city,
+                    postalCode: userDataPost.postalCode,
+                    id: userDataPost.id.toString(),
+                };
+                const result = await this.controller.addAddress(addressData, resultVersionCurrent.version);
+                if (result.success) {
+                    const resultDataUser = await getCustomer(addressId);
+                    const addressGet = resultDataUser.addresses;
+                    const idNewAddress = resultDataUser.addresses[addressGet.length - 1].id;
+                    const customerObject = {
+                        id: idNewAddress,
+                        streetName: street.value,
+                        postalCode: code.value,
+                        city: city.value,
+                        country: country.value,
+                    };
+                    const updatedUserData = {
+                        ...newUserData,
+                    };
+
+                    updatedUserData.customer.addresses.push(customerObject);
+
+                    localStorage.setItem('userData', JSON.stringify(updatedUserData));
+                    addPostAddress.removeEventListener('click', clickHandler);
+                    addPostAddress.addEventListener('click', async (eventBtn: Event) => {
+                        eventBtn.preventDefault();
+                        await updateToServerUserAddress(street, city, code, country, addressId, idNewAddress);
+                    });
+                }
+            };
+
+            document.body.append(popup);
+            popup.append(changeAddressesForm);
+            changeAddressesForm.append(form);
+            form.append(buttonAddAddress);
+
+            const addressGenerate = (i: number): void => {
+                const container = document.createElement('div');
+                container.classList.add(`popup-addresses__form-container-${i}`);
+
+                const streetDiv = new InputGenerator(
+                    'text',
+                    'Street',
+                    'registration__input-street',
+                    'street-shipping'
+                ).getInputContainer();
+                const streetInput = streetDiv.querySelector('input') as HTMLInputElement;
+                if (i === -1) {
+                    streetInput.value = '';
+                } else {
+                    streetInput.value = addressChange[i].streetName;
+                }
+
+                const cityDiv = new InputGenerator(
+                    'text',
+                    'City',
+                    'registration__input-city',
+                    'city-shipping'
+                ).getInputContainer();
+                const cityInput = cityDiv.querySelector('input') as HTMLInputElement;
+                if (i === -1) {
+                    cityInput.value = '';
+                } else {
+                    cityInput.value = addressChange[i].city;
+                }
+
+                const postalCodeDiv = new InputGenerator(
+                    'text',
+                    'Postal code',
+                    'registration__input-postal',
+                    'postal-shipping'
+                ).getInputContainer();
+                const postalCodeInput = postalCodeDiv.querySelector('input') as HTMLInputElement;
+                if (i === -1) {
+                    postalCodeInput.value = '';
+                } else {
+                    postalCodeInput.value = addressChange[i].postalCode;
+                }
+
+                const countryDiv = new InputGenerator(
+                    'select',
+                    'Country',
+                    'registration__input-country',
+                    'country'
+                ).getInputContainer();
+                const countryInput = countryDiv.querySelector('select') as HTMLSelectElement;
+                if (i === -1) {
+                    countryInput.value = 'FR';
+                } else {
+                    countryInput.value = addressChange[i].country;
+                }
+
+                const btnGenerator = new ButtonGenerator();
+                const buttonSwitcherShipping = btnGenerator.createButtonWithCheckbox(
+                    'registration__button-switcher',
+                    'Set as default address',
+                    'Also use as billing address'
+                );
+
+                const customerId = newUserData.customer.id;
+                const addPostAddress = document.createElement('button');
+                // const removePostAddress = document.createElement('button');
+                if (i === -1) {
+                    addPostAddress.innerText = 'Add new address';
+                    const clickHandler = async (eventBtn: Event): Promise<void> => {
+                        eventBtn.preventDefault();
+                        await saveToServerUserAddress(
+                            streetInput,
+                            cityInput,
+                            postalCodeInput,
+                            countryInput,
+                            customerId,
+                            addPostAddress,
+                            clickHandler
+                        );
+                    };
+                    addPostAddress.addEventListener('click', clickHandler);
+                    // addPostAddress.addEventListener('click', async (eventBtn: Event) => {
+                    //     eventBtn.preventDefault();
+                    //     await saveToServerUserAddress(
+                    //         streetInput,
+                    //         cityInput,
+                    //         postalCodeInput,
+                    //         countryInput,
+                    //         customerId,
+                    //         addPostAddress
+                    //     );
+                    // });
+                } else {
+                    const customerAddressId = newUserData.customer.addresses[i].id;
+                    addPostAddress.innerText = 'Update your address';
+                    // removePostAddress.innerText = 'Delete your address';
+                    addPostAddress.addEventListener('click', async (eventBtn: Event) => {
+                        eventBtn.preventDefault();
+                        await updateToServerUserAddress(
+                            streetInput,
+                            cityInput,
+                            postalCodeInput,
+                            countryInput,
+                            customerId,
+                            customerAddressId
+                        );
+                    });
+                    // removePostAddress.addEventListener('click', async (removeEvent: Event) => {
+                    //     removeEvent.preventDefault();
+                    //     await deleteToServerUserAddress(customerAddressId, customerId, container);
+                    // });
+                }
+
+                container.append(streetDiv);
+                container.append(cityDiv);
+                container.append(postalCodeDiv);
+                container.append(countryDiv);
+                container.append(addPostAddress);
+                // container.append(removePostAddress);
+                container.append(buttonSwitcherShipping);
+                form.append(container);
+            };
+
+            for (let i = 0; i < newUserData.customer.addresses.length; i += 1) {
+                addressGenerate(i);
+            }
+
+            buttonAddAddress.addEventListener('click', (eventBtn: Event) => {
+                eventBtn.preventDefault();
+                addressGenerate(-1);
+            });
         });
 
         this.buttonEdit.addEventListener('click', (e) => {

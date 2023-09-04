@@ -18,7 +18,7 @@ async function signIn(token: string, userData: UserLoginData): Promise<AccessTok
         return result;
     }
     const customerData = (await response.json()) as Customer;
-    sessionStorage.setItem('userData', JSON.stringify(customerData));
+    localStorage.setItem('userData', JSON.stringify(customerData));
     return customerData;
 }
 

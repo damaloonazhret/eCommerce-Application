@@ -110,12 +110,11 @@ export default class PasswordChange {
                 // }
             }
 
-            const storedData = sessionStorage.getItem('userData');
+            const storedData = localStorage.getItem('userData');
             if (storedData) {
                 let actualVersion;
                 const userDataInfo = JSON.parse(storedData) as UserInfo;
                 actualVersion = userDataInfo.customer.version;
-                console.log(actualVersion);
                 const userData = {
                     id: userDataInfo.customer.id,
                     currentPassword: this.passwordInput.value,
@@ -123,13 +122,13 @@ export default class PasswordChange {
                 };
                 const result = await this.controller.changePassword(userData, actualVersion);
                 if (result.success) {
+                    console.log('Success password change');
                     const resultVersion = await this.controller.getVersion(userDataInfo.customer.id);
                     const updatedUserData = { ...userDataInfo };
                     updatedUserData.customer.version = resultVersion.version;
-                    sessionStorage.setItem('userData', JSON.stringify(updatedUserData));
+                    localStorage.setItem('userData', JSON.stringify(updatedUserData));
                     actualVersion = resultVersion.version;
                 }
-                console.log(actualVersion);
             }
         });
 

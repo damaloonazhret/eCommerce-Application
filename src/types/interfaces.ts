@@ -102,6 +102,8 @@ export type EmailChangeResult = LoginResult;
 
 export type PasswordChangeResult = LoginResult;
 
+export type AddressAddResult = LoginResult;
+
 export type VersionGetResult = LoginResult;
 
 export type NameUpdateResult = LoginResult;

@@ -12,12 +12,17 @@ import {
     CustomerResponse,
     PasswordChangeResult,
     PasswordChange,
+    Address,
+    AddressAddResult,
 } from '../../types/interfaces';
 import Header from '../view/header';
 import changeEmail from '../../services/commercetools/updateEmail';
 import returnActualVersion from '../../helpers/returnActualVersion';
 import updateUserData from '../../services/commercetools/updateUserData';
 import changePassword from '../../services/commercetools/changePassword';
+import addAddress from '../../services/commercetools/addAddress';
+import updateAddress from '../../services/commercetools/updateAddress';
+import removeAddress from '../../services/commercetools/removeAddress';
 
 export default class Model {
     private header?: Header;
@@ -46,6 +51,27 @@ export default class Model {
     public async changePassword(data: PasswordChange, version: number): Promise<PasswordChangeResult> {
         const token = getToken();
         const response = await changePassword(data, (await token).access_token, version);
+        const errorResponse = this.returnFormError(response);
+        return errorResponse;
+    }
+
+    public async addAddress(data: Address, version: number): Promise<AddressAddResult> {
+        const token = getToken();
+        const response = await addAddress(data, version, (await token).access_token);
+        const errorResponse = this.returnFormError(response);
+        return errorResponse;
+    }
+
+    public async updateAddress(data: Address, version: number, idAddress: string): Promise<AddressAddResult> {
+        const token = getToken();
+        const response = await updateAddress(data, version, idAddress, (await token).access_token);
+        const errorResponse = this.returnFormError(response);
+        return errorResponse;
+    }
+
+    public async removeAddress(id: string, customerId: string, version: number): Promise<AddressAddResult> {
+        const token = getToken();
+        const response = await removeAddress(id, customerId, version, (await token).access_token);
         const errorResponse = this.returnFormError(response);
         return errorResponse;
     }

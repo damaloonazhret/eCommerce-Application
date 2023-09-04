@@ -100,3 +100,24 @@
         }
     }
 }
+
+.popup-addresses {
+    width: 100%;
+    min-height: 100%;
+    background-color: rgb(64, 71, 161);
+    position: absolute;
+    &__form {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 50%;
+        min-width: 280px;
+        max-width: 600px;
+        padding: 25px 30px;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 9px 12px 4px rgba(0, 0, 0, 0.16);
+        margin: 0 auto;
+        margin-top: 15px;
+    }
+}

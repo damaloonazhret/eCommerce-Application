@@ -378,7 +378,11 @@ export default class Registration {
         const headerNavList = document.querySelector('.header__nav-list') as HTMLElement;
         Array.from(headerNavList.children).forEach((el) => {
             const itemMenu = el as HTMLElement;
-            if (itemMenu.classList.contains('header__sign-up') || itemMenu.classList.contains('header__login')) {
+            if (
+                itemMenu.classList.contains('header__sign-up') ||
+                itemMenu.classList.contains('header__login') ||
+                itemMenu.classList.contains('header__account')
+            ) {
                 itemMenu.style.display = 'none';
                 Array.from(itemMenu.children).forEach((el2) => {
                     el2.classList.remove('active');

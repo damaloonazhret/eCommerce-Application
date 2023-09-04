@@ -18,9 +18,7 @@ export default class InputGenerator {
 
         if (type === 'password') {
             const passwordSwitchSpan = document.createElement('button');
-            // passwordSwitchSpan.setAttribute('disabled', '');
             passwordSwitchSpan.classList.add(`${id}-switch`);
-            // this.inputContainer.setAttribute('autocomplete', 'current-password');
             this.inputContainer.appendChild(passwordSwitchSpan);
         }
 

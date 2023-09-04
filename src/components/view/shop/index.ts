@@ -7,7 +7,7 @@ import {
     CaracteristicProductObject,
 } from '../../../types/interfaces';
 
-const allBrendName = ['Audi', 'BMW', 'Mercedes-Benz', 'Toyota', 'Volkswagen', 'FORD'];
+const allBrendName = ['Audi', 'BMW', 'Mercedes-Benz', 'Toyota', 'Volkswagen', 'Ford'];
 
 export default class Shop {
     private shop!: HTMLElement;

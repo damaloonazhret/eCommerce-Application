@@ -6,6 +6,8 @@
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
+        color: #ffffff;
+        font-size: 20px;
     }
     .filter {
         display: flex;
@@ -13,7 +15,7 @@
         align-items: center;
         gap: 15px;
         padding: 10px;
-        box-shadow: 0px 0px 8px 7px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 5px 21px 4px rgba(34, 60, 80, 0.5);
         margin-bottom: 15px;
         border-radius: 10px;
         background: linear-gradient(135deg, #ffffff, #c5c5c5);
@@ -74,7 +76,7 @@
         align-items: center;
         gap: 15px;
         padding: 10px;
-        box-shadow: 0px 0px 8px 7px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 5px 21px 4px rgba(34, 60, 80, 0.5);
         margin-bottom: 10px;
         border-radius: 10px;
         background: linear-gradient(135deg, #ffffff, #c5c5c5);

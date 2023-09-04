@@ -20,6 +20,8 @@ export default class Header {
 
     private loginListItem!: HTMLElement;
 
+    private accountListItem!: HTMLElement;
+
     private logoutListItem!: HTMLElement;
 
     constructor() {
@@ -56,7 +58,8 @@ export default class Header {
         const contactLink = createNavLink('/contact', 'header__nav-link', 'Contact');
         const signUpLink = createNavLink('/registration', 'header__nav-link', 'Sign Up');
         const loginLink = createNavLink('/login', 'header__nav-link', 'Login');
-        const logoutLink = createNavLink('#', 'header__nav-link', 'Logout');
+        const headerAccount = createNavLink('/account', 'header__nav-link', 'Account');
+        const logoutLink = createNavLink('/', 'header__nav-link', 'Logout');
 
         this.homeListItem = document.createElement('li');
         this.homeListItem.className = 'header__home';
@@ -82,6 +85,10 @@ export default class Header {
         this.loginListItem.className = 'header__login';
         this.loginListItem.append(loginLink);
 
+        this.accountListItem = document.createElement('li');
+        this.accountListItem.className = 'header__account';
+        this.accountListItem.append(headerAccount);
+
         this.logoutListItem = document.createElement('li');
         this.logoutListItem.className = 'header__logout';
         this.logoutListItem.append(logoutLink);
@@ -92,6 +99,7 @@ export default class Header {
         this.ul.append(this.contactListItem);
         this.ul.append(this.signUpListItem);
         this.ul.append(this.loginListItem);
+        this.ul.append(this.accountListItem);
         this.ul.append(this.logoutListItem);
     }
 
@@ -121,12 +129,14 @@ export default class Header {
         this.loginListItem.style.display = 'none';
         this.signUpListItem.style.display = 'none';
         this.logoutListItem.style.display = 'block';
+        this.accountListItem.style.display = 'block';
     }
 
     public setNotLoggedLayout(): void {
         this.loginListItem.style.display = 'block';
         this.signUpListItem.style.display = 'block';
         this.logoutListItem.style.display = 'none';
+        this.accountListItem.style.display = 'none';
     }
 
     public getLayout(): HTMLElement {

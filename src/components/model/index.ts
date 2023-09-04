@@ -1,6 +1,11 @@
 import getToken from '../../services/commercetools/getToken';
 import signIn from '../../services/commercetools/signIn';
 import signUp from '../../services/commercetools/signUp';
+import getProducts from '../../services/commercetools/getProducts';
+import getProduct from '../../services/commercetools/getProduct';
+import getCategories from '../../services/commercetools/getCategories';
+import getAnonymousToken from '../../services/commercetools/getAnonymousToken';
+import getSearchProducts from '../../services/commercetools/getSearchProducts';
 import {
     Customer,
     UserRegistrationData,
@@ -8,6 +13,9 @@ import {
     LoginResult,
     RegistrationResult,
     AccessTokenResponse,
+    GetProducts,
+    GetCategories,
+    ProductAll,
     EmailChangeResult,
     CustomerResponse,
     PasswordChangeResult,
@@ -118,5 +126,29 @@ export default class Model {
 
         result.success = true;
         return result;
+    }
+
+    public async getProducts(): Promise<GetProducts> {
+        const anonymousToken = getAnonymousToken();
+        const response = await getProducts((await anonymousToken).access_token);
+        return response;
+    }
+
+    public async getCategories(): Promise<GetCategories> {
+        const anonymousToken = getAnonymousToken();
+        const response = await getCategories((await anonymousToken).access_token);
+        return response;
+    }
+
+    public async getSearchProducts(paramSearch: string): Promise<GetProducts> {
+        const anonymousToken = getAnonymousToken();
+        const response = await getSearchProducts((await anonymousToken).access_token, paramSearch);
+        return response;
+    }
+
+    public async getProduct(productKey: string): Promise<ProductAll> {
+        const anonymousToken = getAnonymousToken();
+        const response = await getProduct((await anonymousToken).access_token, productKey);
+        return response;
     }
 }

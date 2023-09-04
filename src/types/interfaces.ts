@@ -98,6 +98,217 @@ export interface LoginResult {
 
 export type RegistrationResult = LoginResult;
 
+export interface ProductAll {
+    id: string;
+    version: number;
+    masterData: {
+        current: {
+            categories: [
+                {
+                    id: string;
+                    typeId: string;
+                },
+            ];
+            description: {
+                'en-US': string;
+            };
+            masterVariant: {
+                attributes: [];
+                id: number;
+                images: [
+                    {
+                        dimensions: {
+                            h: number;
+                            w: number;
+                        };
+                        url: string;
+                    },
+                ];
+                prices: [
+                    {
+                        discounted: {
+                            value: {
+                                type: string;
+                                fractionDigits: number;
+                                centAmount: number;
+                                currencyCode: string;
+                            };
+                        };
+                        value: {
+                            type: string;
+                            fractionDigits: number;
+                            centAmount: number;
+                            currencyCode: string;
+                        };
+                        id: string;
+                    },
+                ];
+                sku: string;
+            };
+            name: {
+                'en-US': string;
+            };
+            slug: {
+                en: string;
+            };
+            variants: [];
+            searchKeywords: object;
+        };
+        hasStagedChanges: boolean;
+        published: boolean;
+        staged: {
+            categories: [
+                {
+                    id: string;
+                    typeId: string;
+                },
+            ];
+            description: {
+                en: string;
+            };
+            masterVariant: {
+                attributes: [];
+                id: number;
+                images: [
+                    {
+                        dimensions: {
+                            h: number;
+                            w: number;
+                        };
+                        url: string;
+                    },
+                ];
+                prices: [
+                    {
+                        value: {
+                            type: string;
+                            fractionDigits: number;
+                            centAmount: number;
+                            currencyCode: string;
+                        };
+                        id: string;
+                    },
+                ];
+                sku: string;
+            };
+            name: {
+                en: string;
+            };
+            slug: {
+                en: string;
+            };
+            variants: [];
+            searchKeywords: object;
+        };
+    };
+    productType: {
+        id: string;
+        typeId: string;
+    };
+    taxCategory: {
+        id: string;
+        typeId: string;
+    };
+    createdAt: string;
+    lastModifiedAt: string;
+    key: string;
+}
+
+export interface ProductOne {
+    categories: [
+        {
+            id: string;
+            typeId: string;
+        },
+    ];
+    description: {
+        'en-US': string;
+    };
+    masterVariant: {
+        attributes: [];
+        id: number;
+        images: [
+            {
+                dimensions: {
+                    h: number;
+                    w: number;
+                };
+                url: string;
+            },
+        ];
+        prices: [
+            {
+                discounted: {
+                    value: {
+                        type: string;
+                        fractionDigits: number;
+                        centAmount: number;
+                        currencyCode: string;
+                    };
+                };
+                value: {
+                    type: string;
+                    fractionDigits: number;
+                    centAmount: number;
+                    currencyCode: string;
+                };
+                id: string;
+            },
+        ];
+        sku: string;
+    };
+    name: {
+        'en-US': string;
+    };
+    slug: {
+        en: string;
+    };
+    variants: [];
+    searchKeywords: object;
+    key: string;
+}
+
+export interface GetProducts {
+    limit: number;
+    offset: number;
+    count: number;
+    total: number;
+    results: [];
+}
+
+export interface GetCategories {
+    limit: number;
+    offset: number;
+    count: number;
+    total: number;
+    results: [
+        {
+            id: string;
+            description: {
+                'en-US': string;
+            };
+        },
+    ];
+}
+
+export interface CaracteristicProduct {
+    forEach(arg0: (el: CaracteristicProductString | CaracteristicProductObject) => void): unknown;
+    [index: number]: { name: string; value: string };
+}
+
+export interface CaracteristicProductString {
+    name: string;
+    value: string;
+}
+
+export interface CaracteristicProductObject {
+    name: string;
+    value: {
+        key: string;
+        label: string;
+    };
+}
+
 export type EmailChangeResult = LoginResult;
 
 export type PasswordChangeResult = LoginResult;

@@ -1,4 +1,5 @@
 import {
+    ProductAll,
     Address,
     AddressAddResult,
     CustomerResponse,
@@ -60,5 +61,10 @@ export default class Controller {
 
     public async signUp(userData: UserRegistrationData): Promise<RegistrationResult> {
         return this.model.signUp(userData);
+    }
+
+    public async getProduct(productKey: string): Promise<ProductAll> {
+        console.log(this.model.getProduct(productKey));
+        return this.model.getProduct(productKey);
     }
 }

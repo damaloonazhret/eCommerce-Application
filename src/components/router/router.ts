@@ -85,7 +85,6 @@ export default class Router {
             };
         }
 
-        
         const view = new match.route.View(this.controller, this.navigateTo.bind(this), this.getParams(match));
         this.main.setContent(view.getLayout());
         this.header.setActiveLink(match.route.path);

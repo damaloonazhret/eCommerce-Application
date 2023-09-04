@@ -62,7 +62,6 @@ export default class Product {
         /* this.product.textContent = `Product Page ${this.params.id}`; */
 
         void new Model().getProduct(this.params.id).then((data) => {
-            console.log(data);
             this.dataProduct = data;
             this.keyProduct = this.dataProduct.key;
             this.nameProduct = this.dataProduct.masterData.current.name['en-US'];

@@ -7,7 +7,7 @@ import {
     CaracteristicProductObject,
 } from '../../../types/interfaces';
 
-const allBrendName = ['Audi', 'BMW', 'Mercedes-Benz', 'Toyota', 'Volkswagen', 'Ford'];
+const allBrendName = ['Audi', 'BMW', 'Mercedes-Benz', 'Toyota', 'Volkswagen', 'FORD'];
 
 export default class Shop {
     private shop!: HTMLElement;
@@ -226,7 +226,6 @@ export default class Shop {
         setTimeout(() => {
             this.filterProducts();
             this.searchProducts();
-            this.setTiemClickOnProduct();
             const sortName = document.querySelector('.sort-name') as HTMLElement;
             sortName.addEventListener('click', () => {
                 this.sortNameProducts(this.urlToGetSort);
@@ -246,7 +245,6 @@ export default class Shop {
         let stringRequestFilter = '';
 
         this.showProducts('');
-        this.setTiemClickOnProduct();
 
         filterButton.addEventListener('click', () => {
             this.resultFilterSearchDiv.innerHTML = '';
@@ -299,7 +297,6 @@ export default class Shop {
 
             setTimeout(() => {
                 this.showProducts(stringRequestFilter);
-                this.setTiemClickOnProduct();
                 this.urlToGetSort = stringRequestFilter;
                 stringRequestFilter = '';
             }, 300);
@@ -314,7 +311,6 @@ export default class Shop {
             this.resultFilterSearchDiv.innerHTML = '';
             this.products.innerHTML = '';
             this.showProducts(`${stringRequestSearch}&`);
-            this.setTiemClickOnProduct();
             this.resultFilterSearchDiv.innerHTML = `Search query result - "${dataSearchInput.value}"`;
             this.urlToGetSort = `${stringRequestSearch}&`;
             dataSearchInput.value = '';
@@ -334,13 +330,11 @@ export default class Shop {
                 sortPrice.classList.add('asc');
             }
             this.showProducts(`${param}sort=name.en-us desc`);
-            this.setTiemClickOnProduct();
         } else {
             sortName.innerHTML = 'Product name▼';
             sortName.classList.remove('desc');
             sortName.classList.add('asc');
             this.showProducts(`${param}sort=name.en-us asc`);
-            this.setTiemClickOnProduct();
         }
     }
 
@@ -357,18 +351,15 @@ export default class Shop {
                 sortName.classList.add('asc');
             }
             this.showProducts(`${param}sort=price desc`);
-            this.setTiemClickOnProduct();
         } else {
             sortPrice.innerHTML = 'Product price▼';
             sortPrice.classList.remove('desc');
             sortPrice.classList.add('asc');
             this.showProducts(`${param}sort=price asc`);
-            this.setTiemClickOnProduct();
         }
     }
 
     public showProducts(stringRequest: string): void {
-        console.log(stringRequest);
         this.products.innerHTML = '';
         void new Model().getSearchProducts(stringRequest).then((data) => {
             for (let i = 0; i < data.results.length; i += 1) {
@@ -412,11 +403,11 @@ export default class Shop {
     }
 
     public initCartProductWithDescPrice(): void {
-        this.products.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText} <li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="old-price-product">${this.newFormatPriceProduct} €</span></span><span class="disc-price-product">${this.newFormatDiscPriceProduct} €</span></span></div></div>`;
+        this.products.innerHTML += `<a href="product/${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText} <li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="old-price-product">${this.newFormatPriceProduct} €</span></span><span class="disc-price-product">${this.newFormatDiscPriceProduct} €</span></span></div></div></a>`;
     }
 
     public initCartProductWithoutDescPrice(): void {
-        this.products.innerHTML += `<div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText}<li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div></div>`;
+        this.products.innerHTML += `<a href="product/${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText}<li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div></div></a>`;
     }
 
     public newFormatPrice(priceCar: number): string {
@@ -433,26 +424,6 @@ export default class Shop {
         this.discPriceProductDiv.innerHTML = `${this.newFormatDiscPriceProduct} €`;
         infoProduct.appendChild(this.discPriceProductDiv);
     } */
-
-    public clickOnProduct(): void {
-        const product = document.querySelectorAll<HTMLDivElement>('.product');
-        product.forEach((el) => {
-            el.addEventListener('click', () => {
-                const idUrl = el.getAttribute('id');
-                if (idUrl) {
-                    window.location.href = `http://localhost:8081/product/${idUrl}`;
-                }
-            });
-        });
-    }
-
-    public setTiemClickOnProduct(): void {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const that: this = this;
-        setTimeout(function () {
-            that.clickOnProduct();
-        }, 500);
-    }
 
     public getLayout(): HTMLElement {
         return this.shop;

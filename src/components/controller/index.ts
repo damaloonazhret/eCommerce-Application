@@ -1,4 +1,10 @@
-import { LoginResult, RegistrationResult, UserLoginData, UserRegistrationData } from '../../types/interfaces';
+import {
+    LoginResult,
+    RegistrationResult,
+    UserLoginData,
+    UserRegistrationData,
+    ProductAll,
+} from '../../types/interfaces';
 import Model from '../model';
 
 export default class Controller {
@@ -15,5 +21,10 @@ export default class Controller {
 
     public async signUp(userData: UserRegistrationData): Promise<RegistrationResult> {
         return this.model.signUp(userData);
+    }
+
+    public async getProduct(productKey: string): Promise<ProductAll> {
+        console.log(this.model.getProduct(productKey));
+        return this.model.getProduct(productKey);
     }
 }

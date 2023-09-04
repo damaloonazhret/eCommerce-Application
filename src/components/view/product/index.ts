@@ -71,7 +71,6 @@ export default class Product {
         this.product.classList.add('product-main');
 
         void new Model().getProduct(this.params.id).then((data) => {
-            console.log(data);
             this.dataProduct = data;
             this.keyProduct = this.dataProduct.key;
             this.nameProduct = this.dataProduct.masterData.current.name['en-US'];
@@ -86,7 +85,6 @@ export default class Product {
                     }
                     arrImg[i] = this.arrUrlImgProduct[i].url;
                 }
-                console.log(arrImg);
             };
 
             // slider
@@ -99,8 +97,8 @@ export default class Product {
                 const smallImg = document.querySelectorAll<HTMLDivElement>('.small-img');
                 let coutnClick: number = 0;
                 document.addEventListener('click', (e) => {
-                    const a = e.target as HTMLElement;
-                    if (a.className === 'slider') {
+                    const target = e.target as HTMLElement;
+                    if (target.className === 'slider') {
                         slider.style.display = 'none';
                         coutnClick = 0;
                     }
@@ -110,6 +108,7 @@ export default class Product {
                 imgBig.addEventListener('click', () => {
                     slider.style.display = 'flex';
                     rightArrow.addEventListener('click', () => {
+                        console.log(coutnClick);
                         coutnClick += 1;
                         if (coutnClick > arrImg.length - 1) {
                             coutnClick = 0;

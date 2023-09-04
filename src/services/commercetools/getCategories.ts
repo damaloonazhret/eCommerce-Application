@@ -1,14 +1,17 @@
 import { GetCategories } from '../../types/interfaces';
-import { CTP_API_URL, CTP_PROJECT_KEY } from './credential';
+/* import { CTP_API_URL, CTP_PROJECT_KEY } from './credential'; */
 
 async function getCategories(anonymousToken: string): Promise<GetCategories> {
     try {
-        const response = await fetch(`${CTP_API_URL}/${CTP_PROJECT_KEY}/categories/`, {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${anonymousToken}`,
-            },
-        });
+        const response = await fetch(
+            `${process.env.CTP_API_URL as string}/${process.env.CTP_PROJECT_KEY as string}/categories/`,
+            {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${anonymousToken}`,
+                },
+            }
+        );
 
         if (!response.ok) {
             throw Error(`HTTP error! Status: ${response.status}`);

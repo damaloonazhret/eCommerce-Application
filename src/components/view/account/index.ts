@@ -108,8 +108,6 @@ export default class Account {
         month = parseInt(datePartsInit[1], 10) - 1;
         day = parseInt(datePartsInit[2], 10);
         let birthDay = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const address = `${userAddresses[0].streetName}, ${userAddresses[0].postalCode} ${userAddresses[0].city}, ${userAddresses[0].country}`;
-        const addressBilling = `${userAddresses[1].streetName}, ${userAddresses[1].postalCode} ${userAddresses[1].city}, ${userAddresses[1].country}`;
 
         this.account = document.createElement('form');
         this.account.classList.add('account');
@@ -139,16 +137,6 @@ export default class Account {
             'disabled'
         ).getInputContainer();
         this.birthDayInput = this.birthDayDiv.querySelector('input') as HTMLInputElement;
-
-        this.addressDiv = new AccountPageInfo('Address shipping:', address, 'account__address').getContainer();
-        this.addressInput = this.addressDiv.querySelector('input') as HTMLInputElement;
-
-        this.addressBillingDiv = new AccountPageInfo(
-            'Address billing:',
-            addressBilling,
-            'account__address'
-        ).getContainer();
-        this.addressBillingInput = this.addressBillingDiv.querySelector('input') as HTMLInputElement;
 
         this.nameSave = new AccountPageInfo('button', '', 'account__btn').getContainer();
 
@@ -184,8 +172,27 @@ export default class Account {
         this.account.append(this.surNameDiv);
         this.account.append(this.emailDiv);
         this.account.append(this.birthDayDiv);
-        this.account.append(this.addressDiv);
-        this.account.append(this.addressBillingDiv);
+
+        const addAddress = (i: number): void => {
+            const address = `${userAddresses[i].streetName}, ${userAddresses[i].postalCode} ${userAddresses[i].city}, ${userAddresses[i].country}`;
+            const addressDiv = new AccountPageInfo('Address:', address, 'account__address').getContainer();
+            this.account.append(addressDiv);
+        };
+
+        const addAddressIntoAddressesChange = (
+            streetName: string,
+            postalCode: string,
+            city: string,
+            country: string
+        ): void => {
+            const address = `${streetName}, ${postalCode} ${city}, ${country}`;
+            const addressDiv = new AccountPageInfo('Address:', address, 'account__address').getContainer();
+            this.account.append(addressDiv);
+        };
+
+        for (let i = 0; i < userAddresses.length; i += 1) {
+            addAddress(i);
+        }
 
         this.buttonBox.append(this.buttonEdit);
         this.buttonBox.append(this.buttonSave);
@@ -422,7 +429,12 @@ export default class Account {
                 const updatedUserData = {
                     ...newUserData,
                 };
-
+                addAddressIntoAddressesChange(
+                    newAddressData.streetName,
+                    newAddressData.postalCode,
+                    newAddressData.city,
+                    newAddressData.country
+                );
                 localStorage.setItem('userData', JSON.stringify(updatedUserData));
             }
 
@@ -460,29 +472,57 @@ export default class Account {
                 }
             };
 
-            // const removeAddressById = (customer: UserInfo, id: string) => {
+            // const removeAddressById = (customer: UserInfo, id: string): void => {
+            //     console.log(customer, id);
             //     const updatedAddresses = customer.customer.addresses.filter((addressRemove) => addressRemove.id !== id);
             //     const updatedCustomer = {
-            //         ...customer.customer,
+            //         // customer: {
+            //         ...customer,
             //         addresses: updatedAddresses,
+            //         // },
             //     };
-            //     console.log(removeAddressById());
+            //     console.log(updatedCustomer);
             //     localStorage.setItem('userData', JSON.stringify(updatedCustomer));
             // };
 
-            // const deleteToServerUserAddress = async (id: string, customerId: string, container: HTMLElement) => {
-            //     const resultVersionCurrent = await this.controller.getVersion(userId);
-            //     const result = await this.controller.removeAddress(id, customerId, resultVersionCurrent.version);
-            //     if (result.success) {
-            //         console.log(result);
-            //         form.removeChild(container);
-            //         const updatedUserData = {
-            //             ...newUserData,
-            //         };
-            //         console.log(updatedUserData);
-            //         // removeAddressById(updatedUserData, id);
-            //     }
-            // };
+            const removeAddressById = (customer: UserInfo, id: string): void => {
+                // console.log(customer, id);
+                const updatedCustomer = {
+                    ...customer,
+                    customer: {
+                        ...customer.customer,
+                        addresses: customer.customer.addresses.filter((addressRemove) => addressRemove.id !== id),
+                    },
+                };
+                // console.log(updatedCustomer);
+                localStorage.setItem('userData', JSON.stringify(updatedCustomer));
+            };
+
+            const deleteToServerUserAddress = async (
+                id: string,
+                customerId: string,
+                container: HTMLElement
+            ): Promise<void> => {
+                const resultVersionCurrent = await this.controller.getVersion(userId);
+                const result = await this.controller.removeAddress(id, customerId, resultVersionCurrent.version);
+                if (result.success) {
+                    const updateData = localStorage.getItem('userData');
+                    // console.log(updateData);
+                    let updateDataUserInfo;
+                    if (updateData) {
+                        updateDataUserInfo = JSON.parse(updateData) as UserInfo;
+                        const updatedUserData = {
+                            customer: {
+                                ...updateDataUserInfo.customer,
+                            },
+                        };
+                        // console.log(updatedUserData);
+                        removeAddressById(updatedUserData, id);
+                    }
+
+                    form.removeChild(container);
+                }
+            };
 
             const saveToServerUserAddress = async (
                 street: HTMLInputElement,
@@ -491,7 +531,9 @@ export default class Account {
                 country: HTMLSelectElement,
                 addressId: string,
                 addPostAddress: HTMLButtonElement,
-                clickHandler: EventListener
+                clickHandler: EventListener,
+                removeBtn: HTMLElement,
+                container: HTMLElement
             ): Promise<void> => {
                 const resultVersionCurrent = await this.controller.getVersion(userId);
                 const userDataPost = {
@@ -513,6 +555,7 @@ export default class Account {
                     const resultDataUser = await getCustomer(addressId);
                     const addressGet = resultDataUser.addresses;
                     const idNewAddress = resultDataUser.addresses[addressGet.length - 1].id;
+                    // console.log(idNewAddress);
                     const customerObject = {
                         id: idNewAddress,
                         streetName: street.value,
@@ -532,6 +575,14 @@ export default class Account {
                         eventBtn.preventDefault();
                         await updateToServerUserAddress(street, city, code, country, addressId, idNewAddress);
                     });
+                    removeBtn.addEventListener('click', async (removeEvent: Event) => {
+                        removeEvent.preventDefault();
+                        await deleteToServerUserAddress(idNewAddress, addressId, container);
+                    });
+                    const removeBtnClone = removeBtn;
+                    removeBtnClone.innerText = 'Remove your address';
+                    const addPostAddressClone = addPostAddress;
+                    addPostAddressClone.innerText = 'Update Your address';
                 }
             };
 
@@ -605,7 +656,7 @@ export default class Account {
 
                 const customerId = newUserData.customer.id;
                 const addPostAddress = document.createElement('button');
-                // const removePostAddress = document.createElement('button');
+                const removePostAddress = document.createElement('button');
                 if (i === -1) {
                     addPostAddress.innerText = 'Add new address';
                     const clickHandler = async (eventBtn: Event): Promise<void> => {
@@ -617,7 +668,9 @@ export default class Account {
                             countryInput,
                             customerId,
                             addPostAddress,
-                            clickHandler
+                            clickHandler,
+                            removePostAddress,
+                            container
                         );
                     };
                     addPostAddress.addEventListener('click', clickHandler);
@@ -631,11 +684,10 @@ export default class Account {
                     //         customerId,
                     //         addPostAddress
                     //     );
-                    // });
                 } else {
                     const customerAddressId = newUserData.customer.addresses[i].id;
                     addPostAddress.innerText = 'Update your address';
-                    // removePostAddress.innerText = 'Delete your address';
+                    removePostAddress.innerText = 'Delete your address';
                     addPostAddress.addEventListener('click', async (eventBtn: Event) => {
                         eventBtn.preventDefault();
                         await updateToServerUserAddress(
@@ -647,10 +699,10 @@ export default class Account {
                             customerAddressId
                         );
                     });
-                    // removePostAddress.addEventListener('click', async (removeEvent: Event) => {
-                    //     removeEvent.preventDefault();
-                    //     await deleteToServerUserAddress(customerAddressId, customerId, container);
-                    // });
+                    removePostAddress.addEventListener('click', async (removeEvent: Event) => {
+                        removeEvent.preventDefault();
+                        await deleteToServerUserAddress(customerAddressId, customerId, container);
+                    });
                 }
 
                 container.append(streetDiv);
@@ -658,7 +710,7 @@ export default class Account {
                 container.append(postalCodeDiv);
                 container.append(countryDiv);
                 container.append(addPostAddress);
-                // container.append(removePostAddress);
+                container.append(removePostAddress);
                 container.append(buttonSwitcherShipping);
                 form.append(container);
             };

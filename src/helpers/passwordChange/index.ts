@@ -54,6 +54,7 @@ export default class PasswordChange {
         this.buttonPasswordSave = document.createElement('button');
         this.buttonPasswordSave.classList.add(`${className}_btn`);
         this.buttonPasswordSave.textContent = buttonText;
+        // this.buttonPasswordSave.setAttribute('disabled', 'true');
         this.passwordDiv = new InputGenerator(
             'password',
             placeholderCurrentPass,
@@ -100,14 +101,19 @@ export default class PasswordChange {
 
         this.buttonPasswordSave.addEventListener('click', async (e) => {
             e.preventDefault();
-            // let valid = true;
+            let valid = true;
 
             const inputs = Array.from(this.form.querySelectorAll('input'));
             for (let i = 0; i < inputs.length; i += 1) {
-                // const errors = validation(inputs[i], this.showError.bind(this));
-                // if (errors.length > 0) {
-                //     valid = false;
-                // }
+                const errors = validation(inputs[i], this.showError.bind(this));
+                if (errors.length > 0) {
+                    valid = false;
+                }
+            }
+
+            if (!valid) {
+                console.log('not valid');
+                return;
             }
 
             const storedData = localStorage.getItem('userData');
@@ -128,6 +134,15 @@ export default class PasswordChange {
                     updatedUserData.customer.version = resultVersion.version;
                     localStorage.setItem('userData', JSON.stringify(updatedUserData));
                     actualVersion = resultVersion.version;
+                    this.buttonPasswordSave.innerText = 'Success password change!!!';
+                    setTimeout(() => {
+                        this.buttonPasswordSave.innerText = 'Save new password';
+                    }, 3000);
+                } else {
+                    this.buttonPasswordSave.innerText = result.message;
+                    setTimeout(() => {
+                        this.buttonPasswordSave.innerText = 'Save new password';
+                    }, 3000);
                 }
             }
         });

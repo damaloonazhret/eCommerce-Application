@@ -18,7 +18,9 @@ async function signUp(token: string, userData: UserRegistrationData): Promise<Ac
         return result;
     }
 
-    return (await response.json()) as Customer;
+    const customerData = (await response.json()) as Customer;
+    localStorage.setItem('userData', JSON.stringify(customerData));
+    return customerData;
 }
 
 export default signUp;

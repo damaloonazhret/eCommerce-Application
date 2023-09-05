@@ -400,6 +400,10 @@ export default class Registration {
             if (itemMenu.classList.contains('header__logout')) {
                 itemMenu.style.display = 'block';
             }
+
+            if (itemMenu.classList.contains('header__account')) {
+                itemMenu.style.display = 'block';
+            }
         });
     }
 

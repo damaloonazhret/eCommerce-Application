@@ -71,6 +71,7 @@ export default class Account {
 
         if (storedData && storedToken) {
             const userData = JSON.parse(storedData) as UserInfo;
+            console.log(userData);
             this.updatePageWithData(
                 userData,
                 userData.customer.firstName,
@@ -108,8 +109,6 @@ export default class Account {
         month = parseInt(datePartsInit[1], 10) - 1;
         day = parseInt(datePartsInit[2], 10);
         let birthDay = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const address = `${userAddresses[0].streetName}, ${userAddresses[0].postalCode} ${userAddresses[0].city}, ${userAddresses[0].country}`;
-        const addressBilling = `${userAddresses[1].streetName}, ${userAddresses[1].postalCode} ${userAddresses[1].city}, ${userAddresses[1].country}`;
 
         this.account = document.createElement('form');
         this.account.classList.add('account');
@@ -139,16 +138,6 @@ export default class Account {
             'disabled'
         ).getInputContainer();
         this.birthDayInput = this.birthDayDiv.querySelector('input') as HTMLInputElement;
-
-        this.addressDiv = new AccountPageInfo('Address shipping:', address, 'account__address').getContainer();
-        this.addressInput = this.addressDiv.querySelector('input') as HTMLInputElement;
-
-        this.addressBillingDiv = new AccountPageInfo(
-            'Address billing:',
-            addressBilling,
-            'account__address'
-        ).getContainer();
-        this.addressBillingInput = this.addressBillingDiv.querySelector('input') as HTMLInputElement;
 
         this.nameSave = new AccountPageInfo('button', '', 'account__btn').getContainer();
 
@@ -184,8 +173,23 @@ export default class Account {
         this.account.append(this.surNameDiv);
         this.account.append(this.emailDiv);
         this.account.append(this.birthDayDiv);
-        this.account.append(this.addressDiv);
-        this.account.append(this.addressBillingDiv);
+
+        for (let i = 0; i < userAddresses.length; i += 1) {
+            const address = `${userAddresses[0].streetName}, ${userAddresses[0].postalCode} ${userAddresses[0].city}, ${userAddresses[0].country}`;
+            const addressDiv = new AccountPageInfo('Address shipping:', address, 'account__address').getContainer();
+            this.account.append(addressDiv);
+        }
+
+        // const addressBilling = `${userAddresses[1].streetName}, ${userAddresses[1].postalCode} ${userAddresses[1].city}, ${userAddresses[1].country}`;
+        // this.addressDiv = new AccountPageInfo('Address shipping:', address, 'account__address').getContainer();
+
+        // this.addressBillingDiv = new AccountPageInfo(
+        //     'Address billing:',
+        //     addressBilling,
+        //     'account__address'
+        // ).getContainer();
+        // this.account.append(this.addressDiv);
+        // this.account.append(this.addressBillingDiv);
 
         this.buttonBox.append(this.buttonEdit);
         this.buttonBox.append(this.buttonSave);
@@ -460,29 +464,34 @@ export default class Account {
                 }
             };
 
-            // const removeAddressById = (customer: UserInfo, id: string) => {
-            //     const updatedAddresses = customer.customer.addresses.filter((addressRemove) => addressRemove.id !== id);
-            //     const updatedCustomer = {
-            //         ...customer.customer,
-            //         addresses: updatedAddresses,
-            //     };
-            //     console.log(removeAddressById());
-            //     localStorage.setItem('userData', JSON.stringify(updatedCustomer));
-            // };
+            const removeAddressById = (customer: UserInfo, id: string): void => {
+                const updatedAddresses = customer.customer.addresses.filter((addressRemove) => addressRemove.id !== id);
+                const updatedCustomer = {
+                    customer: {
+                        ...customer.customer,
+                        addresses: updatedAddresses,
+                    },
+                };
+                localStorage.setItem('userData', JSON.stringify(updatedCustomer));
+            };
 
-            // const deleteToServerUserAddress = async (id: string, customerId: string, container: HTMLElement) => {
-            //     const resultVersionCurrent = await this.controller.getVersion(userId);
-            //     const result = await this.controller.removeAddress(id, customerId, resultVersionCurrent.version);
-            //     if (result.success) {
-            //         console.log(result);
-            //         form.removeChild(container);
-            //         const updatedUserData = {
-            //             ...newUserData,
-            //         };
-            //         console.log(updatedUserData);
-            //         // removeAddressById(updatedUserData, id);
-            //     }
-            // };
+            const deleteToServerUserAddress = async (
+                id: string,
+                customerId: string,
+                container: HTMLElement
+            ): Promise<void> => {
+                const resultVersionCurrent = await this.controller.getVersion(userId);
+                const result = await this.controller.removeAddress(id, customerId, resultVersionCurrent.version);
+                if (result.success) {
+                    console.log(result);
+                    form.removeChild(container);
+                    const updatedUserData = {
+                        ...newUserData,
+                    };
+                    console.log(updatedUserData);
+                    removeAddressById(updatedUserData, id);
+                }
+            };
 
             const saveToServerUserAddress = async (
                 street: HTMLInputElement,
@@ -605,7 +614,7 @@ export default class Account {
 
                 const customerId = newUserData.customer.id;
                 const addPostAddress = document.createElement('button');
-                // const removePostAddress = document.createElement('button');
+                const removePostAddress = document.createElement('button');
                 if (i === -1) {
                     addPostAddress.innerText = 'Add new address';
                     const clickHandler = async (eventBtn: Event): Promise<void> => {
@@ -631,11 +640,10 @@ export default class Account {
                     //         customerId,
                     //         addPostAddress
                     //     );
-                    // });
                 } else {
                     const customerAddressId = newUserData.customer.addresses[i].id;
                     addPostAddress.innerText = 'Update your address';
-                    // removePostAddress.innerText = 'Delete your address';
+                    removePostAddress.innerText = 'Delete your address';
                     addPostAddress.addEventListener('click', async (eventBtn: Event) => {
                         eventBtn.preventDefault();
                         await updateToServerUserAddress(
@@ -647,10 +655,10 @@ export default class Account {
                             customerAddressId
                         );
                     });
-                    // removePostAddress.addEventListener('click', async (removeEvent: Event) => {
-                    //     removeEvent.preventDefault();
-                    //     await deleteToServerUserAddress(customerAddressId, customerId, container);
-                    // });
+                    removePostAddress.addEventListener('click', async (removeEvent: Event) => {
+                        removeEvent.preventDefault();
+                        await deleteToServerUserAddress(customerAddressId, customerId, container);
+                    });
                 }
 
                 container.append(streetDiv);
@@ -658,7 +666,7 @@ export default class Account {
                 container.append(postalCodeDiv);
                 container.append(countryDiv);
                 container.append(addPostAddress);
-                // container.append(removePostAddress);
+                container.append(removePostAddress);
                 container.append(buttonSwitcherShipping);
                 form.append(container);
             };

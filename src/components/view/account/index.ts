@@ -71,7 +71,6 @@ export default class Account {
 
         if (storedData && storedToken) {
             const userData = JSON.parse(storedData) as UserInfo;
-            console.log(userData);
             this.updatePageWithData(
                 userData,
                 userData.customer.firstName,
@@ -174,22 +173,26 @@ export default class Account {
         this.account.append(this.emailDiv);
         this.account.append(this.birthDayDiv);
 
-        for (let i = 0; i < userAddresses.length; i += 1) {
-            const address = `${userAddresses[0].streetName}, ${userAddresses[0].postalCode} ${userAddresses[0].city}, ${userAddresses[0].country}`;
-            const addressDiv = new AccountPageInfo('Address shipping:', address, 'account__address').getContainer();
+        const addAddress = (i: number): void => {
+            const address = `${userAddresses[i].streetName}, ${userAddresses[i].postalCode} ${userAddresses[i].city}, ${userAddresses[i].country}`;
+            const addressDiv = new AccountPageInfo('Address:', address, 'account__address').getContainer();
             this.account.append(addressDiv);
+        };
+
+        const addAddressIntoAddressesChange = (
+            streetName: string,
+            postalCode: string,
+            city: string,
+            country: string
+        ): void => {
+            const address = `${streetName}, ${postalCode} ${city}, ${country}`;
+            const addressDiv = new AccountPageInfo('Address:', address, 'account__address').getContainer();
+            this.account.append(addressDiv);
+        };
+
+        for (let i = 0; i < userAddresses.length; i += 1) {
+            addAddress(i);
         }
-
-        // const addressBilling = `${userAddresses[1].streetName}, ${userAddresses[1].postalCode} ${userAddresses[1].city}, ${userAddresses[1].country}`;
-        // this.addressDiv = new AccountPageInfo('Address shipping:', address, 'account__address').getContainer();
-
-        // this.addressBillingDiv = new AccountPageInfo(
-        //     'Address billing:',
-        //     addressBilling,
-        //     'account__address'
-        // ).getContainer();
-        // this.account.append(this.addressDiv);
-        // this.account.append(this.addressBillingDiv);
 
         this.buttonBox.append(this.buttonEdit);
         this.buttonBox.append(this.buttonSave);
@@ -426,7 +429,12 @@ export default class Account {
                 const updatedUserData = {
                     ...newUserData,
                 };
-
+                addAddressIntoAddressesChange(
+                    newAddressData.streetName,
+                    newAddressData.postalCode,
+                    newAddressData.city,
+                    newAddressData.country
+                );
                 localStorage.setItem('userData', JSON.stringify(updatedUserData));
             }
 
@@ -464,14 +472,29 @@ export default class Account {
                 }
             };
 
+            // const removeAddressById = (customer: UserInfo, id: string): void => {
+            //     console.log(customer, id);
+            //     const updatedAddresses = customer.customer.addresses.filter((addressRemove) => addressRemove.id !== id);
+            //     const updatedCustomer = {
+            //         // customer: {
+            //         ...customer,
+            //         addresses: updatedAddresses,
+            //         // },
+            //     };
+            //     console.log(updatedCustomer);
+            //     localStorage.setItem('userData', JSON.stringify(updatedCustomer));
+            // };
+
             const removeAddressById = (customer: UserInfo, id: string): void => {
-                const updatedAddresses = customer.customer.addresses.filter((addressRemove) => addressRemove.id !== id);
+                // console.log(customer, id);
                 const updatedCustomer = {
+                    ...customer,
                     customer: {
                         ...customer.customer,
-                        addresses: updatedAddresses,
+                        addresses: customer.customer.addresses.filter((addressRemove) => addressRemove.id !== id),
                     },
                 };
+                // console.log(updatedCustomer);
                 localStorage.setItem('userData', JSON.stringify(updatedCustomer));
             };
 
@@ -483,13 +506,21 @@ export default class Account {
                 const resultVersionCurrent = await this.controller.getVersion(userId);
                 const result = await this.controller.removeAddress(id, customerId, resultVersionCurrent.version);
                 if (result.success) {
-                    console.log(result);
+                    const updateData = localStorage.getItem('userData');
+                    // console.log(updateData);
+                    let updateDataUserInfo;
+                    if (updateData) {
+                        updateDataUserInfo = JSON.parse(updateData) as UserInfo;
+                        const updatedUserData = {
+                            customer: {
+                                ...updateDataUserInfo.customer,
+                            },
+                        };
+                        // console.log(updatedUserData);
+                        removeAddressById(updatedUserData, id);
+                    }
+
                     form.removeChild(container);
-                    const updatedUserData = {
-                        ...newUserData,
-                    };
-                    console.log(updatedUserData);
-                    removeAddressById(updatedUserData, id);
                 }
             };
 
@@ -500,7 +531,9 @@ export default class Account {
                 country: HTMLSelectElement,
                 addressId: string,
                 addPostAddress: HTMLButtonElement,
-                clickHandler: EventListener
+                clickHandler: EventListener,
+                removeBtn: HTMLElement,
+                container: HTMLElement
             ): Promise<void> => {
                 const resultVersionCurrent = await this.controller.getVersion(userId);
                 const userDataPost = {
@@ -522,6 +555,7 @@ export default class Account {
                     const resultDataUser = await getCustomer(addressId);
                     const addressGet = resultDataUser.addresses;
                     const idNewAddress = resultDataUser.addresses[addressGet.length - 1].id;
+                    // console.log(idNewAddress);
                     const customerObject = {
                         id: idNewAddress,
                         streetName: street.value,
@@ -541,6 +575,14 @@ export default class Account {
                         eventBtn.preventDefault();
                         await updateToServerUserAddress(street, city, code, country, addressId, idNewAddress);
                     });
+                    removeBtn.addEventListener('click', async (removeEvent: Event) => {
+                        removeEvent.preventDefault();
+                        await deleteToServerUserAddress(idNewAddress, addressId, container);
+                    });
+                    const removeBtnClone = removeBtn;
+                    removeBtnClone.innerText = 'Remove your address';
+                    const addPostAddressClone = addPostAddress;
+                    addPostAddressClone.innerText = 'Update Your address';
                 }
             };
 
@@ -626,7 +668,9 @@ export default class Account {
                             countryInput,
                             customerId,
                             addPostAddress,
-                            clickHandler
+                            clickHandler,
+                            removePostAddress,
+                            container
                         );
                     };
                     addPostAddress.addEventListener('click', clickHandler);

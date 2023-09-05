@@ -55,6 +55,9 @@
         .price-up {
             border-radius: 0px 5px 5px 0px;
         }
+        .filter-price {
+            display: flex;
+        }
         .filter-button {
             background: #6967e8;
             color: #ffffff;
@@ -209,6 +212,7 @@
     .filter {
         align-items: center;
         .filter-price {
+            flex-direction: column;
             .price-from {
                 border: 1px solid #c5c5c5;
                 border-bottom: none;
@@ -228,6 +232,14 @@
             ul {
                 font-size: 16px;
             }
+        }
+    }
+}
+
+@media (max-width: 1090px) {
+    .shop {
+        .filtr-body-car {
+            text-align: center;
         }
     }
 }
@@ -256,6 +268,7 @@
         .filter {
             flex-flow: column;
             .filter-price {
+                flex-direction: row;
                 .price-from {
                     border: 1px solid #c5c5c5;
                     border-right: none;
@@ -271,6 +284,13 @@
             .result-filter-search {
                 top: 100px;
             }
+            .result-filter-search {
+                padding-top: 22px;
+                font-size: 16px;
+            }
+        }
+        .products {
+            font-size: 16px;
         }
     }
 }
@@ -283,6 +303,38 @@
                 max-width: 100%;
                 margin-bottom: 5px;
             }
+        }
+    }
+}
+
+@media (max-width: 400px) {
+    .shop {
+        .filter {
+            .filter-price {
+                flex-direction: column;
+                .price-from {
+                    border: 1px solid #c5c5c5;
+                    border-bottom: none;
+                    border-radius: 5px 5px 0 0;
+                }
+                .price-up {
+                    border-radius: 0px 0px 5px 5px;
+                }
+            }
+            .filtr-body-car,
+            .brand-car {
+                font-size: 14px;
+                display: flex;
+                flex-direction: column;
+            }
+        }
+        .search {
+            .result-filter-search {
+                padding-top: 18px;
+            }
+        }
+        .sort {
+            font-size: 14px;
         }
     }
 }

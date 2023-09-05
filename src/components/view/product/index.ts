@@ -59,99 +59,41 @@ export default class Product {
 
     private maxSpeedProductText!: string;
 
+    private arrImg!: Array<string>;
+
     constructor(controller: Controller, navigateTo: (url: string) => void, params: Record<string, string>) {
         this.controller = controller;
         this.navigateTo = navigateTo;
         this.params = params;
+        this.arrImg = [];
         this.init();
     }
 
     private init(): void {
+        this.showProduct();
+    }
+
+    public showProduct(): void {
         this.product = document.createElement('section');
         this.product.classList.add('product-main');
-
         void new Model().getProduct(this.params.id).then((data) => {
             this.dataProduct = data;
             this.keyProduct = this.dataProduct.key;
             this.nameProduct = this.dataProduct.masterData.current.name['en-US'];
             this.urlImgProduct = this.dataProduct.masterData.current.masterVariant.images[0].url;
             this.arrUrlImgProduct = this.dataProduct.masterData.current.masterVariant.images;
-            const arrImg: Array<string> = [];
             const creatSmallImgBlock = (): void => {
                 const allSmallImg = document.querySelector('.all-small-img') as HTMLElement;
                 for (let i = 0; i < this.arrUrlImgProduct.length; i += 1) {
                     if (i > 0) {
                         allSmallImg.innerHTML += `<div><img class="small-img" data-num-img="${i}" src="${this.arrUrlImgProduct[i].url}"></div>`;
                     }
-                    arrImg[i] = this.arrUrlImgProduct[i].url;
+                    this.arrImg[i] = this.arrUrlImgProduct[i].url;
                 }
             };
-
-            // slider
-            const showSlider = (): void => {
-                const imgBig = document.querySelector('.big-img') as HTMLElement;
-                const slider = document.querySelector('.slider') as HTMLElement;
-                const sliderImg = document.querySelector('.slider-img') as HTMLElement;
-                const leftArrow = document.querySelector('.left-arrow') as HTMLElement;
-                const rightArrow = document.querySelector('.right-arrow') as HTMLElement;
-                const smallImg = document.querySelectorAll<HTMLDivElement>('.small-img');
-                let coutnClick: number = 0;
-                document.addEventListener('click', (e) => {
-                    const target = e.target as HTMLElement;
-                    if (target.className === 'slider') {
-                        slider.style.display = 'none';
-                        coutnClick = 0;
-                    }
-                });
-
-                // click big img
-                imgBig.addEventListener('click', () => {
-                    slider.style.display = 'flex';
-                    rightArrow.addEventListener('click', () => {
-                        console.log(coutnClick);
-                        coutnClick += 1;
-                        if (coutnClick > arrImg.length - 1) {
-                            coutnClick = 0;
-                        }
-                        sliderImg.innerHTML = `<img src="${arrImg[coutnClick]}">`;
-                    });
-                    leftArrow.addEventListener('click', () => {
-                        coutnClick -= 1;
-                        if (coutnClick < 0) {
-                            coutnClick = arrImg.length - 1;
-                        }
-                        sliderImg.innerHTML = `<img src="${arrImg[coutnClick]}">`;
-                    });
-                    sliderImg.innerHTML = `<img src="${arrImg[0]}">`;
-                });
-
-                // click small img
-                smallImg.forEach((el) => {
-                    coutnClick = 0;
-                    el.addEventListener('click', () => {
-                        const numClickSmallImg = Number(el.getAttribute('data-num-img'));
-                        coutnClick = numClickSmallImg;
-                        slider.style.display = 'flex';
-                        rightArrow.addEventListener('click', () => {
-                            coutnClick += 1;
-                            if (coutnClick > arrImg.length - 1) {
-                                coutnClick = 0;
-                            }
-                            sliderImg.innerHTML = `<img src="${arrImg[coutnClick]}">`;
-                        });
-                        leftArrow.addEventListener('click', () => {
-                            coutnClick -= 1;
-                            if (coutnClick < 0) {
-                                coutnClick = arrImg.length - 1;
-                            }
-                            sliderImg.innerHTML = `<img src="${arrImg[coutnClick]}">`;
-                        });
-                        sliderImg.innerHTML = `<img src="${arrImg[coutnClick]}">`;
-                    });
-                });
-            };
             setTimeout(creatSmallImgBlock, 0);
-            setTimeout(showSlider, 0);
+
+            this.slider();
 
             this.descriptionProduct = this.dataProduct.masterData.current.description['en-US'];
             this.characteristicProduct = this.dataProduct.masterData.current.masterVariant.attributes;
@@ -189,6 +131,68 @@ export default class Product {
                 this.showDiscPriceProduct();
             }
         });
+    }
+
+    public slider(): void {
+        // slider
+        const showSlider = (): void => {
+            const imgBig = document.querySelector('.big-img') as HTMLElement;
+            const slider = document.querySelector('.slider') as HTMLElement;
+            const sliderImg = document.querySelector('.slider-img') as HTMLElement;
+            const leftArrow = document.querySelector('.left-arrow') as HTMLElement;
+            const rightArrow = document.querySelector('.right-arrow') as HTMLElement;
+            const smallImg = document.querySelectorAll<HTMLDivElement>('.small-img');
+            let coutnClick: number = 0;
+            document.addEventListener('click', (e) => {
+                const target = e.target as HTMLElement;
+                if (target.className === 'slider') {
+                    document.body.style.overflow = 'visible';
+                    slider.style.display = 'none';
+                    coutnClick = 0;
+                }
+            });
+
+            const showImgClickRigth = (): void => {
+                coutnClick += 1;
+                if (coutnClick > this.arrImg.length - 1) {
+                    coutnClick = 0;
+                }
+                sliderImg.innerHTML = `<img src="${this.arrImg[coutnClick]}">`;
+            };
+
+            const showImgClickLeft = (): void => {
+                console.log('left');
+                coutnClick -= 1;
+                if (coutnClick < 0) {
+                    coutnClick = this.arrImg.length - 1;
+                }
+                sliderImg.innerHTML = `<img src="${this.arrImg[coutnClick]}">`;
+            };
+
+            // click big img
+            imgBig.addEventListener('click', () => {
+                slider.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                rightArrow.addEventListener('click', showImgClickRigth);
+                leftArrow.addEventListener('click', showImgClickLeft);
+                sliderImg.innerHTML = `<img src="${this.arrImg[0]}">`;
+            });
+
+            // click small img
+            smallImg.forEach((el) => {
+                coutnClick = 0;
+                el.addEventListener('click', () => {
+                    const numClickSmallImg = Number(el.getAttribute('data-num-img'));
+                    coutnClick = numClickSmallImg;
+                    slider.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    rightArrow.addEventListener('click', showImgClickRigth);
+                    leftArrow.addEventListener('click', showImgClickLeft);
+                    sliderImg.innerHTML = `<img src="${this.arrImg[coutnClick]}">`;
+                });
+            });
+        };
+        setTimeout(showSlider, 0);
     }
 
     public showDiscPriceProduct(): void {

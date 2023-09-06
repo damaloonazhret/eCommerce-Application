@@ -20,7 +20,7 @@ export default class Shop {
 
     private priceUpInput!: HTMLInputElement;
 
-    private priceDiv!: HTMLElement;
+    private filterPrice!: HTMLElement;
 
     private selectBodyCar!: HTMLSelectElement;
 
@@ -34,7 +34,11 @@ export default class Shop {
 
     private labelBrandCar!: HTMLLabelElement;
 
-    private filterButton!: HTMLButtonElement;
+    private filterButtons!: HTMLElement;
+
+    private filterShowButton!: HTMLButtonElement;
+
+    private filterResetButton!: HTMLButtonElement;
 
     private dataProduct!: ProductOne;
 
@@ -96,21 +100,21 @@ export default class Shop {
         this.shop.appendChild(this.filterDiv);
 
         // price
-        this.priceDiv = document.createElement('div');
-        this.priceDiv.classList.add('filter-price');
-        this.filterDiv.appendChild(this.priceDiv);
+        this.filterPrice = document.createElement('div');
+        this.filterPrice.classList.add('filter-price');
+        this.filterDiv.appendChild(this.filterPrice);
 
         this.priceFromInput = document.createElement('input');
         this.priceFromInput.type = 'number';
         this.priceFromInput.classList.add('price-from');
         this.priceFromInput.placeholder = 'Price from, €';
-        this.priceDiv.appendChild(this.priceFromInput);
+        this.filterPrice.appendChild(this.priceFromInput);
 
         this.priceUpInput = document.createElement('input');
         this.priceUpInput.type = 'number';
         this.priceUpInput.classList.add('price-up');
         this.priceUpInput.placeholder = 'Price up, €';
-        this.priceDiv.appendChild(this.priceUpInput);
+        this.filterPrice.appendChild(this.priceUpInput);
 
         // creat select body car
         this.selectBodydCarDiv = document.createElement('div');
@@ -163,11 +167,22 @@ export default class Shop {
             this.selectBrandCar.appendChild(this.optionSelectBrandCar);
         });
 
-        // button
-        this.filterButton = document.createElement('button');
-        this.filterButton.classList.add('filter-button');
-        this.filterButton.innerHTML = 'Show';
-        this.filterDiv.appendChild(this.filterButton);
+        // all buttons
+        this.filterButtons = document.createElement('div');
+        this.filterButtons.classList.add('filter-buttons');
+        this.filterDiv.appendChild(this.filterButtons);
+
+        // button reset
+        this.filterResetButton = document.createElement('button');
+        this.filterResetButton.classList.add('filter-reset-button');
+        this.filterResetButton.innerHTML = 'Reset';
+        this.filterButtons.appendChild(this.filterResetButton);
+
+        // button show
+        this.filterShowButton = document.createElement('button');
+        this.filterShowButton.classList.add('filter-show-button');
+        this.filterShowButton.innerHTML = 'Show';
+        this.filterButtons.appendChild(this.filterShowButton);
     }
 
     // creat block search
@@ -238,21 +253,26 @@ export default class Shop {
     }
 
     public filterProducts(): void {
-        const filterButton = document.querySelector('.filter-button') as HTMLElement;
-        const filterPrice = document.querySelector('.filter-price') as HTMLElement;
-        const priceFrom = document.querySelector('.price-from') as HTMLInputElement;
-        const priceUp = document.querySelector('.price-up') as HTMLInputElement;
         let stringRequestFilter = '';
 
         this.showProducts('');
 
-        filterButton.addEventListener('click', () => {
+        this.filterResetButton.addEventListener('click', () => {
+            this.selectBodyCar.selectedIndex = 0;
+            this.selectBrandCar.selectedIndex = 0;
+            this.priceFromInput.value = '';
+            this.priceFromInput.placeholder = 'Price from, €';
+            this.priceUpInput.value = '';
+            this.priceUpInput.placeholder = 'Price up, €';
+        });
+
+        this.filterShowButton.addEventListener('click', () => {
             this.resultFilterSearchDiv.innerHTML = '';
             this.products.innerHTML = '';
 
             // filter price
-            let priceFromValue = priceFrom.value;
-            let priceUpValue = priceUp.value;
+            let priceFromValue = this.priceFromInput.value;
+            let priceUpValue = this.priceUpInput.value;
             if (priceFromValue === '' || priceFromValue === '0') {
                 priceFromValue = '0.';
             }
@@ -260,15 +280,15 @@ export default class Shop {
                 priceUpValue = '0.';
             }
 
-            if (Number(priceFrom.value) > Number(priceUp.value)) {
-                filterPrice.classList.add('shake');
-                priceUp.classList.add('input-error');
+            if (Number(this.priceFromInput.value) > Number(this.priceUpInput.value)) {
+                this.filterPrice.classList.add('shake');
+                this.priceUpInput.classList.add('input-error');
             } else {
-                priceUp.classList.remove('input-error');
+                this.priceUpInput.classList.remove('input-error');
             }
 
-            setTimeout(function () {
-                filterPrice.classList.remove('shake');
+            setTimeout(() => {
+                this.filterPrice.classList.remove('shake');
             }, 300);
 
             if (!(priceFromValue === '0.' && priceUpValue === '0.')) {
@@ -278,19 +298,17 @@ export default class Shop {
             }
 
             // filter category
-            const selectBodyCar = document.querySelector('.body-car') as HTMLSelectElement;
             void new Model().getCategories().then((data) => {
                 data.results.forEach((el) => {
-                    if (selectBodyCar.value === el.description['en-US']) {
+                    if (this.selectBodyCar.value === el.description['en-US']) {
                         stringRequestFilter += `filter=categories.id:"${el.id}"&`;
                     }
                 });
             });
 
             // filter brand
-            const selectBrandCar = document.querySelector('.brand-car') as HTMLSelectElement;
             allBrendName.forEach((el) => {
-                if (selectBrandCar.value === el) {
+                if (this.selectBrandCar.value === el) {
                     stringRequestFilter += `filter=variants.attributes.brandCar.key:"${el}"&`;
                 }
             });

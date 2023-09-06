@@ -58,13 +58,18 @@
         .filter-price {
             display: flex;
         }
-        .filter-button {
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .filter-show-button,
+        .filter-reset-button {
             background: #6967e8;
             color: #ffffff;
             font-size: 20px;
             border-radius: 5px;
             text-align: center;
-            min-width: 150px;
+            min-width: 100px;
             height: 30px;
             cursor: pointer;
             border: none;
@@ -73,11 +78,14 @@
                 transition: opacity 0.2s ease 0s;
             }
         }
+        .filter-reset-button {
+            background-color: #f53b3b;
+        }
     }
     .search {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 10px;
         padding: 10px;
         box-shadow: 0px 5px 21px 4px rgba(34, 60, 80, 0.5);
         margin-bottom: 10px;
@@ -99,7 +107,7 @@
             font-size: 20px;
             border-radius: 5px;
             text-align: center;
-            min-width: 150px;
+            min-width: 100px;
             height: 30px;
             cursor: pointer;
             border: none;
@@ -208,7 +216,7 @@
     }
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 1330px) {
     .filter {
         align-items: center;
         .filter-price {
@@ -232,6 +240,16 @@
             ul {
                 font-size: 16px;
             }
+        }
+    }
+}
+
+@media (max-width: 1190px) {
+    .shop {
+        .filtr-body-car,
+        .filtr-brand-car {
+            display: flex;
+            flex-direction: column;
         }
     }
 }
@@ -263,7 +281,7 @@
     }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 870px) {
     .shop {
         .filter {
             flex-flow: column;
@@ -278,6 +296,11 @@
                     border-radius: 0px 5px 5px 0px;
                 }
             }
+            .filtr-body-car,
+            .filtr-brand-car {
+                display: flex;
+                flex-direction: row;
+            }
         }
         .search {
             flex-flow: column;
@@ -285,18 +308,13 @@
                 top: 100px;
             }
             .result-filter-search {
-                padding-top: 22px;
+                padding-top: 18px;
                 font-size: 16px;
             }
         }
         .products {
             font-size: 16px;
         }
-    }
-}
-
-@media (max-width: 800px) {
-    .shop {
         .product {
             flex-flow: column;
             img {
@@ -322,9 +340,8 @@
                 }
             }
             .filtr-body-car,
-            .brand-car {
+            .filtr-brand-car {
                 font-size: 14px;
-                display: flex;
                 flex-direction: column;
             }
         }

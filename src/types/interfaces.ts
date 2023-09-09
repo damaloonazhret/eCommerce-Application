@@ -3,8 +3,10 @@ import Contact from '../components/view/contact';
 import Error404 from '../components/view/error404';
 import Home from '../components/view/home';
 import Login from '../components/view/login';
+import Product from '../components/view/product';
 import Registration from '../components/view/registration';
 import Shop from '../components/view/shop';
+import Account from '../components/view/account';
 
 export interface Route {
     path: string;
@@ -12,10 +14,12 @@ export interface Route {
         | typeof Home
         | typeof Shop
         | typeof Login
+        | typeof Account
         | typeof Registration
         | typeof Error404
         | typeof About
-        | typeof Contact;
+        | typeof Contact
+        | typeof Product;
 }
 
 export interface RequestOptions {
@@ -93,3 +97,307 @@ export interface LoginResult {
 }
 
 export type RegistrationResult = LoginResult;
+
+export interface ProductAll {
+    id: string;
+    version: number;
+    masterData: {
+        current: {
+            categories: [
+                {
+                    id: string;
+                    typeId: string;
+                },
+            ];
+            description: {
+                'en-US': string;
+            };
+            masterVariant: {
+                attributes: [];
+                id: number;
+                images: [
+                    {
+                        dimensions: {
+                            h: number;
+                            w: number;
+                        };
+                        url: string;
+                    },
+                ];
+                prices: [
+                    {
+                        discounted: {
+                            value: {
+                                type: string;
+                                fractionDigits: number;
+                                centAmount: number;
+                                currencyCode: string;
+                            };
+                        };
+                        value: {
+                            type: string;
+                            fractionDigits: number;
+                            centAmount: number;
+                            currencyCode: string;
+                        };
+                        id: string;
+                    },
+                ];
+                sku: string;
+            };
+            name: {
+                'en-US': string;
+            };
+            slug: {
+                en: string;
+            };
+            variants: [];
+            searchKeywords: object;
+        };
+        hasStagedChanges: boolean;
+        published: boolean;
+        staged: {
+            categories: [
+                {
+                    id: string;
+                    typeId: string;
+                },
+            ];
+            description: {
+                en: string;
+            };
+            masterVariant: {
+                attributes: [];
+                id: number;
+                images: [
+                    {
+                        dimensions: {
+                            h: number;
+                            w: number;
+                        };
+                        url: string;
+                    },
+                ];
+                prices: [
+                    {
+                        value: {
+                            type: string;
+                            fractionDigits: number;
+                            centAmount: number;
+                            currencyCode: string;
+                        };
+                        id: string;
+                    },
+                ];
+                sku: string;
+            };
+            name: {
+                en: string;
+            };
+            slug: {
+                en: string;
+            };
+            variants: [];
+            searchKeywords: object;
+        };
+    };
+    productType: {
+        id: string;
+        typeId: string;
+    };
+    taxCategory: {
+        id: string;
+        typeId: string;
+    };
+    createdAt: string;
+    lastModifiedAt: string;
+    key: string;
+}
+
+export interface ProductOne {
+    categories: [
+        {
+            id: string;
+            typeId: string;
+        },
+    ];
+    description: {
+        'en-US': string;
+    };
+    masterVariant: {
+        attributes: [];
+        id: number;
+        images: [
+            {
+                dimensions: {
+                    h: number;
+                    w: number;
+                };
+                url: string;
+            },
+        ];
+        prices: [
+            {
+                discounted: {
+                    value: {
+                        type: string;
+                        fractionDigits: number;
+                        centAmount: number;
+                        currencyCode: string;
+                    };
+                };
+                value: {
+                    type: string;
+                    fractionDigits: number;
+                    centAmount: number;
+                    currencyCode: string;
+                };
+                id: string;
+            },
+        ];
+        sku: string;
+    };
+    name: {
+        'en-US': string;
+    };
+    slug: {
+        en: string;
+    };
+    variants: [];
+    searchKeywords: object;
+    key: string;
+}
+
+export interface GetProducts {
+    limit: number;
+    offset: number;
+    count: number;
+    total: number;
+    results: [];
+}
+
+export interface GetCategories {
+    limit: number;
+    offset: number;
+    count: number;
+    total: number;
+    results: [
+        {
+            id: string;
+            description: {
+                'en-US': string;
+            };
+        },
+    ];
+}
+
+export interface CaracteristicProduct {
+    forEach(arg0: (el: CaracteristicProductString | CaracteristicProductObject) => void): unknown;
+    [index: number]: { name: string; value: string };
+}
+
+export interface CaracteristicProductString {
+    name: string;
+    value: string;
+}
+
+export interface CaracteristicProductObject {
+    name: string;
+    value: {
+        key: string;
+        label: string;
+    };
+}
+
+export type EmailChangeResult = LoginResult;
+
+export type PasswordChangeResult = LoginResult;
+
+export type AddressAddResult = LoginResult;
+
+export type VersionGetResult = LoginResult;
+
+export type NameUpdateResult = LoginResult;
+
+export interface Address {
+    id: string;
+    streetName: string;
+    postalCode: string;
+    city: string;
+    country: string;
+}
+
+export interface UserInfo {
+    customer: {
+        id: string;
+        version: number;
+        versionModifiedAt: string;
+        lastMessageSequenceNumber: number;
+        createdAt: string;
+        lastModifiedAt: string;
+        lastModifiedBy: {
+            clientId: string;
+            isPlatformClient: boolean;
+        };
+        createdBy: {
+            clientId: string;
+            isPlatformClient: boolean;
+        };
+        email: string;
+        firstName: string;
+        lastName: string;
+        dateOfBirth: string;
+        password: string;
+        addresses: Address[];
+        shippingAddressIds: string[];
+        billingAddressIds: string[];
+        isEmailVerified: boolean;
+        stores: string[];
+        authenticationMode: string;
+    };
+}
+
+export interface CustomerResponse {
+    statusCode?: number;
+    id: string;
+    version: number;
+    createdAt: string;
+    lastModifiedAt: string;
+    lastModifiedBy: {
+        clientId: string;
+        isPlatformClient: boolean;
+    };
+    createdBy: {
+        clientId: string;
+        isPlatformClient: boolean;
+    };
+    email: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    addresses: Address[];
+    shippingAddressIds: string[];
+    billingAddressIds: string[];
+    isEmailVerified: boolean;
+    stores: string[];
+    authenticationMode: string;
+    message?: string;
+}
+
+export interface PasswordChange {
+    id: string;
+    currentPassword: string;
+    newPassword: string;
+}
+
+export interface ErrorResponse {
+    statusCode: number;
+    message: string;
+    errors: ErrorDetail[];
+}
+
+interface ErrorDetail {
+    code: string;
+    message: string;
+    currentVersion: number;
+}

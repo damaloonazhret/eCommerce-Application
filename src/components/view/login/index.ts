@@ -47,10 +47,10 @@ export default class Login {
             this.login = document.createElement('section');
             this.login.classList.add('login');
 
-        this.errorMessage = document.createElement('span');
-        this.errorMessage.classList.add('registration__error');
+            this.errorMessage = document.createElement('span');
+            this.errorMessage.classList.add('registration__error');
 
-        this.loginForm = document.createElement('form');
+            this.loginForm = document.createElement('form');
 
             this.loginDiv = new InputGenerator('text', 'Enter Email', 'login__email', 'email').getInputContainer();
             this.loginInput = this.loginDiv.querySelector('input') as HTMLInputElement;
@@ -69,16 +69,16 @@ export default class Login {
                 (e) => this.submit(e)
             );
 
-        this.needRegistration = new AlreadyRegister(
-            'registration',
-            'Not registered yet?',
-            'Registration in here!'
-        ).getContainer();
+            this.needRegistration = new AlreadyRegister(
+                'registration',
+                'Not registered yet?',
+                'Registration in here!'
+            ).getContainer();
 
-        this.loginForm.append(this.loginDiv);
-        this.loginForm.append(this.passwordDiv);
-        this.loginForm.append(this.submitButton);
-        this.loginForm.append(this.needRegistration);
+            this.loginForm.append(this.loginDiv);
+            this.loginForm.append(this.passwordDiv);
+            this.loginForm.append(this.submitButton);
+            this.loginForm.append(this.needRegistration);
 
             this.login.append(this.loginForm);
 
@@ -152,7 +152,6 @@ export default class Login {
                 this.delItemMenuRegAndLogin();
                 this.navigateTo('/');
             }, 1400);
-
         } else {
             this.errorMessage.innerText = result.message;
             this.loginForm.insertBefore(this.errorMessage, this.submitButton);

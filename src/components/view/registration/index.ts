@@ -8,6 +8,7 @@ import ValidationUtils from '../../../helpers/formValidator';
 import ButtonGenerator from '../../../helpers/buttonSwitchGenerator';
 import SuccessRegistration from '../../../helpers/successRegistratioin';
 import AlreadyRegister from '../../../helpers/alreadyRegisterGenerator';
+import Header from '../header';
 
 export default class Registration {
     private defaultShippingAddressValue!: number;
@@ -246,7 +247,7 @@ export default class Registration {
                 'text',
                 'Street',
                 'registration__input-street-billing',
-                'street-billing'
+                'street-shipping'
             ).getInputContainer();
             this.streetInputBilling = this.streetDivBilling.querySelector('input') as HTMLInputElement;
 
@@ -375,10 +376,16 @@ export default class Registration {
     }
 
     public delItemMenuRegAndLogin(): void {
+        const headerInstance = new Header();
+        headerInstance.setLoggedLayout();
         const headerNavList = document.querySelector('.header__nav-list') as HTMLElement;
         Array.from(headerNavList.children).forEach((el) => {
             const itemMenu = el as HTMLElement;
-            if (itemMenu.classList.contains('header__sign-up') || itemMenu.classList.contains('header__login')) {
+            if (
+                itemMenu.classList.contains('header__sign-up') ||
+                itemMenu.classList.contains('header__login') ||
+                itemMenu.classList.contains('header__account')
+            ) {
                 itemMenu.style.display = 'none';
                 Array.from(itemMenu.children).forEach((el2) => {
                     el2.classList.remove('active');
@@ -391,6 +398,10 @@ export default class Registration {
             }
 
             if (itemMenu.classList.contains('header__logout')) {
+                itemMenu.style.display = 'block';
+            }
+
+            if (itemMenu.classList.contains('header__account')) {
                 itemMenu.style.display = 'block';
             }
         });
@@ -465,10 +476,16 @@ export default class Registration {
             ).getInputContainer();
             document.body.append(this.popup);
             localStorage.setItem('isTokenUser', 'true');
+
             setTimeout(() => {
                 document.body.removeChild(this.popup);
+                this.popup = new SuccessRegistration('popup', 'Success', 'Your login is success').getInputContainer();
                 this.delItemMenuRegAndLogin();
                 this.navigateTo('/');
+                document.body.append(this.popup);
+                setTimeout(() => {
+                    document.body.removeChild(this.popup);
+                }, 1400);
             }, 1400);
         } else {
             this.errorMessage.innerText = result.message;

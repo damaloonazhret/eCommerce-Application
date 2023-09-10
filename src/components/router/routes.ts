@@ -7,6 +7,7 @@ import Product from '../view/product';
 import Registration from '../view/registration';
 import Shop from '../view/shop';
 import Account from '../view/account';
+import Cart from '../view/cart';
 
 const routes: Route[] = [
     { path: '/', View: Home },
@@ -17,6 +18,7 @@ const routes: Route[] = [
     { path: '/registration', View: Registration },
     { path: '/about', View: About },
     { path: '/contact', View: Contact },
+    { path: '/cart', View: Cart },
 ];
 
 export default routes;

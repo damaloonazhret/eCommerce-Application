@@ -24,6 +24,8 @@ export default class Header {
 
     private logoutListItem!: HTMLElement;
 
+    private cartListItem!: HTMLElement;
+
     constructor() {
         this.init();
         this.bindListeners();
@@ -60,6 +62,7 @@ export default class Header {
         const loginLink = createNavLink('/login', 'header__nav-link', 'Login');
         const headerAccount = createNavLink('/account', 'header__nav-link', 'Account');
         const logoutLink = createNavLink('/', 'header__nav-link', 'Logout');
+        const cartLink = createNavLink('/cart', 'header__nav-link', 'Cart');
 
         this.homeListItem = document.createElement('li');
         this.homeListItem.className = 'header__home';
@@ -93,6 +96,10 @@ export default class Header {
         this.logoutListItem.className = 'header__logout';
         this.logoutListItem.append(logoutLink);
 
+        this.cartListItem = document.createElement('li');
+        this.cartListItem.className = 'header__cart';
+        this.cartListItem.append(cartLink);
+
         this.ul.append(this.homeListItem);
         this.ul.append(this.shopListItem);
         this.ul.append(this.aboutListItem);
@@ -101,6 +108,7 @@ export default class Header {
         this.ul.append(this.loginListItem);
         this.ul.append(this.accountListItem);
         this.ul.append(this.logoutListItem);
+        this.ul.append(this.cartListItem);
     }
 
     private bindListeners(): void {

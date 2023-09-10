@@ -120,6 +120,7 @@ export default class Header {
     public setActiveLink(path: string): void {
         const liElements = this.ul.querySelectorAll('li a');
         liElements.forEach((li) => {
+            if (li.textContent === 'Logout') return;
             li.classList.remove('active');
             if (li.getAttribute('href') === path) {
                 li.classList.add('active');

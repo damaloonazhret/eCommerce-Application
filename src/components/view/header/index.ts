@@ -54,7 +54,7 @@ export default class Header {
     private createMenu(): void {
         const homeLink = createNavLink('/', 'header__nav-link', 'Home');
         const shopLink = createNavLink('/shop', 'header__nav-link', 'Shop');
-        const aboutLink = createNavLink('/about', 'header__nav-link', 'About');
+        const aboutLink = createNavLink('/about', 'header__nav-link', 'About Us');
         const contactLink = createNavLink('/contact', 'header__nav-link', 'Contact');
         const signUpLink = createNavLink('/registration', 'header__nav-link', 'Sign Up');
         const loginLink = createNavLink('/login', 'header__nav-link', 'Login');

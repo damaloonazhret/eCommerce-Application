@@ -7,6 +7,7 @@ import Product from '../components/view/product';
 import Registration from '../components/view/registration';
 import Shop from '../components/view/shop';
 import Account from '../components/view/account';
+import Cart from '../components/view/cart';
 
 export interface Route {
     path: string;
@@ -19,7 +20,8 @@ export interface Route {
         | typeof Error404
         | typeof About
         | typeof Contact
-        | typeof Product;
+        | typeof Product
+        | typeof Cart;
 }
 
 export interface RequestOptions {

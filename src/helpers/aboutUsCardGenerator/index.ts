@@ -1,6 +1,7 @@
 import Andrey from '../../assets/membersPhotos/Andrey.jpg';
-// import Denis from '../../assets/membersPhotos/Denis.jpg';
-// import Evgeniy from '../../assets/membersPhotos/Evgeniy.jpg';
+import Denis from '../../assets/membersPhotos/Denis.jpg';
+import Eugene from '../../assets/membersPhotos/Evgeniy.jpg';
+import RSSSChool from '../../assets/membersPhotos/RSSSchool.png';
 
 export default class AboutUsCardGenerator {
     private readonly cardContainer: HTMLElement;
@@ -17,8 +18,21 @@ export default class AboutUsCardGenerator {
         header.classList.add('card__header');
 
         const image = document.createElement('img');
+        image.alt = 'Member team photo';
         image.classList.add('card__header-img');
-        image.src = Andrey;
+        switch (name) {
+            case 'Eugene':
+                image.src = Eugene;
+                break;
+            case 'Andrey':
+                image.src = Andrey;
+                break;
+            case 'Denis':
+                image.src = Denis;
+                break;
+            default:
+                break;
+        }
 
         const headerName = document.createElement('h1');
         headerName.innerText = `Name: ${name}`;
@@ -29,19 +43,37 @@ export default class AboutUsCardGenerator {
         rolesMember.classList.add('card__header-roles');
 
         const biographyText = document.createElement('span');
+        biographyText.classList.add('card__text');
         biographyText.innerText = biography;
+
+        const linksContainer = document.createElement('div');
+        linksContainer.classList.add('card__link-container');
+
+        const RSSLink = document.createElement('a');
+        RSSLink.classList.add('card__link_RSS');
+        RSSLink.setAttribute('href', 'https://rs.school/');
+        RSSLink.setAttribute('target', '_blank');
+
+        const RSSImage = document.createElement('img');
+        RSSImage.src = RSSSChool;
+        RSSImage.alt = 'RSS School image link';
+
+        RSSLink.append(RSSImage);
 
         const githubLink = document.createElement('a');
         githubLink.setAttribute('href', gitHub);
         githubLink.setAttribute('target', '_blank');
         githubLink.innerText = 'Link to GitHub';
+        githubLink.classList.add('card__link');
 
         header.append(image);
         header.append(headerName);
         header.append(rolesMember);
         card.append(header);
         card.append(biographyText);
-        card.append(githubLink);
+        linksContainer.append(githubLink);
+        linksContainer.append(RSSLink);
+        card.append(linksContainer);
 
         return card;
     }

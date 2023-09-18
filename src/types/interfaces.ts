@@ -403,3 +403,13 @@ interface ErrorDetail {
     message: string;
     currentVersion: number;
 }
+
+export interface CartData {
+    id: string;
+    version: number;
+    lineItems: [
+        {
+            productId: string;
+        },
+    ];
+}

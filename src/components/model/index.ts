@@ -6,6 +6,10 @@ import getProduct from '../../services/commercetools/getProduct';
 import getCategories from '../../services/commercetools/getCategories';
 import getAnonymousToken from '../../services/commercetools/getAnonymousToken';
 import getSearchProducts from '../../services/commercetools/getSearchProducts';
+import creatCart from '../../services/commercetools/creatCart';
+import addAnonymousShipping from '../../services/commercetools/addAnonymousShipping';
+import addLineItem from '../../services/commercetools/addLineItem';
+import getCart from '../../services/commercetools/getCart';
 import {
     Customer,
     UserRegistrationData,
@@ -22,6 +26,7 @@ import {
     PasswordChange,
     Address,
     AddressAddResult,
+    CartData,
 } from '../../types/interfaces';
 import Header from '../view/header';
 import changeEmail from '../../services/commercetools/updateEmail';
@@ -150,5 +155,61 @@ export default class Model {
         const anonymousToken = getAnonymousToken();
         const response = await getProduct((await anonymousToken).access_token, productKey);
         return response;
+    }
+
+    public async creatCartModel(): Promise<CartData> {
+        const anonymousToken = getAnonymousToken();
+        const response = await creatCart((await anonymousToken).access_token);
+        return response;
+    }
+
+    public async addAnonymousShippingModel(): Promise<void> {
+        const anonymousToken = getAnonymousToken();
+        const getIdCartFromLocalStorage = localStorage.getItem('idCart');
+        if (typeof getIdCartFromLocalStorage === 'string') {
+            void getCart((await anonymousToken).access_token, getIdCartFromLocalStorage).then(async (data) => {
+                const response = await addAnonymousShipping(
+                    (await anonymousToken).access_token,
+                    getIdCartFromLocalStorage,
+                    data.version
+                );
+                return response;
+            });
+        }
+    }
+
+    public async addLineItemModel(idCar: string): Promise<void> {
+        const anonymousToken = getAnonymousToken();
+        const getIdCartFromLocalStorage = localStorage.getItem('idCart');
+        if (typeof getIdCartFromLocalStorage === 'string') {
+            void getCart((await anonymousToken).access_token, getIdCartFromLocalStorage).then(async (data) => {
+                const response = await addLineItem(
+                    (await anonymousToken).access_token,
+                    idCar,
+                    getIdCartFromLocalStorage,
+                    data.version
+                );
+                return response;
+            });
+        }
+    }
+
+    /*     public async getCartModel(): Promise<CartData> {
+        const anonymousToken = getAnonymousToken();
+        const getIdCartFromLocalStorage = localStorage.getItem('idCart');
+        if (typeof getIdCartFromLocalStorage === 'string') {
+            const response = getCart((await anonymousToken).access_token, getIdCartFromLocalStorage);
+            return response;
+        }
+    } */
+
+    // eslint-disable-next-line consistent-return
+    public async getCartModel(): Promise<CartData | undefined> {
+        const anonymousToken = getAnonymousToken();
+        const getIdCartFromLocalStorage = localStorage.getItem('idCart');
+        if (typeof getIdCartFromLocalStorage === 'string') {
+            const response = await getCart((await anonymousToken).access_token, getIdCartFromLocalStorage);
+            return response;
+        }
     }
 }

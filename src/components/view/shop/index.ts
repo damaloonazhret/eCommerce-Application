@@ -6,6 +6,7 @@ import {
     CaracteristicProductString,
     CaracteristicProductObject,
 } from '../../../types/interfaces';
+import Controller from '../../controller';
 
 const allBrendName = ['Audi', 'BMW', 'Mercedes-Benz', 'Toyota', 'Volkswagen', 'Ford'];
 
@@ -13,6 +14,8 @@ export default class Shop {
     private shop!: HTMLElement;
 
     private filterDiv!: HTMLElement;
+
+    private breadcrumbsDiv!: HTMLElement;
 
     private products!: HTMLElement;
 
@@ -82,10 +85,21 @@ export default class Shop {
 
     private maxSpeedProductText!: string;
 
-    constructor() {
-        this.init();
+    private controller: Controller;
+
+    constructor(controller: Controller) {
+        this.controller = controller;
         this.urlToGetSort = '';
+        void this.init();
     }
+
+    /*     // creat breadcrumbs
+    public createBlockBreadcrumbs(namePage: string, abc: HTMLElement): void {
+        this.breadcrumbsDiv = document.createElement('div');
+        this.breadcrumbsDiv.classList.add('breadcrumbs');
+        this.breadcrumbsDiv.innerHTML = `<a href="/" data-route>Home</a> / <span>${namePage}</span>`;
+        abc.appendChild(this.breadcrumbsDiv);
+    } */
 
     public createBlockProducts(): void {
         this.products = document.createElement('div');
@@ -229,14 +243,22 @@ export default class Shop {
         sortProductDiv.appendChild(sortByPrice);
     }
 
-    private init(): void {
+    private async init(): Promise<void> {
         this.shop = document.createElement('section');
         this.shop.classList.add('shop');
+        /* this.createBlockBreadcrumbs('Shop', this.shop); */
         this.creatBlockfilter();
         this.creatBlockSearch();
         this.creatResultFilterSearch();
         this.creatBlockSortProduct();
         this.createBlockProducts();
+
+        if (localStorage.getItem('idCart') === null) {
+            await this.controller.creatAnonimousCart().then(async (data) => {
+                localStorage.setItem('idCart', data.id);
+                await this.controller.addAnonimousShippng();
+            });
+        }
 
         setTimeout(() => {
             this.filterProducts();
@@ -250,6 +272,10 @@ export default class Shop {
                 this.sortPriceProducts(this.urlToGetSort);
             });
         }, 0);
+
+        setTimeout(() => {
+            this.redirectOnPageProduct();
+        }, 500);
     }
 
     public filterProducts(): void {
@@ -421,11 +447,11 @@ export default class Shop {
     }
 
     public initCartProductWithDescPrice(): void {
-        this.products.innerHTML += `<a href="product/${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText} <li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="old-price-product">${this.newFormatPriceProduct} €</span></span><span class="disc-price-product">${this.newFormatDiscPriceProduct} €</span></span></div></div></a>`;
+        this.products.innerHTML += `<div data-id="${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText} <li>Transmission: ${this.transmissionProductText}</li></ul><div><span class="old-price-product">${this.newFormatPriceProduct} €</span></span><span class="disc-price-product">${this.newFormatDiscPriceProduct} €</span></div></span><div><button class="btn-add-cart">Add to cart</button></div></div></div></div>`;
     }
 
     public initCartProductWithoutDescPrice(): void {
-        this.products.innerHTML += `<a href="product/${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText}<li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div></div></a>`;
+        this.products.innerHTML += `<div data-id="${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText}<li>Transmission: ${this.transmissionProductText}</li></ul><div><span class="price-product">${this.newFormatPriceProduct} €</span></div><div><button class="btn-add-cart">Add to cart</button></div></div></div></div>`;
     }
 
     public newFormatPrice(priceCar: number): string {
@@ -433,6 +459,20 @@ export default class Shop {
         const newFormatPriceCar = this.priceProduct.split('');
         newFormatPriceCar.splice(-2, 0, '.');
         return newFormatPriceCar.join('');
+    }
+
+    public redirectOnPageProduct(): void {
+        const productLink = document.querySelectorAll<HTMLDivElement>('.product-link');
+        productLink.forEach((el) => {
+            console.log(el.getAttribute('data-id'));
+            el.addEventListener('click', (el2) => {
+                const target = el2.target as HTMLElement;
+                if (target.tagName !== 'BUTTON') {
+                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                    window.location.href = `product/${el.getAttribute('data-id')}`;
+                }
+            });
+        });
     }
 
     /*  public showDiscPriceProduct(): void {

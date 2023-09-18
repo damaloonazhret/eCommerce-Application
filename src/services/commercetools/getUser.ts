@@ -5,8 +5,8 @@ const baseApiUrl = process.env.CTP_API_URL as string;
 const projectKey = process.env.CTP_PROJECT_KEY as string;
 const changeEmailEndpoint = 'customers/';
 const apiUrl = `${baseApiUrl}/${projectKey}/${changeEmailEndpoint}`;
-const token = getToken();
 async function getCustomer(id: string): Promise<CustomerResponse> {
+    const token = getToken();
     const headers = {
         Authorization: `Bearer ${(await token).access_token}`,
     };

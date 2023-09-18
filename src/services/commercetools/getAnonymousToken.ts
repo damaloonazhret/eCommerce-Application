@@ -9,12 +9,10 @@ async function getAnonymousToken(): Promise<AccessTokenResponse> {
             {
                 method: 'POST',
                 headers: {
-                    Authorization: `Basic ${btoa(
-                        `${process.env.ANON_CTP_CLIENT_ID as string}:${process.env.ANON_CTP_CLIENT_SECRET as string}`
-                    )}`,
+                    Authorization: `Basic ${btoa(`n36--8oKb-pyMGmqPJyS0xx4:hPw_vT3yy2iLqUJuwAQ1Gotqe2csB6Fc`)}`,
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `grant_type=client_credentials&scope=${process.env.ANON_CTP_SCOPES as string}`,
+                body: `grant_type=client_credentials&scope=view_payments:commercetools-team-project view_categories:commercetools-team-project view_product_selections:commercetools-team-project view_products:commercetools-team-project manage_orders:commercetools-team-project create_anonymous_token:commercetools-team-project view_orders:commercetools-team-project`,
             }
         );
 

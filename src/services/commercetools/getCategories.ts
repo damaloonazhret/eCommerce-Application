@@ -1,5 +1,4 @@
 import { GetCategories } from '../../types/interfaces';
-/* import { CTP_API_URL, CTP_PROJECT_KEY } from './credential'; */
 
 async function getCategories(anonymousToken: string): Promise<GetCategories> {
     try {

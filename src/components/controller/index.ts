@@ -11,6 +11,7 @@ import {
     RegistrationResult,
     UserLoginData,
     UserRegistrationData,
+    CartData,
 } from '../../types/interfaces';
 import Model from '../model';
 
@@ -64,7 +65,22 @@ export default class Controller {
     }
 
     public async getProduct(productKey: string): Promise<ProductAll> {
-        console.log(this.model.getProduct(productKey));
         return this.model.getProduct(productKey);
+    }
+
+    public async creatAnonimousCart(): Promise<CartData> {
+        return this.model.creatCartModel();
+    }
+
+    public async addAnonimousShippng(): Promise<void> {
+        return this.model.addAnonymousShippingModel();
+    }
+
+    public async addLineItem(idCar: string): Promise<void> {
+        return this.model.addLineItemModel(idCar);
+    }
+
+    public async getCart(): Promise<CartData | undefined> {
+        return this.model.getCartModel();
     }
 }

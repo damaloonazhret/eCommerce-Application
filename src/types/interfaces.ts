@@ -268,6 +268,7 @@ export interface ProductOne {
     variants: [];
     searchKeywords: object;
     key: string;
+    id: string;
 }
 
 export interface GetProducts {
@@ -402,4 +403,14 @@ interface ErrorDetail {
     code: string;
     message: string;
     currentVersion: number;
+}
+
+export interface CartData {
+    id: string;
+    version: number;
+    lineItems: [
+        {
+            productId: string;
+        },
+    ];
 }

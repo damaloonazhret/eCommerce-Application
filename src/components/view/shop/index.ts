@@ -6,6 +6,7 @@ import {
     CaracteristicProductString,
     CaracteristicProductObject,
 } from '../../../types/interfaces';
+import Controller from '../../controller';
 
 const allBrendName = ['Audi', 'BMW', 'Mercedes-Benz', 'Toyota', 'Volkswagen', 'Ford'];
 
@@ -13,6 +14,8 @@ export default class Shop {
     private shop!: HTMLElement;
 
     private filterDiv!: HTMLElement;
+
+    private breadcrumbsDiv!: HTMLElement;
 
     private products!: HTMLElement;
 
@@ -82,10 +85,23 @@ export default class Shop {
 
     private maxSpeedProductText!: string;
 
-    constructor() {
-        this.init();
+    private idProduct!: string;
+
+    private controller: Controller;
+
+    constructor(controller: Controller) {
+        this.controller = controller;
         this.urlToGetSort = '';
+        void this.init();
     }
+
+    /*     // creat breadcrumbs
+    public createBlockBreadcrumbs(namePage: string, abc: HTMLElement): void {
+        this.breadcrumbsDiv = document.createElement('div');
+        this.breadcrumbsDiv.classList.add('breadcrumbs');
+        this.breadcrumbsDiv.innerHTML = `<a href="/" data-route>Home</a> / <span>${namePage}</span>`;
+        abc.appendChild(this.breadcrumbsDiv);
+    } */
 
     public createBlockProducts(): void {
         this.products = document.createElement('div');
@@ -229,14 +245,22 @@ export default class Shop {
         sortProductDiv.appendChild(sortByPrice);
     }
 
-    private init(): void {
+    private async init(): Promise<void> {
         this.shop = document.createElement('section');
         this.shop.classList.add('shop');
+        /* this.createBlockBreadcrumbs('Shop', this.shop); */
         this.creatBlockfilter();
         this.creatBlockSearch();
         this.creatResultFilterSearch();
         this.creatBlockSortProduct();
         this.createBlockProducts();
+
+        if (localStorage.getItem('idCart') === null) {
+            await this.controller.creatAnonimousCart().then(async (data) => {
+                localStorage.setItem('idCart', data.id);
+                await this.controller.addAnonimousShippng();
+            });
+        }
 
         setTimeout(() => {
             this.filterProducts();
@@ -250,6 +274,11 @@ export default class Shop {
                 this.sortPriceProducts(this.urlToGetSort);
             });
         }, 0);
+        setTimeout(() => {
+            void this.checkProductInCart();
+            this.addToCart();
+            this.redirectOnPageProduct();
+        }, 500);
     }
 
     public filterProducts(): void {
@@ -318,6 +347,12 @@ export default class Shop {
                 this.urlToGetSort = stringRequestFilter;
                 stringRequestFilter = '';
             }, 300);
+
+            setTimeout(() => {
+                this.redirectOnPageProduct();
+                void this.checkProductInCart();
+                this.addToCart();
+            }, 700);
         });
     }
 
@@ -332,6 +367,11 @@ export default class Shop {
             this.resultFilterSearchDiv.innerHTML = `Search query result - "${dataSearchInput.value}"`;
             this.urlToGetSort = `${stringRequestSearch}&`;
             dataSearchInput.value = '';
+            setTimeout(() => {
+                void this.checkProductInCart();
+                this.addToCart();
+                this.redirectOnPageProduct();
+            }, 500);
         });
     }
 
@@ -382,6 +422,7 @@ export default class Shop {
         void new Model().getSearchProducts(stringRequest).then((data) => {
             for (let i = 0; i < data.results.length; i += 1) {
                 this.dataProduct = data.results[i];
+                this.idProduct = this.dataProduct.id;
                 this.keyProduct = this.dataProduct.key;
                 this.nameProduct = this.dataProduct.name['en-US'];
                 this.urlImgProduct = this.dataProduct.masterVariant.images[0].url;
@@ -408,9 +449,9 @@ export default class Shop {
                     this.newFormatDiscPriceProduct = this.newFormatPrice(
                         this.dataProduct.masterVariant.prices[0].discounted.value.centAmount
                     );
-                    this.initCartProductWithDescPrice();
+                    this.initCartProductWithDescPrice(this.idProduct);
                 } else {
-                    this.initCartProductWithoutDescPrice();
+                    this.initCartProductWithoutDescPrice(this.idProduct);
                 }
             }
 
@@ -420,12 +461,12 @@ export default class Shop {
         });
     }
 
-    public initCartProductWithDescPrice(): void {
-        this.products.innerHTML += `<a href="product/${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText} <li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="old-price-product">${this.newFormatPriceProduct} €</span></span><span class="disc-price-product">${this.newFormatDiscPriceProduct} €</span></span></div></div></a>`;
+    public initCartProductWithDescPrice(idProduct: string): void {
+        this.products.innerHTML += `<div data-article="${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText} <li>Transmission: ${this.transmissionProductText}</li></ul><div><span class="old-price-product">${this.newFormatPriceProduct} €</span></span><span class="disc-price-product">${this.newFormatDiscPriceProduct} €</span></div></span><div class="add-to-cart"><button class="btn-add-cart" data-id="${idProduct}">Add to cart</button><span class="tick">✔</span></div></div></div></div>`;
     }
 
-    public initCartProductWithoutDescPrice(): void {
-        this.products.innerHTML += `<a href="product/${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText}<li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div></div></a>`;
+    public initCartProductWithoutDescPrice(idProduct: string): void {
+        this.products.innerHTML += `<div data-article="${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText}<li>Transmission: ${this.transmissionProductText}</li></ul><div><span class="price-product">${this.newFormatPriceProduct} €</span></div><div class="add-to-cart"><button class="btn-add-cart" data-id="${idProduct}">Add to cart</button><span class="tick">✔</span></div></div></div></div>`;
     }
 
     public newFormatPrice(priceCar: number): string {
@@ -433,6 +474,58 @@ export default class Shop {
         const newFormatPriceCar = this.priceProduct.split('');
         newFormatPriceCar.splice(-2, 0, '.');
         return newFormatPriceCar.join('');
+    }
+
+    public redirectOnPageProduct(): void {
+        const productLink = document.querySelectorAll<HTMLDivElement>('.product-link');
+        productLink.forEach((el) => {
+            el.addEventListener('click', (el2) => {
+                const target = el2.target as HTMLElement;
+                if (target.tagName !== 'BUTTON') {
+                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                    window.location.href = `product/${el.getAttribute('data-article')}`;
+                }
+            });
+        });
+    }
+
+    public addToCart(): void {
+        const btnAddCart = document.querySelectorAll<HTMLDivElement>('.btn-add-cart');
+
+        btnAddCart.forEach((elBtn) => {
+            elBtn.addEventListener('click', async () => {
+                const getIdCar = elBtn.getAttribute('data-id');
+                if (getIdCar) {
+                    await this.controller.addLineItem(getIdCar);
+                    elBtn.setAttribute('disabled', 'disabled');
+                    elBtn.classList.add('btn-no-active');
+                    // eslint-disable-next-line no-param-reassign
+                    elBtn.innerHTML = 'In the basket';
+                    // eslint-disable-next-line no-param-reassign
+                    const tick = elBtn.nextSibling as HTMLElement;
+                    tick.style.display = 'block';
+                }
+            });
+        });
+    }
+
+    public async checkProductInCart(): Promise<void> {
+        await this.controller.getCart().then((data) => {
+            const btnAddCart = document.querySelectorAll<HTMLDivElement>('.btn-add-cart');
+
+            data?.lineItems.forEach((elCart) => {
+                btnAddCart.forEach((elBtn) => {
+                    if (elCart.productId === elBtn.getAttribute('data-id')) {
+                        elBtn.setAttribute('disabled', 'disabled');
+                        elBtn.classList.add('btn-no-active');
+                        // eslint-disable-next-line no-param-reassign
+                        elBtn.innerHTML = 'In the basket';
+                        const tick = elBtn.nextSibling as HTMLElement;
+                        tick.style.display = 'block';
+                    }
+                });
+            });
+        });
     }
 
     /*  public showDiscPriceProduct(): void {

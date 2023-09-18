@@ -464,7 +464,6 @@ export default class Shop {
     public redirectOnPageProduct(): void {
         const productLink = document.querySelectorAll<HTMLDivElement>('.product-link');
         productLink.forEach((el) => {
-            console.log(el.getAttribute('data-id'));
             el.addEventListener('click', (el2) => {
                 const target = el2.target as HTMLElement;
                 if (target.tagName !== 'BUTTON') {

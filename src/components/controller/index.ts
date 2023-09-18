@@ -65,7 +65,6 @@ export default class Controller {
     }
 
     public async getProduct(productKey: string): Promise<ProductAll> {
-        console.log(this.model.getProduct(productKey));
         return this.model.getProduct(productKey);
     }
 

@@ -51,7 +51,7 @@ async function addLineItem(token: string, idCar: string, idCart: string, version
         }
 
         const result = (await response.json()) as void;
-        console.log(result);
+
         return result;
     } catch (error) {
         throw new Error(`Error creat cart: ${error as string}`);

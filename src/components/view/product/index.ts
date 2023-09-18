@@ -332,7 +332,6 @@ export default class Product {
 
             data?.lineItems.forEach((elCart) => {
                 if (getIdCar === elCart.productId) {
-                    console.log('проверка товара');
                     btnAddCart.setAttribute('disabled', 'disabled');
                     btnAddCart.classList.add('btn-no-active');
                     tick.style.display = 'block';

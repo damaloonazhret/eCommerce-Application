@@ -194,15 +194,6 @@ export default class Model {
         }
     }
 
-    /*     public async getCartModel(): Promise<CartData> {
-        const anonymousToken = getAnonymousToken();
-        const getIdCartFromLocalStorage = localStorage.getItem('idCart');
-        if (typeof getIdCartFromLocalStorage === 'string') {
-            const response = getCart((await anonymousToken).access_token, getIdCartFromLocalStorage);
-            return response;
-        }
-    } */
-
     // eslint-disable-next-line consistent-return
     public async getCartModel(): Promise<CartData | undefined> {
         const anonymousToken = getAnonymousToken();

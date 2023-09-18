@@ -268,6 +268,7 @@ export interface ProductOne {
     variants: [];
     searchKeywords: object;
     key: string;
+    id: string;
 }
 
 export interface GetProducts {

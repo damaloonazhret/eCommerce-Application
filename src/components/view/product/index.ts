@@ -87,7 +87,7 @@ export default class Product {
         setTimeout(() => {
             void this.checkProductInCart();
             this.addToCart();
-        }, 700);
+        }, 500);
     }
 
     public showProduct(): void {
@@ -308,6 +308,7 @@ export default class Product {
                 btnAddCart.setAttribute('disabled', 'disabled');
                 btnAddCart.classList.add('btn-no-active');
                 tick.style.display = 'block';
+                btnAddCart.innerHTML = 'In the basket';
                 /*                 await this.controller.getCart().then((data) => {
                     data?.lineItems.forEach((elCart) => {
                         if (getIdCar === elCart.productId) {
@@ -334,6 +335,7 @@ export default class Product {
                 if (getIdCar === elCart.productId) {
                     btnAddCart.setAttribute('disabled', 'disabled');
                     btnAddCart.classList.add('btn-no-active');
+                    btnAddCart.innerHTML = 'In the basket';
                     tick.style.display = 'block';
                     // eslint-disable-next-line no-useless-return
                     return;

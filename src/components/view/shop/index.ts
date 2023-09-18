@@ -496,7 +496,6 @@ export default class Shop {
             elBtn.addEventListener('click', async () => {
                 const getIdCar = elBtn.getAttribute('data-id');
                 if (getIdCar) {
-                    console.log(elBtn.getAttribute('data-id'));
                     await this.controller.addLineItem(getIdCar);
                     elBtn.setAttribute('disabled', 'disabled');
                     elBtn.classList.add('btn-no-active');

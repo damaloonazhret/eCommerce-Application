@@ -429,6 +429,11 @@ export default class Shop {
         this.maxNumPage = 1;
         this.currentNumPage = 1;
         this.numPage.innerHTML = `1`;
+        setTimeout(() => {
+            void this.checkProductInCart();
+            this.addToCart();
+            this.redirectOnPageProduct();
+        }, 500);
     }
 
     public sortPriceProducts(param: string): void {
@@ -452,6 +457,11 @@ export default class Shop {
             this.showProducts(`${param}sort=price asc`);
             this.paramSort = 'sort=price asc';
         }
+        setTimeout(() => {
+            void this.checkProductInCart();
+            this.addToCart();
+            this.redirectOnPageProduct();
+        }, 500);
     }
 
     public showProducts(stringRequest: string): void {

@@ -89,10 +89,21 @@ export default class Shop {
 
     private controller: Controller;
 
+    private numOffset!: number;
+
+    private blockPagination!: HTMLElement;
+
+    private arrowLeftPage!: HTMLElement;
+
+    private numPage!: HTMLElement;
+
+    private arrowRightPage!: HTMLElement;
+
     constructor(controller: Controller) {
         this.controller = controller;
         this.urlToGetSort = '';
         void this.init();
+        this.numOffset = 0;
     }
 
     /*     // creat breadcrumbs
@@ -254,6 +265,7 @@ export default class Shop {
         this.creatResultFilterSearch();
         this.creatBlockSortProduct();
         this.createBlockProducts();
+        this.creatBlockPagination();
 
         if (localStorage.getItem('idCart') === null) {
             await this.controller.creatAnonimousCart().then(async (data) => {
@@ -418,8 +430,10 @@ export default class Shop {
     }
 
     public showProducts(stringRequest: string): void {
+        console.log('show');
         this.products.innerHTML = '';
-        void new Model().getSearchProducts(stringRequest).then((data) => {
+        void new Model().getSearchProducts(stringRequest, this.numOffset).then((data) => {
+            console.log(data);
             for (let i = 0; i < data.results.length; i += 1) {
                 this.dataProduct = data.results[i];
                 this.idProduct = this.dataProduct.id;
@@ -454,7 +468,6 @@ export default class Shop {
                     this.initCartProductWithoutDescPrice(this.idProduct);
                 }
             }
-
             if (data.results.length === 0) {
                 this.products.innerHTML = 'Nothing found';
             }
@@ -535,6 +548,57 @@ export default class Shop {
         this.discPriceProductDiv.innerHTML = `${this.newFormatDiscPriceProduct} €`;
         infoProduct.appendChild(this.discPriceProductDiv);
     } */
+
+    public creatBlockPagination(): void {
+        this.blockPagination = document.createElement('div');
+        this.blockPagination.classList.add('pagination');
+        this.blockPagination.innerHTML = '';
+        this.shop.appendChild(this.blockPagination);
+
+        this.arrowLeftPage = document.createElement('span');
+        this.arrowLeftPage.classList.add('arrow-left-pate');
+        this.arrowLeftPage.innerHTML = '❮';
+        this.blockPagination.appendChild(this.arrowLeftPage);
+
+        this.numPage = document.createElement('div');
+        this.numPage.classList.add('num-page');
+        this.numPage.innerHTML = `1`;
+        this.blockPagination.appendChild(this.numPage);
+
+        this.arrowRightPage = document.createElement('span');
+        this.arrowRightPage.classList.add('arrow-right-pate');
+        this.arrowRightPage.innerHTML = '❯';
+        this.blockPagination.appendChild(this.arrowRightPage);
+
+        let page = 1;
+        this.arrowRightPage.addEventListener('click', () => {
+            if (page < 2) {
+                page += 1;
+                this.numPage.innerHTML = `${page}`;
+                this.numOffset += 4;
+                this.showProducts(``);
+                setTimeout(() => {
+                    void this.checkProductInCart();
+                    this.addToCart();
+                    this.redirectOnPageProduct();
+                }, 500);
+            }
+        });
+
+        this.arrowLeftPage.addEventListener('click', () => {
+            if (page > 1) {
+                page -= 1;
+                this.numPage.innerHTML = `${page}`;
+                this.numOffset -= 4;
+                this.showProducts(``);
+                setTimeout(() => {
+                    void this.checkProductInCart();
+                    this.addToCart();
+                    this.redirectOnPageProduct();
+                }, 500);
+            }
+        });
+    }
 
     public getLayout(): HTMLElement {
         return this.shop;

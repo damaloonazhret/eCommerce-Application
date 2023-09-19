@@ -592,7 +592,7 @@ describe('getSearchProducts', () => {
                 results: [],
             }),
         });
-        const result = await getSearchProducts(anonymousToken, paramSearch);
+        const result = await getSearchProducts(anonymousToken, paramSearch, 0);
         expect(result.results).toEqual([]);
     });
 
@@ -610,7 +610,7 @@ describe('getSearchProducts', () => {
             json: jest.fn().mockResolvedValue({}),
         };
         global.fetch = jest.fn().mockResolvedValue(mockResponse);
-        await getSearchProducts(anonymousToken, paramSearch);
+        await getSearchProducts(anonymousToken, paramSearch, 0);
         expect(fetch).toHaveBeenCalledWith(expectedUrl, {
             method: 'GET',
             headers: expectedHeaders,
@@ -620,7 +620,7 @@ describe('getSearchProducts', () => {
         const expectedUrl2 = `${process.env.CTP_API_URL as string}/${
             process.env.CTP_PROJECT_KEY as string
         }/product-projections/search?${paramSearch2}`;
-        await getSearchProducts(anonymousToken, paramSearch2);
+        await getSearchProducts(anonymousToken, paramSearch2, 0);
         expect(fetch).toHaveBeenCalledWith(expectedUrl2, {
             method: 'GET',
             headers: expectedHeaders,
@@ -630,7 +630,7 @@ describe('getSearchProducts', () => {
         const expectedUrl3 = `${process.env.CTP_API_URL as string}/${
             process.env.CTP_PROJECT_KEY as string
         }/product-projections/search?${paramSearch3}`;
-        await getSearchProducts(anonymousToken, paramSearch3);
+        await getSearchProducts(anonymousToken, paramSearch3, 0);
         expect(fetch).toHaveBeenCalledWith(expectedUrl3, {
             method: 'GET',
             headers: expectedHeaders,
@@ -654,7 +654,7 @@ describe('getSearchProducts', () => {
             }),
         };
         global.fetch = jest.fn().mockResolvedValue(mockResponse);
-        const result = await getSearchProducts(anonymousToken, paramSearch);
+        const result = await getSearchProducts(anonymousToken, paramSearch, 0);
         expect(fetch).toHaveBeenCalledWith(
             `${process.env.CTP_API_URL as string}/${
                 process.env.CTP_PROJECT_KEY as string
@@ -699,7 +699,7 @@ describe('getSearchProducts', () => {
         mockFetch.mockResolvedValue(mockResponse);
         const anonymousToken = 'anonymousToken';
         const paramSearch = 'paramSearch';
-        const result = await getSearchProducts(anonymousToken, paramSearch);
+        const result = await getSearchProducts(anonymousToken, paramSearch, 0);
         expect(mockFetch).toHaveBeenCalledWith(
             `${process.env.CTP_API_URL as string}/${
                 process.env.CTP_PROJECT_KEY as string

@@ -156,6 +156,7 @@
         padding: 10px;
         border-radius: 10px;
         box-shadow: 0px 0px 8px 7px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
         &:hover {
             cursor: pointer;
             position: relative;
@@ -230,6 +231,28 @@
             border: 1px solid #ffffff;
             cursor: pointer;
             &:hover {
+                opacity: 0.7;
+            }
+        }
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        font-size: 26px;
+        color: #ffffff;
+        .num-page {
+            border-radius: 30%;
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ffffff;
+            font-size: 26px;
+            text-align: center;
+        }
+        span {
+            &:hover {
+                cursor: pointer;
                 opacity: 0.7;
             }
         }

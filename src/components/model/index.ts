@@ -145,9 +145,9 @@ export default class Model {
         return response;
     }
 
-    public async getSearchProducts(paramSearch: string): Promise<GetProducts> {
+    public async getSearchProducts(paramSearch: string, numPage: number, paramSort: string): Promise<GetProducts> {
         const anonymousToken = getAnonymousToken();
-        const response = await getSearchProducts((await anonymousToken).access_token, paramSearch);
+        const response = await getSearchProducts((await anonymousToken).access_token, paramSearch, numPage, paramSort);
         return response;
     }
 

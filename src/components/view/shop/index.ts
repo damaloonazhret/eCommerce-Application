@@ -6,6 +6,7 @@ import {
     CaracteristicProductString,
     CaracteristicProductObject,
 } from '../../../types/interfaces';
+import Controller from '../../controller';
 
 const allBrendName = ['Audi', 'BMW', 'Mercedes-Benz', 'Toyota', 'Volkswagen', 'Ford'];
 
@@ -13,6 +14,8 @@ export default class Shop {
     private shop!: HTMLElement;
 
     private filterDiv!: HTMLElement;
+
+    private breadcrumbsDiv!: HTMLElement;
 
     private products!: HTMLElement;
 
@@ -82,10 +85,43 @@ export default class Shop {
 
     private maxSpeedProductText!: string;
 
-    constructor() {
-        this.init();
+    private idProduct!: string;
+
+    private controller: Controller;
+
+    private blockPagination!: HTMLElement;
+
+    private arrowLeftPage!: HTMLElement;
+
+    private numPage!: HTMLElement;
+
+    private arrowRightPage!: HTMLElement;
+
+    private numOffset!: number;
+
+    private maxNumPage!: number;
+
+    private currentNumPage!: number;
+
+    private paramSort!: string;
+
+    constructor(controller: Controller) {
+        this.controller = controller;
         this.urlToGetSort = '';
+        void this.init();
+        this.numOffset = 0;
+        this.maxNumPage = 1;
+        this.currentNumPage = 1;
+        this.paramSort = 'sort=name.en-us asc';
     }
+
+    /*     // creat breadcrumbs
+    public createBlockBreadcrumbs(namePage: string, abc: HTMLElement): void {
+        this.breadcrumbsDiv = document.createElement('div');
+        this.breadcrumbsDiv.classList.add('breadcrumbs');
+        this.breadcrumbsDiv.innerHTML = `<a href="/" data-route>Home</a> / <span>${namePage}</span>`;
+        abc.appendChild(this.breadcrumbsDiv);
+    } */
 
     public createBlockProducts(): void {
         this.products = document.createElement('div');
@@ -229,14 +265,23 @@ export default class Shop {
         sortProductDiv.appendChild(sortByPrice);
     }
 
-    private init(): void {
+    private async init(): Promise<void> {
         this.shop = document.createElement('section');
         this.shop.classList.add('shop');
+        /* this.createBlockBreadcrumbs('Shop', this.shop); */
         this.creatBlockfilter();
         this.creatBlockSearch();
         this.creatResultFilterSearch();
         this.creatBlockSortProduct();
         this.createBlockProducts();
+        this.creatBlockPagination();
+
+        if (localStorage.getItem('idCart') === null) {
+            await this.controller.creatAnonimousCart().then(async (data) => {
+                localStorage.setItem('idCart', data.id);
+                await this.controller.addAnonimousShippng();
+            });
+        }
 
         setTimeout(() => {
             this.filterProducts();
@@ -250,6 +295,11 @@ export default class Shop {
                 this.sortPriceProducts(this.urlToGetSort);
             });
         }, 0);
+        setTimeout(() => {
+            void this.checkProductInCart();
+            this.addToCart();
+            this.redirectOnPageProduct();
+        }, 500);
     }
 
     public filterProducts(): void {
@@ -314,10 +364,20 @@ export default class Shop {
             });
 
             setTimeout(() => {
+                this.numOffset = 0;
+                this.maxNumPage = 1;
+                this.currentNumPage = 1;
+                this.numPage.innerHTML = `1`;
                 this.showProducts(stringRequestFilter);
                 this.urlToGetSort = stringRequestFilter;
                 stringRequestFilter = '';
             }, 300);
+
+            setTimeout(() => {
+                this.redirectOnPageProduct();
+                void this.checkProductInCart();
+                this.addToCart();
+            }, 700);
         });
     }
 
@@ -325,6 +385,10 @@ export default class Shop {
         const searchButton = document.querySelector('.search-button') as HTMLElement;
         const dataSearchInput = document.querySelector('.search-input') as HTMLInputElement;
         searchButton.addEventListener('click', () => {
+            this.numOffset = 0;
+            this.maxNumPage = 1;
+            this.currentNumPage = 1;
+            this.numPage.innerHTML = `1`;
             const stringRequestSearch = `filter=searchKeywords.en-US.text:"${dataSearchInput.value}"`;
             this.resultFilterSearchDiv.innerHTML = '';
             this.products.innerHTML = '';
@@ -332,6 +396,11 @@ export default class Shop {
             this.resultFilterSearchDiv.innerHTML = `Search query result - "${dataSearchInput.value}"`;
             this.urlToGetSort = `${stringRequestSearch}&`;
             dataSearchInput.value = '';
+            setTimeout(() => {
+                void this.checkProductInCart();
+                this.addToCart();
+                this.redirectOnPageProduct();
+            }, 500);
         });
     }
 
@@ -348,12 +417,23 @@ export default class Shop {
                 sortPrice.classList.add('asc');
             }
             this.showProducts(`${param}sort=name.en-us desc`);
+            this.paramSort = 'sort=name.en-us desc';
         } else {
             sortName.innerHTML = 'Product name▼';
             sortName.classList.remove('desc');
             sortName.classList.add('asc');
             this.showProducts(`${param}sort=name.en-us asc`);
+            this.paramSort = 'sort=name.en-us asc';
         }
+        this.numOffset = 0;
+        this.maxNumPage = 1;
+        this.currentNumPage = 1;
+        this.numPage.innerHTML = `1`;
+        setTimeout(() => {
+            void this.checkProductInCart();
+            this.addToCart();
+            this.redirectOnPageProduct();
+        }, 500);
     }
 
     public sortPriceProducts(param: string): void {
@@ -369,19 +449,30 @@ export default class Shop {
                 sortName.classList.add('asc');
             }
             this.showProducts(`${param}sort=price desc`);
+            this.paramSort = 'sort=price desc';
         } else {
             sortPrice.innerHTML = 'Product price▼';
             sortPrice.classList.remove('desc');
             sortPrice.classList.add('asc');
             this.showProducts(`${param}sort=price asc`);
+            this.paramSort = 'sort=price asc';
         }
+        setTimeout(() => {
+            void this.checkProductInCart();
+            this.addToCart();
+            this.redirectOnPageProduct();
+        }, 500);
     }
 
     public showProducts(stringRequest: string): void {
         this.products.innerHTML = '';
-        void new Model().getSearchProducts(stringRequest).then((data) => {
+        this.blockPagination.style.display = 'flex';
+        void new Model().getSearchProducts(stringRequest, this.numOffset, this.paramSort).then((data) => {
+            this.maxNumPage = Math.ceil(data.total / 4);
+            this.pagination();
             for (let i = 0; i < data.results.length; i += 1) {
                 this.dataProduct = data.results[i];
+                this.idProduct = this.dataProduct.id;
                 this.keyProduct = this.dataProduct.key;
                 this.nameProduct = this.dataProduct.name['en-US'];
                 this.urlImgProduct = this.dataProduct.masterVariant.images[0].url;
@@ -408,24 +499,24 @@ export default class Shop {
                     this.newFormatDiscPriceProduct = this.newFormatPrice(
                         this.dataProduct.masterVariant.prices[0].discounted.value.centAmount
                     );
-                    this.initCartProductWithDescPrice();
+                    this.initCartProductWithDescPrice(this.idProduct);
                 } else {
-                    this.initCartProductWithoutDescPrice();
+                    this.initCartProductWithoutDescPrice(this.idProduct);
                 }
             }
-
             if (data.results.length === 0) {
                 this.products.innerHTML = 'Nothing found';
+                this.blockPagination.style.display = 'none';
             }
         });
     }
 
-    public initCartProductWithDescPrice(): void {
-        this.products.innerHTML += `<a href="product/${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText} <li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="old-price-product">${this.newFormatPriceProduct} €</span></span><span class="disc-price-product">${this.newFormatDiscPriceProduct} €</span></span></div></div></a>`;
+    public initCartProductWithDescPrice(idProduct: string): void {
+        this.products.innerHTML += `<div data-article="${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText} <li>Transmission: ${this.transmissionProductText}</li></ul><div><span class="old-price-product">${this.newFormatPriceProduct} €</span></span><span class="disc-price-product">${this.newFormatDiscPriceProduct} €</span></div></span><div class="add-to-cart"><button class="btn-add-cart" data-id="${idProduct}">Add to cart</button><span class="tick">✔</span></div></div></div></div>`;
     }
 
-    public initCartProductWithoutDescPrice(): void {
-        this.products.innerHTML += `<a href="product/${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText}<li>Transmission: ${this.transmissionProductText}</li><li>Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div></div></a>`;
+    public initCartProductWithoutDescPrice(idProduct: string): void {
+        this.products.innerHTML += `<div data-article="${this.keyProduct}" class="product-link" data-route><div class="product" id="${this.keyProduct}"><img src="${this.urlImgProduct}" alt="${this.nameProduct}"><div class="info-product"><span class="name-product">${this.nameProduct}</span><ul><li>Body type: ${this.bodyTypeProductText}<li>Transmission: ${this.transmissionProductText}</li></ul><div><span class="price-product">${this.newFormatPriceProduct} €</span></div><div class="add-to-cart"><button class="btn-add-cart" data-id="${idProduct}">Add to cart</button><span class="tick">✔</span></div></div></div></div>`;
     }
 
     public newFormatPrice(priceCar: number): string {
@@ -435,6 +526,58 @@ export default class Shop {
         return newFormatPriceCar.join('');
     }
 
+    public redirectOnPageProduct(): void {
+        const productLink = document.querySelectorAll<HTMLDivElement>('.product-link');
+        productLink.forEach((el) => {
+            el.addEventListener('click', (el2) => {
+                const target = el2.target as HTMLElement;
+                if (target.tagName !== 'BUTTON') {
+                    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                    window.location.href = `product/${el.getAttribute('data-article')}`;
+                }
+            });
+        });
+    }
+
+    public addToCart(): void {
+        const btnAddCart = document.querySelectorAll<HTMLDivElement>('.btn-add-cart');
+
+        btnAddCart.forEach((elBtn) => {
+            elBtn.addEventListener('click', async () => {
+                const getIdCar = elBtn.getAttribute('data-id');
+                if (getIdCar) {
+                    await this.controller.addLineItem(getIdCar);
+                    elBtn.setAttribute('disabled', 'disabled');
+                    elBtn.classList.add('btn-no-active');
+                    // eslint-disable-next-line no-param-reassign
+                    elBtn.innerHTML = 'In the basket';
+                    // eslint-disable-next-line no-param-reassign
+                    const tick = elBtn.nextSibling as HTMLElement;
+                    tick.style.display = 'block';
+                }
+            });
+        });
+    }
+
+    public async checkProductInCart(): Promise<void> {
+        await this.controller.getCart().then((data) => {
+            const btnAddCart = document.querySelectorAll<HTMLDivElement>('.btn-add-cart');
+
+            data?.lineItems.forEach((elCart) => {
+                btnAddCart.forEach((elBtn) => {
+                    if (elCart.productId === elBtn.getAttribute('data-id')) {
+                        elBtn.setAttribute('disabled', 'disabled');
+                        elBtn.classList.add('btn-no-active');
+                        // eslint-disable-next-line no-param-reassign
+                        elBtn.innerHTML = 'In the basket';
+                        const tick = elBtn.nextSibling as HTMLElement;
+                        tick.style.display = 'block';
+                    }
+                });
+            });
+        });
+    }
+
     /*  public showDiscPriceProduct(): void {
         const infoProduct = document.querySelector('.info-product') as HTMLElement;
         this.discPriceProductDiv = document.createElement('div');
@@ -442,6 +585,58 @@ export default class Shop {
         this.discPriceProductDiv.innerHTML = `${this.newFormatDiscPriceProduct} €`;
         infoProduct.appendChild(this.discPriceProductDiv);
     } */
+
+    public creatBlockPagination(): void {
+        this.blockPagination = document.createElement('div');
+        this.blockPagination.classList.add('pagination');
+        this.blockPagination.innerHTML = '';
+        this.shop.appendChild(this.blockPagination);
+
+        this.arrowLeftPage = document.createElement('span');
+        this.arrowLeftPage.classList.add('arrow-left-pate');
+        this.arrowLeftPage.innerHTML = '❮';
+        this.blockPagination.appendChild(this.arrowLeftPage);
+
+        this.numPage = document.createElement('div');
+        this.numPage.classList.add('num-page');
+        this.numPage.innerHTML = `1`;
+        this.blockPagination.appendChild(this.numPage);
+
+        this.arrowRightPage = document.createElement('span');
+        this.arrowRightPage.classList.add('arrow-right-pate');
+        this.arrowRightPage.innerHTML = '❯';
+        this.blockPagination.appendChild(this.arrowRightPage);
+    }
+
+    public pagination(): void {
+        this.arrowRightPage.addEventListener('click', () => {
+            if (this.currentNumPage < this.maxNumPage) {
+                this.currentNumPage += 1;
+                this.numPage.innerHTML = `${this.currentNumPage}`;
+                this.numOffset += 4;
+                this.showProducts(``);
+                setTimeout(() => {
+                    void this.checkProductInCart();
+                    this.addToCart();
+                    this.redirectOnPageProduct();
+                }, 500);
+            }
+        });
+
+        this.arrowLeftPage.addEventListener('click', () => {
+            if (this.currentNumPage > 1) {
+                this.currentNumPage -= 1;
+                this.numPage.innerHTML = `${this.currentNumPage}`;
+                this.numOffset -= 4;
+                this.showProducts(``);
+                setTimeout(() => {
+                    void this.checkProductInCart();
+                    this.addToCart();
+                    this.redirectOnPageProduct();
+                }, 500);
+            }
+        });
+    }
 
     public getLayout(): HTMLElement {
         return this.shop;

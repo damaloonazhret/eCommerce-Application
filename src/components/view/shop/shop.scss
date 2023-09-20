@@ -2,6 +2,23 @@
     display: flex;
     flex-direction: column;
     width: 90%;
+    position: relative;
+    .breadcrumbs {
+        position: absolute;
+        display: flex;
+        gap: 5px;
+        top: -28px;
+        color: #00284d;
+        :last-child {
+            color: #ffffff;
+        }
+        a {
+            color: #00284d;
+            &:hover {
+                color: #00407c;
+            }
+        }
+    }
     .products {
         display: flex;
         flex-wrap: wrap;
@@ -139,6 +156,7 @@
         padding: 10px;
         border-radius: 10px;
         box-shadow: 0px 0px 8px 7px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
         &:hover {
             cursor: pointer;
             position: relative;
@@ -155,19 +173,30 @@
         }
         ul {
             font-size: 18px;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             padding-left: 15px;
         }
         li {
             list-style-type: '- ';
         }
         .info-product {
+            display: flex;
+            flex-direction: column;
             padding-left: 10px;
+            margin-bottom: 5px;
+            .add-to-cart {
+                display: flex;
+                gap: 5px;
+            }
+            .tick {
+                font-size: 26px;
+                color: #00da00;
+                display: none;
+            }
         }
         .name-product {
             font-size: 24px;
             font-weight: 700;
-            margin-bottom: 20px;
         }
         .desc-product {
             font-size: 20px;
@@ -181,11 +210,51 @@
             text-decoration: line-through;
         }
         .disc-price-product {
-            display: inline;
+            display: inline-block;
             background: #c71212;
             padding-left: 4px;
             padding-right: 4px;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .btn-add-cart.btn-no-active {
+            &:hover {
+                cursor: default;
+                opacity: 1;
+            }
+        }
+        .btn-add-cart {
+            background: none;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 30px;
+            border: 1px solid #ffffff;
+            cursor: pointer;
+            &:hover {
+                opacity: 0.7;
+            }
+        }
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        font-size: 26px;
+        color: #ffffff;
+        .num-page {
+            border-radius: 30%;
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ffffff;
             font-size: 26px;
+            text-align: center;
+        }
+        span {
+            &:hover {
+                cursor: pointer;
+                opacity: 0.7;
+            }
         }
     }
 

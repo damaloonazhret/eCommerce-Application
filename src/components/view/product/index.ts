@@ -83,6 +83,11 @@ export default class Product {
 
     private init(): void {
         this.showProduct();
+
+        setTimeout(() => {
+            void this.checkProductInCart();
+            this.addToCart();
+        }, 500);
     }
 
     public showProduct(): void {
@@ -136,7 +141,7 @@ export default class Product {
                 this.dataProduct.masterData.current.masterVariant.prices[0].value.centAmount
             );
 
-            this.product.innerHTML += `<div class="breadcrumbs"> <a href="/" data-route>Home</a> / <a href='/shop' data-route>Shop</a> / <span>${this.nameProduct}</span></div><div class="img-product"><div class="big-img"><img class="main-img" src="${this.urlImgProduct}" alt="${this.nameProduct}"></div><div class="small-slider"><span class="left-arrow-small">❮</span><div class="all-small-img"></div><span class="right-arrow-small">❯</span></div></div><div class="info-product"><span class="name-product">${this.nameProduct}</span><span class="desc-product">${this.descriptionProduct}</span><ul><li>- Body type: ${this.bodyTypeProductText} </li><li>- Type of drive: ${this.typeDriveProductText} <li>- Transmission: ${this.transmissionProductText}</li><li>- Engine: ${this.engineProductText}</li><li>- Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div><div class="slider"><span class="left-arrow">❮</span><div class="slider-img"></div><span class="right-arrow">❯</span></div>`;
+            this.product.innerHTML += `<div class="breadcrumbs"> <a href="/" data-route>Home</a> / <a href='/shop' data-route>Shop</a> / <span>${this.nameProduct}</span></div><div class="img-product"><div class="big-img"><img class="main-img" src="${this.urlImgProduct}" alt="${this.nameProduct}"></div><div class="small-slider"><span class="left-arrow-small">❮</span><div class="all-small-img"></div><span class="right-arrow-small">❯</span></div></div><div class="info-product" data-id="${data.id}"><span class="name-product">${this.nameProduct}</span><span class="desc-product">${this.descriptionProduct}</span><ul><li>- Body type: ${this.bodyTypeProductText} </li><li>- Type of drive: ${this.typeDriveProductText} <li>- Transmission: ${this.transmissionProductText}</li><li>- Engine: ${this.engineProductText}</li><li>- Maximum speed: ${this.maxSpeedProductText} km/h</li></ul><span class="price-product">${this.newFormatPriceProduct} €</span></span></div><div class="slider"><span class="left-arrow">❮</span><div class="slider-img"></div><span class="right-arrow">❯</span></div>`;
 
             if (this.dataProduct.masterData.current.masterVariant.prices[0].discounted) {
                 this.newFormatDiscPriceProduct = this.newFormatPrice(
@@ -144,6 +149,8 @@ export default class Product {
                 );
                 this.showDiscPriceProduct();
             }
+
+            this.showAddToCart();
         });
     }
 
@@ -270,6 +277,71 @@ export default class Product {
         const newFormatPriceCar = this.priceProduct.split('');
         newFormatPriceCar.splice(-2, 0, '.');
         return newFormatPriceCar.join('');
+    }
+
+    public showAddToCart(): void {
+        const infoProduct = document.querySelector('.info-product') as HTMLElement;
+        const blockAddToCart = document.createElement('div');
+        blockAddToCart.classList.add('add-to-cart');
+        infoProduct.appendChild(blockAddToCart);
+
+        const btnAddToCart = document.createElement('button');
+        btnAddToCart.classList.add('btn-add-cart');
+        btnAddToCart.innerText = 'Add to cart';
+        blockAddToCart.appendChild(btnAddToCart);
+
+        const tick = document.createElement('span');
+        tick.classList.add('tick');
+        tick.innerText = '✔';
+        blockAddToCart.appendChild(tick);
+    }
+
+    public addToCart(): void {
+        const btnAddCart = document.querySelector('.btn-add-cart') as HTMLElement;
+        const infoProduct = document.querySelector('.info-product') as HTMLElement;
+        const tick = document.querySelector('.tick') as HTMLElement;
+
+        btnAddCart.addEventListener('click', async () => {
+            const getIdCar = infoProduct.getAttribute('data-id');
+            if (getIdCar) {
+                await this.controller.addLineItem(getIdCar);
+                btnAddCart.setAttribute('disabled', 'disabled');
+                btnAddCart.classList.add('btn-no-active');
+                tick.style.display = 'block';
+                btnAddCart.innerHTML = 'In the basket';
+                /*                 await this.controller.getCart().then((data) => {
+                    data?.lineItems.forEach((elCart) => {
+                        if (getIdCar === elCart.productId) {
+                            console.log('добавление товара');
+                            btnAddCart.setAttribute('disabled', 'disabled');
+                            tick.style.display = 'block';
+                            // eslint-disable-next-line no-useless-return
+                            return;
+                        }
+                    });
+                }); */
+            }
+        });
+    }
+
+    public async checkProductInCart(): Promise<void> {
+        await this.controller.getCart().then((data) => {
+            const btnAddCart = document.querySelector('.btn-add-cart') as HTMLElement;
+            const infoProduct = document.querySelector('.info-product') as HTMLElement;
+            const tick = document.querySelector('.tick') as HTMLElement;
+            const getIdCar = infoProduct.getAttribute('data-id');
+
+            data?.lineItems.forEach((elCart) => {
+                if (getIdCar === elCart.productId) {
+                    btnAddCart.setAttribute('disabled', 'disabled');
+                    btnAddCart.classList.add('btn-no-active');
+                    btnAddCart.innerHTML = 'In the basket';
+                    tick.style.display = 'block';
+                    // eslint-disable-next-line no-useless-return
+                    return;
+                }
+            });
+        });
     }
 
     public getLayout(): HTMLElement {

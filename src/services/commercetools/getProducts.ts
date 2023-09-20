@@ -1,5 +1,4 @@
 import { GetProducts } from '../../types/interfaces';
-/* import { CTP_API_URL, CTP_PROJECT_KEY } from './credential'; */
 
 async function getProducts(anonymousToken: string): Promise<GetProducts> {
     try {

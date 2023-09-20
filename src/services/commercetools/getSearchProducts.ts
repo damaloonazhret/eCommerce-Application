@@ -1,12 +1,16 @@
 import { GetProducts } from '../../types/interfaces';
-/* import { CTP_API_URL, CTP_PROJECT_KEY } from './credential'; */
 
-async function getSearchProducts(anonymousToken: string, paramSearch: string): Promise<GetProducts> {
+async function getSearchProducts(
+    anonymousToken: string,
+    paramSearch: string,
+    numOffset: number,
+    paraSort: string
+): Promise<GetProducts> {
     try {
         const response = await fetch(
             `${process.env.CTP_API_URL as string}/${
                 process.env.CTP_PROJECT_KEY as string
-            }/product-projections/search?${paramSearch}`,
+            }/product-projections/search?${paramSearch}&limit=4&offset=${numOffset}&${paraSort}`,
             {
                 method: 'GET',
                 headers: {

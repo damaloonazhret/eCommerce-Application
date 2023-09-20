@@ -24,6 +24,8 @@ export default class Header {
 
     private logoutListItem!: HTMLElement;
 
+    private cartListItem!: HTMLElement;
+
     constructor() {
         this.init();
         this.bindListeners();
@@ -54,12 +56,13 @@ export default class Header {
     private createMenu(): void {
         const homeLink = createNavLink('/', 'header__nav-link', 'Home');
         const shopLink = createNavLink('/shop', 'header__nav-link', 'Shop');
-        const aboutLink = createNavLink('/about', 'header__nav-link', 'About');
+        const aboutLink = createNavLink('/about', 'header__nav-link', 'About Us');
         const contactLink = createNavLink('/contact', 'header__nav-link', 'Contact');
         const signUpLink = createNavLink('/registration', 'header__nav-link', 'Sign Up');
         const loginLink = createNavLink('/login', 'header__nav-link', 'Login');
         const headerAccount = createNavLink('/account', 'header__nav-link', 'Account');
         const logoutLink = createNavLink('/', 'header__nav-link', 'Logout');
+        const cartLink = createNavLink('/cart', 'header__nav-link', 'Cart');
 
         this.homeListItem = document.createElement('li');
         this.homeListItem.className = 'header__home';
@@ -93,6 +96,10 @@ export default class Header {
         this.logoutListItem.className = 'header__logout';
         this.logoutListItem.append(logoutLink);
 
+        this.cartListItem = document.createElement('li');
+        this.cartListItem.className = 'header__cart';
+        this.cartListItem.append(cartLink);
+
         this.ul.append(this.homeListItem);
         this.ul.append(this.shopListItem);
         this.ul.append(this.aboutListItem);
@@ -101,6 +108,7 @@ export default class Header {
         this.ul.append(this.loginListItem);
         this.ul.append(this.accountListItem);
         this.ul.append(this.logoutListItem);
+        this.ul.append(this.cartListItem);
     }
 
     private bindListeners(): void {
@@ -112,6 +120,7 @@ export default class Header {
     public setActiveLink(path: string): void {
         const liElements = this.ul.querySelectorAll('li a');
         liElements.forEach((li) => {
+            if (li.textContent === 'Logout') return;
             li.classList.remove('active');
             if (li.getAttribute('href') === path) {
                 li.classList.add('active');

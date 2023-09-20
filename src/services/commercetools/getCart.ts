@@ -1,9 +1,9 @@
-import { GetCategories } from '../../types/interfaces';
+import { CartData } from '../../types/interfaces';
 
-async function getCategories(anonymousToken: string): Promise<GetCategories> {
+async function getCart(anonymousToken: string, idCart: string): Promise<CartData> {
     try {
         const response = await fetch(
-            `${process.env.CTP_API_URL as string}/${process.env.CTP_PROJECT_KEY as string}/categories/`,
+            `${process.env.CTP_API_URL as string}/${process.env.CTP_PROJECT_KEY as string}/carts/${idCart}`,
             {
                 method: 'GET',
                 headers: {
@@ -16,11 +16,12 @@ async function getCategories(anonymousToken: string): Promise<GetCategories> {
             throw Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const result = (await response.json()) as GetCategories;
+        const result = (await response.json()) as CartData;
+
         return result;
     } catch (error) {
         throw Error(`Error fetching get products: ${error as string}`);
     }
 }
 
-export default getCategories;
+export default getCart;
